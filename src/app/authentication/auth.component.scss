@@ -13,6 +13,19 @@
   overflow: visible
 }
 
+input {
+  letter-spacing: 0.5px !important;
+  font-size: 15px !important;
+}
+
+mat-error {
+  font-weight: 500;
+}
+
+mat-error i {
+  padding-right: 5px;
+}
+
 .mat-ripple-element {
   position: absolute;
   border-radius: 50%;

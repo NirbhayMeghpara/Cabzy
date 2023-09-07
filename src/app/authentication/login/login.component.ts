@@ -8,11 +8,16 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
   styleUrls: ["../auth.component.scss"],
 })
 export class LoginComponent {
-  form: FormGroup
+  loginForm: FormGroup
+
+get email () {
+  return this.loginForm.get('email')
+}
 
   constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      username: ["", Validators.required],
+    
+    this.loginForm = this.fb.group({
+      email: ["", [Validators.required, Validators.email]],
       password: ["", Validators.required],
     })
   }
