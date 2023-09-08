@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core"
 import { RouterModule, Routes } from "@angular/router"
 import { FullComponent } from "./layouts/full/full.component"
 import { LoginComponent } from "./authentication/login/login.component"
-import { RegisterComponent } from "./authentication/register/register.component"
 import { CreateRideComponent } from "./component/create-ride/create-ride.component"
 import { ConfirmedRideComponent } from "./component/confirmed-ride/confirmed-ride.component"
 import { RideHistoryComponent } from "./component/ride-history/ride-history.component"
@@ -35,7 +34,6 @@ const routes: Routes = [
     ],
   },
   { path: "login", component: LoginComponent },
-  { path: "register", component: RegisterComponent },
 
   { path: "**", redirectTo: "/create-ride", pathMatch: "full" },
 ]

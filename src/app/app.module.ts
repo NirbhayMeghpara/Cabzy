@@ -13,7 +13,6 @@ import { MaterialModule } from "./material.module"
 
 // Modules
 import { LoginComponent } from "./authentication/login/login.component"
-import { RegisterComponent } from "./authentication/register/register.component"
 import { CreateRideComponent } from "./component/create-ride/create-ride.component"
 import { ConfirmedRideComponent } from "./component/confirmed-ride/confirmed-ride.component"
 import { RideHistoryComponent } from "./component/ride-history/ride-history.component"
@@ -31,7 +30,6 @@ import { SettingsComponent } from "./component/settings/settings.component"
     AppComponent,
     FullComponent,
     LoginComponent,
-    RegisterComponent,
     CreateRideComponent,
     ConfirmedRideComponent,
     RideHistoryComponent,
