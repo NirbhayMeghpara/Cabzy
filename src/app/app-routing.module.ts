@@ -13,6 +13,7 @@ import { VehicalTypeComponent } from "./component/vehical-type/vehical-type.comp
 import { VehicalPriceComponent } from "./component/vehical-price/vehical-price.component"
 import { SettingsComponent } from "./component/settings/settings.component"
 import { UsersComponent } from "./component/users/users.component"
+import { AuthGuard } from "./shared/auth.guard"
 
 const routes: Routes = [
   {
@@ -20,17 +21,17 @@ const routes: Routes = [
     component: FullComponent,
     children: [
       { path: "", redirectTo: "/create-ride", pathMatch: "full" },
-      { path: "create-ride", component: CreateRideComponent },
-      { path: "confirmed-ride", component: ConfirmedRideComponent },
-      { path: "ride-history", component: RideHistoryComponent },
-      { path: "users", component: UsersComponent },
-      { path: "driver-list", component: DriverListComponent },
-      { path: "running-request", component: RunningRequestComponent },
-      { path: "country", component: CountryComponent },
-      { path: "city", component: CityComponent },
-      { path: "vehicle-type", component: VehicalTypeComponent },
-      { path: "vehicle-price", component: VehicalPriceComponent },
-      { path: "settings", component: SettingsComponent },
+      { path: "create-ride", component: CreateRideComponent, canActivate: [AuthGuard] },
+      { path: "confirmed-ride", component: ConfirmedRideComponent, canActivate: [AuthGuard] },
+      { path: "ride-history", component: RideHistoryComponent, canActivate: [AuthGuard] },
+      { path: "users", component: UsersComponent, canActivate: [AuthGuard] },
+      { path: "driver-list", component: DriverListComponent, canActivate: [AuthGuard] },
+      { path: "running-request", component: RunningRequestComponent, canActivate: [AuthGuard] },
+      { path: "country", component: CountryComponent, canActivate: [AuthGuard] },
+      { path: "city", component: CityComponent, canActivate: [AuthGuard] },
+      { path: "vehicle-type", component: VehicalTypeComponent, canActivate: [AuthGuard] },
+      { path: "vehicle-price", component: VehicalPriceComponent, canActivate: [AuthGuard] },
+      { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] },
     ],
   },
   { path: "login", component: LoginComponent },

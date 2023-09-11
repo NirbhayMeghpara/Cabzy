@@ -1,6 +1,8 @@
-import { PlatformModule } from "@angular/cdk/platform"
+import { AuthService } from "../../services/auth.service"
 import { Component } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { Router } from "@angular/router"
+import { ToastrService } from "ngx-toastr"
 
 @Component({
   selector: "app-login",
@@ -8,30 +10,63 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
   styleUrls: ["../auth.component.scss"],
 })
 export class LoginComponent {
-  loginForm: FormGroup
+  isLoading: boolean = false
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
+
+  loginForm: FormGroup = this.fb.group({
+    email: [
+      "",
+      [
+        Validators.required,
+        Validators.email,
+        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
+      ],
+    ],
+    password: ["", [Validators.required, Validators.minLength(8)]],
+  })
+
+  loginUser() {
+    const loginDetails = { email: this.email?.value, password: this.password?.value }
+    this.isLoading = true
+    this.authService.login(loginDetails).subscribe(
+      (response) => {
+        this.isLoading = false
+
+        // Error success message
+        this.toastr.success("Login Successfully", "Success", {
+          progressBar: true,
+          progressAnimation: "decreasing",
+          closeButton: true,
+          timeOut: 5000,
+        })
+
+        localStorage.setItem("token", response.token)
+        this.router.navigate(["/create-ride"])
+      },
+      (error) => {
+        this.isLoading = false
+
+        // Error toast message
+        this.toastr.error(error.error.error, "Error Occured", {
+          progressBar: true,
+          progressAnimation: "decreasing",
+          closeButton: true,
+          timeOut: 5000,
+        })
+      }
+    )
+  }
 
   get email() {
     return this.loginForm.get("email")
   }
   get password() {
     return this.loginForm.get("password")
-  }
-
-  signin() {
-    console.log(this.loginForm)
-  }
-
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      email: [
-        "",
-        [
-          Validators.required,
-          Validators.email,
-          Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
-        ],
-      ],
-      password: ["", [Validators.required, Validators.minLength(8)]],
-    })
   }
 }

@@ -10,6 +10,7 @@ import { AppComponent } from "./app.component"
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations"
 import { FullComponent } from "./layouts/full/full.component"
 import { MaterialModule } from "./material.module"
+import { HttpClientModule } from "@angular/common/http"
 
 // Modules
 import { LoginComponent } from "./authentication/login/login.component"
@@ -24,6 +25,8 @@ import { CityComponent } from "./component/city/city.component"
 import { VehicalTypeComponent } from "./component/vehical-type/vehical-type.component"
 import { VehicalPriceComponent } from "./component/vehical-price/vehical-price.component"
 import { SettingsComponent } from "./component/settings/settings.component"
+import { LoadingSpinnerComponent } from "./shared/loading-spinner/loading-spinner.component"
+import { ToastrModule } from "ngx-toastr"
 
 @NgModule({
   declarations: [
@@ -41,6 +44,7 @@ import { SettingsComponent } from "./component/settings/settings.component"
     VehicalTypeComponent,
     VehicalPriceComponent,
     SettingsComponent,
+    LoadingSpinnerComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +54,12 @@ import { SettingsComponent } from "./component/settings/settings.component"
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      maxOpened: 5,
+      autoDismiss: true,
+      preventDuplicates: true,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
