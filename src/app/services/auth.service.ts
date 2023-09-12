@@ -5,15 +5,24 @@ import { Injectable } from "@angular/core"
   providedIn: "root",
 })
 export class AuthService {
-  loginUrl = "http://localhost:3000/login"
+  private _loginUrl = "http://localhost:3000/login"
+  private _logoutUrl = "http://localhost:3000/logout"
 
   constructor(private http: HttpClient) {}
 
   login(loginDetails: { email: string; password: string }) {
-    return this.http.post<any>(this.loginUrl, loginDetails)
+    return this.http.post<any>(this._loginUrl, loginDetails)
+  }
+
+  logout() {
+    return this.http.get(this._logoutUrl)
   }
 
   isLoggedIn() {
-    return !!localStorage.getItem("token")
+    return !!localStorage.getItem("adminToken")
+  }
+
+  getToken() {
+    return localStorage.getItem("adminToken")
   }
 }

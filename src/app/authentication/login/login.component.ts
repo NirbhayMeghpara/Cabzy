@@ -2,7 +2,7 @@ import { AuthService } from "../../services/auth.service"
 import { Component } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { Router } from "@angular/router"
-import { ToastrService } from "ngx-toastr"
+import { ToastService } from "src/app/services/toast.service"
 
 @Component({
   selector: "app-login",
@@ -16,7 +16,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private toast: ToastService
   ) {}
 
   loginForm: FormGroup = this.fb.group({
@@ -31,7 +31,7 @@ export class LoginComponent {
     password: ["", [Validators.required, Validators.minLength(8)]],
   })
 
-  loginUser() {
+  loginAdmin() {
     const loginDetails = { email: this.email?.value, password: this.password?.value }
     this.isLoading = true
     this.authService.login(loginDetails).subscribe(
@@ -39,26 +39,31 @@ export class LoginComponent {
         this.isLoading = false
 
         // Error success message
-        this.toastr.success("Login Successfully", "Success", {
-          progressBar: true,
-          progressAnimation: "decreasing",
-          closeButton: true,
-          timeOut: 5000,
-        })
+        // this.toastr.success("Login Successfully", "Success", {
+        //   progressBar: true,
+        //   progressAnimation: "decreasing",
+        //   closeButton: true,
+        //   timeOut: 5000,
+        // })
+        this.toast.success("Login Successfully", "Success")
 
-        localStorage.setItem("token", response.token)
+        localStorage.setItem("adminToken", response.token)
         this.router.navigate(["/create-ride"])
       },
       (error) => {
         this.isLoading = false
 
         // Error toast message
-        this.toastr.error(error.error.error, "Error Occured", {
-          progressBar: true,
-          progressAnimation: "decreasing",
-          closeButton: true,
-          timeOut: 5000,
-        })
+        // this.toastr.error(error.error.error, "Error Occured", {
+        //   progressBar: true,
+        //   progressAnimation: "decreasing",
+        //   closeButton: true,
+        //   timeOut: 5000,
+        // })
+
+        this.toast.error(error.error.error, "Error Occured")
+
+        this.loginForm.reset()
       }
     )
   }

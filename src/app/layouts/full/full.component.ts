@@ -1,7 +1,11 @@
-import { Component } from "@angular/core"
+import { AuthService } from "./../../services/auth.service"
+import { Component, OnInit } from "@angular/core"
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout"
 import { Observable } from "rxjs"
 import { map, shareReplay } from "rxjs/operators"
+import { Router } from "@angular/router"
+import { DEFAULT_INTERRUPTSOURCES, Idle } from "@ng-idle/core"
+import { ToastService } from "src/app/services/toast.service"
 
 interface sidebarMenu {
   link: string
@@ -16,14 +20,40 @@ interface sidebarMenu {
   templateUrl: "./full.component.html",
   styleUrls: ["./full.component.scss"],
 })
-export class FullComponent {
+export class FullComponent implements OnInit {
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map((result) => result.matches),
     shareReplay()
   )
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  idleTimer = 1170 // 19 min 30 sec in seconds
+  timeoutTimer = 1200 // 20 min in seconds
 
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private authService: AuthService,
+    private toast: ToastService,
+    private router: Router,
+    private idle: Idle
+  ) {
+    idle.setIdle(this.idleTimer) // How long can they be inactive before considered idle, in seconds
+    idle.setTimeout(this.idleTimer) // How long can they be idle before considered timed out, in seconds
+    idle.setInterrupts(DEFAULT_INTERRUPTSOURCES) // Different sources that will "interrupt" (provide events indicating that user is active)
+
+    idle.onIdleStart.subscribe(() => {
+      this.toast.warning("You are idle. Please stay active !!", "Warning")
+    })
+
+    idle.onTimeout.subscribe(() => {
+      this.authService.logout().subscribe((response) => {
+        localStorage.removeItem("adminToken")
+
+        this.toast.info("Opps you are logged out !!", "Timeout", 10000)
+        this.router.navigate(["/login"])
+      })
+    })
+  }
+  // Applying activelink material lib. class to active router
   routerActive: string = "activelink"
 
   toggleDropdown(menuItem: sidebarMenu): void {
@@ -112,4 +142,23 @@ export class FullComponent {
       menu: "Settings",
     },
   ]
+
+  logoutAdmin() {
+    this.authService.logout().subscribe(
+      (response) => {
+        localStorage.removeItem("adminToken")
+        this.toast.success("Admin logout successfully !!", "Success")
+
+        this.router.navigate(["/login"])
+      },
+      (error) => {
+        console.log(error)
+        this.toast.error(error.error.error, "Error Occured")
+      }
+    )
+  }
+
+  ngOnInit(): void {
+    this.idle.watch()
+  }
 }

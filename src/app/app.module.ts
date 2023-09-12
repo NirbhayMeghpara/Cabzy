@@ -10,7 +10,7 @@ import { AppComponent } from "./app.component"
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations"
 import { FullComponent } from "./layouts/full/full.component"
 import { MaterialModule } from "./material.module"
-import { HttpClientModule } from "@angular/common/http"
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http"
 
 // Modules
 import { LoginComponent } from "./authentication/login/login.component"
@@ -27,6 +27,8 @@ import { VehicalPriceComponent } from "./component/vehical-price/vehical-price.c
 import { SettingsComponent } from "./component/settings/settings.component"
 import { LoadingSpinnerComponent } from "./shared/loading-spinner/loading-spinner.component"
 import { ToastrModule } from "ngx-toastr"
+import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.service"
+import { NgIdleModule } from "@ng-idle/core"
 
 @NgModule({
   declarations: [
@@ -55,13 +57,20 @@ import { ToastrModule } from "ngx-toastr"
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgIdleModule.forRoot(),
     ToastrModule.forRoot({
       maxOpened: 5,
       autoDismiss: true,
       preventDuplicates: true,
     }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
