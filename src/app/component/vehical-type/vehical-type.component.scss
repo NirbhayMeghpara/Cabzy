@@ -1,0 +1,39 @@
+.submit-icon{
+  width: 18px;
+  height: 20px;
+  margin-right: 6px;
+  margin-top: 2px;
+}
+
+.submit-text{
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.form-card {
+  max-width: 550px;
+  margin: 0rem auto 5rem;
+}
+
+.form-wrapper{
+  display: flex;
+  cursor: pointer;
+}
+
+.form-wrapper > input[type='text']{
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+.mat-mdc-card:hover {
+  box-shadow: 0px 0px 40px 0px rgba(251, 150, 120, 0.4) !important;
+  transform: scale(1.01);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.mat-mdc-outlined-button.mat-mdc-button-base{
+  width: 200px;
+  outline: 1px solid rgba(251, 150, 120, 0.7);
+  font-weight: 500;
+}

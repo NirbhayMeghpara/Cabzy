@@ -18,15 +18,6 @@ input {
   font-size: 15px !important;
 }
 
-mat-error {
-  font-weight: 500;
-  color: #e95861 !important;
-}
-
-mat-error i {
-  padding-right: 5px;
-}
-
 .mat-ripple-element {
   position: absolute;
   border-radius: 50%;
@@ -2375,6 +2366,12 @@ textarea.cdk-textarea-autosize-measuring-firefox {
 
 .mat-mdc-button.mat-mdc-button-base,.mat-mdc-raised-button.mat-mdc-button-base,.mat-mdc-unelevated-button.mat-mdc-button-base,.mat-mdc-outlined-button.mat-mdc-button-base {
   height: 36px
+}
+
+.cdk-keyboard-focused {
+  outline: 2px solid #616161;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.2s ease-in-out;
 }
 
 .mdc-button {

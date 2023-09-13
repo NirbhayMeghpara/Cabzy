@@ -45,12 +45,20 @@ export class FullComponent implements OnInit {
     })
 
     idle.onTimeout.subscribe(() => {
-      this.authService.logout().subscribe((response) => {
-        localStorage.removeItem("adminToken")
+      this.authService.logout().subscribe(
+        (response) => {
+          localStorage.removeItem("adminToken")
 
-        this.toast.info("Opps you are logged out !!", "Timeout", 10000)
-        this.router.navigate(["/login"])
-      })
+          this.toast.info("Opps you are logged out !!", "Timeout", 10000)
+          this.router.navigate(["/login"])
+        },
+        (error) => {
+          localStorage.removeItem("adminToken")
+
+          this.toast.info("Opps you are logged out !!", "Timeout", 10000)
+          this.router.navigate(["/login"])
+        }
+      )
     })
   }
   // Applying activelink material lib. class to active router
@@ -63,7 +71,7 @@ export class FullComponent implements OnInit {
   sidebarMenu: sidebarMenu[] = [
     {
       link: "/",
-      icon: "layers",
+      icon: "truck",
       menu: "Ride",
       submenus: [
         {
@@ -145,9 +153,9 @@ export class FullComponent implements OnInit {
 
   logoutAdmin() {
     this.authService.logout().subscribe(
-      (response) => {
+      (response: any) => {
         localStorage.removeItem("adminToken")
-        this.toast.success("Admin logout successfully !!", "Success")
+        this.toast.success(response.msg, "Success")
 
         this.router.navigate(["/login"])
       },

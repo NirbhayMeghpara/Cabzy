@@ -9,3 +9,24 @@
   font-style: italic;
   font-weight: 500;
 }
+
+button.toast-close-button {
+  margin-right: 5px;
+  transform: scale(1.25);
+}
+
+.toast-container .ngx-toastr {
+  width: 320px !important;
+  padding: 15px 15px 15px 55px;
+  border-radius: 10px;
+}
+
+mat-error {
+  margin-top: 6px;
+  font-weight: 500;
+  color: #e95861 !important;
+}
+
+mat-error i {
+  padding-right: 5px;
+}

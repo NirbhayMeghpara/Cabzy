@@ -1,1 +1,115 @@
-<p>vehical-type works!</p>
+<div class="card form-card">
+  <div class="card-body">
+    <h2 class="mb-12">Manage Vehicle</h2>
+    <hr class="mb-32" />
+    <form [formGroup]="vehicleForm" enctype="multipart/form-data">
+      <mat-form-field
+        class="w-100 fs-16"
+        [class.mb-16]="vehicleType?.invalid && vehicleType?.touched"
+        appearance="outline"
+      >
+        <mat-label>Vehicle</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Enter your vehicle type"
+          formControlName="vehicleType"
+        />
+        <mat-error class="m-t-6" *ngIf="vehicleType?.invalid && vehicleType?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="vehicleType?.hasError('required')">Please enter the type of vehicle</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="inputFile fs-16 mb-32">
+        <div class="form-wrapper">
+          <input
+            style="display: inline"
+            matInput
+            type="text"
+            placeholder="Upload image..."
+            readonly
+            (click)="fileInput.click()"
+            formControlName="vehicleImage"
+          />
+          <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
+          <button
+            type="button"
+            mat-stroked-button
+            color="accent"
+            class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-accent mat-mdc-button-base"
+            mat-button-is-fab="false"
+            (click)="fileInput.click()"
+          >
+            <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
+            ><span class="mdc-button__label">Browse File</span
+            ><span class="mat-mdc-focus-indicator"></span
+            ><span class="mat-mdc-button-touch-target"></span><span class="mat-mdc-button-ripple"></span>
+          </button>
+        </div>
+        <mat-error class="m-t-6" *ngIf="vehicleImage?.hasError('required') && vehicleImage?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span>Vehicle Image is required. Please upload !!</span>
+        </mat-error>
+      </mat-form-field>
+      <br />
+
+      <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+      <button
+        (click)="onVehicleSave()"
+        [disabled]="vehicleForm.invalid"
+        mat-fab
+        extended
+        color="accent"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="save" class="icon-20 m-r-10 submit-icon"></i-feather>
+          Save
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- -------- -->
+
+<div class="d-flex justify-content-center row">
+  <div class="col-sm-6 col-lg-3 ng-star-inserted">
+    <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden">
+      <div class="vehicle-image">
+        <img
+          alt="imgSrc"
+          mat-card-image=""
+          class="mat-mdc-card-image mdc-card__media w-100"
+          src="../../../assets/images/icon.png"
+        />
+      </div>
+      <mat-card-content class="mat-mdc-card-content pb-24 pt-12 text-center">
+        <mat-card-title class="mat-mdc-card-title mat-headline-2 mb-4"><h3>SUV</h3></mat-card-title>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-sm-6 col-lg-3 ng-star-inserted">
+    <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden">
+      <div class="vehicle-image">
+        <img
+          alt="imgSrc"
+          mat-card-image=""
+          class="mat-mdc-card-image mdc-card__media w-100"
+          src="../../../assets/images/icon.png"
+        />
+      </div>
+      <mat-card-content class="mat-mdc-card-content pb-24 pt-12 text-center">
+        <mat-card-title class="mat-mdc-card-title mat-headline-2 mb-4"><h3>SUV</h3></mat-card-title>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

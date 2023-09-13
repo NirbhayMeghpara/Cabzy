@@ -9,11 +9,24 @@
 
   .list-group {
     display: flex;
-    align-items: center;
+    align-items: center; 
+  }
+
+  .list-group a, .list-group div a {
+    border-radius: 25px;
+    cursor: pointer;
+  }
+
+  .submenu a{
+    margin: 4px 0px;
+  }
+
+  .list-group div a:hover, .list-group a:hover{
+    background-color: #f4f4f4;
   }
 
   .sidebar-menu {
-    padding: 14px 16px;
+    padding: 12px 17px;
     border-radius: 9px;
 
     &.activelink {
