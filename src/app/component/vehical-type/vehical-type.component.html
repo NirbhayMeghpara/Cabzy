@@ -1,4 +1,13 @@
-<div class="card form-card">
+<div class="btn-wrapper" [class.d-none]="showForm">
+  <div class="btn-container" *ngIf="!showForm">
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleForm()">
+      <i-feather name="user-plus" class="icon-20 mr-10 submit-icon"></i-feather>
+      <span>Add New Vehicle</span>
+    </button>
+  </div>
+</div>
+
+<div class="card form-card" *ngIf="showForm">
   <div class="card-body">
     <h2 class="mb-12">Manage Vehicle</h2>
     <hr class="mb-32" />
@@ -21,48 +30,64 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="inputFile fs-16 mb-32">
-        <div class="form-wrapper">
-          <input
-            style="display: inline"
-            matInput
-            type="text"
-            placeholder="Upload image..."
-            readonly
-            (click)="fileInput.click()"
-            formControlName="vehicleImage"
-          />
-          <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
-          <button
-            type="button"
-            mat-stroked-button
-            color="accent"
-            class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-accent mat-mdc-button-base"
-            mat-button-is-fab="false"
-            (click)="fileInput.click()"
-          >
-            <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
-            ><span class="mdc-button__label">Browse File</span
-            ><span class="mat-mdc-focus-indicator"></span
-            ><span class="mat-mdc-button-touch-target"></span><span class="mat-mdc-button-ripple"></span>
-          </button>
-        </div>
-        <mat-error class="m-t-6" *ngIf="vehicleImage?.hasError('required') && vehicleImage?.touched"
-          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-          <span>Vehicle Image is required. Please upload !!</span>
-        </mat-error>
-      </mat-form-field>
+      <div class="mb-32">
+        <mat-form-field class="fs-16">
+          <div class="form-wrapper">
+            <input
+              style="display: inline"
+              matInput
+              type="text"
+              placeholder="Upload image..."
+              readonly
+              tabindex="-1"
+              (click)="fileInput.click()"
+              formControlName="vehicleImage"
+            />
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
+            <button
+              type="button"
+              mat-stroked-button
+              color="accent"
+              class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-accent mat-mdc-button-base"
+              mat-button-is-fab="false"
+              (keydown.enter)="fileInput.click()"
+              (click)="fileInput.click()"
+            >
+              <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
+              ><span class="mdc-button__label">Browse File</span
+              ><span class="mat-mdc-focus-indicator"></span
+              ><span class="mat-mdc-button-touch-target"></span
+              ><span class="mat-mdc-button-ripple"></span>
+            </button>
+          </div>
+          <mat-error class="m-t-6" *ngIf="vehicleImage?.pristine && vehicleImage?.touched"
+            ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+            <span *ngIf="vehicleImage?.hasError('required')">
+              Vehicle Image is required. Please upload !!
+            </span>
+            <span *ngIf="vehicleImage?.errors?.['fileSizeExceeded']">
+              Please upload file size lesser than 5 MB
+            </span>
+            <span *ngIf="vehicleImage?.errors?.['fileInvalid']">
+              Please upload an image in JPG, JPEG, or PNG format
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <small class="info" *ngIf="!(vehicleImage?.pristine && vehicleImage?.touched)">
+          <i>** Max file size to upload is <b>5 MB</b></i>
+        </small>
+      </div>
+
       <br />
 
       <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
       <button
         (click)="onVehicleSave()"
-        [disabled]="vehicleForm.invalid"
         mat-fab
         extended
         color="accent"
         aria-label="Icon button with a save icon"
-        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab mr-10"
         mat-button-is-fab="true"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
@@ -74,41 +99,66 @@
         <span class="mat-mdc-button-touch-target"></span>
         <span class="mat-mdc-button-ripple"></span>
       </button>
+
+      <!-- Cancel Button -->
+
+      <button
+        (click)="toggleForm()"
+        mat-fab
+        extended
+        color="warn"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="x" class="icon-20 m-r-10 submit-icon"></i-feather>
+          Cancel
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
     </form>
   </div>
 </div>
 
-<!-- -------- -->
+<!-- -------- Added Vehicle Type -------- -->
 
 <div class="d-flex justify-content-center row">
-  <div class="col-sm-6 col-lg-3 ng-star-inserted">
-    <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden">
-      <div class="vehicle-image">
-        <img
-          alt="imgSrc"
-          mat-card-image=""
-          class="mat-mdc-card-image mdc-card__media w-100"
-          src="../../../assets/images/icon.png"
-        />
-      </div>
-      <mat-card-content class="mat-mdc-card-content pb-24 pt-12 text-center">
-        <mat-card-title class="mat-mdc-card-title mat-headline-2 mb-4"><h3>SUV</h3></mat-card-title>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  <div
+    class="col-sm-6 col-lg-3 ng-star-inserted"
+    *ngFor="let vehicle of vehicleTypeData"
+    (click)="editForm()"
+  >
+    <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden position-relative">
+      <input type="hidden" name="vehicleId" value="{{ vehicle._id }}" #vehicleId />
+      <button
+        mat-fab
+        color="accent"
+        aria-label="edit icon"
+        class="edit-btn mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <span class="mdc-button__label"><i-feather name="edit" class="icon-20"></i-feather></span>
+        <span class="mat-mdc-focus-indicator"></span><span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
 
-  <div class="col-sm-6 col-lg-3 ng-star-inserted">
-    <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden">
       <div class="vehicle-image">
         <img
           alt="imgSrc"
           mat-card-image=""
-          class="mat-mdc-card-image mdc-card__media w-100"
-          src="../../../assets/images/icon.png"
+          class="mat-mdc-card-image mdc-card__media"
+          src="http://localhost:3000/{{ vehicle.vehicleImage }}"
         />
       </div>
       <mat-card-content class="mat-mdc-card-content pb-24 pt-12 text-center">
-        <mat-card-title class="mat-mdc-card-title mat-headline-2 mb-4"><h3>SUV</h3></mat-card-title>
+        <mat-card-title class="mat-mdc-card-title mat-headline-2 mb-4"
+          ><h3>{{ vehicle.vehicleType }}</h3></mat-card-title
+        >
       </mat-card-content>
     </mat-card>
   </div>

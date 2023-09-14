@@ -32,40 +32,29 @@ export class LoginComponent {
   })
 
   loginAdmin() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched()
+      return
+    }
+
     const loginDetails = { email: this.email?.value, password: this.password?.value }
     this.isLoading = true
-    this.authService.login(loginDetails).subscribe(
-      (response) => {
+    this.authService.login(loginDetails).subscribe({
+      next: (response) => {
         this.isLoading = false
 
-        // Error success message
-        // this.toastr.success("Login Successfully", "Success", {
-        //   progressBar: true,
-        //   progressAnimation: "decreasing",
-        //   closeButton: true,
-        //   timeOut: 5000,
-        // })
         this.toast.success("Login Successfully", "Success")
 
         localStorage.setItem("adminToken", response.token)
         this.router.navigate(["/create-ride"])
       },
-      (error) => {
+      error: (error) => {
         this.isLoading = false
 
-        // Error toast message
-        // this.toastr.error(error.error.error, "Error Occured", {
-        //   progressBar: true,
-        //   progressAnimation: "decreasing",
-        //   closeButton: true,
-        //   timeOut: 5000,
-        // })
-
         this.toast.error(error.error.error, "Error Occured")
-
         this.loginForm.reset()
-      }
-    )
+      },
+    })
   }
 
   get email() {
