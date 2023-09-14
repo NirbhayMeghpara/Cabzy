@@ -6,6 +6,7 @@ import { Injectable } from "@angular/core"
 })
 export class VehicleTypeService {
   private _addVehicleUrl = "http://localhost:3000/vehicle/add"
+  private _fetchVehicleUrl = "http://localhost:3000/vehicle"
 
   constructor(private http: HttpClient) {}
 
@@ -14,5 +15,9 @@ export class VehicleTypeService {
     formData.append("vehicleType", vehicleType)
     formData.append("vehicleImage", vehicleImage)
     return this.http.post(this._addVehicleUrl, formData)
+  }
+
+  fetchVehicle() {
+    return this.http.get(this._fetchVehicleUrl)
   }
 }

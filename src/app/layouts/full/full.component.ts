@@ -6,14 +6,7 @@ import { map, shareReplay } from "rxjs/operators"
 import { Router } from "@angular/router"
 import { DEFAULT_INTERRUPTSOURCES, Idle } from "@ng-idle/core"
 import { ToastService } from "src/app/services/toast.service"
-
-interface sidebarMenu {
-  link: string
-  icon: string
-  menu: string
-  submenus?: sidebarMenu[]
-  showSubmenu?: boolean
-}
+import { SidebarMenu } from "src/app/shared/interfaces/sidebar-menu.model"
 
 @Component({
   selector: "app-full",
@@ -45,30 +38,30 @@ export class FullComponent implements OnInit {
     })
 
     idle.onTimeout.subscribe(() => {
-      this.authService.logout().subscribe(
-        (response) => {
+      this.authService.logout().subscribe({
+        next: (response) => {
           localStorage.removeItem("adminToken")
 
           this.toast.info("Opps you are logged out !!", "Timeout", 10000)
           this.router.navigate(["/login"])
         },
-        (error) => {
+        error: (error) => {
           localStorage.removeItem("adminToken")
 
           this.toast.info("Opps you are logged out !!", "Timeout", 10000)
           this.router.navigate(["/login"])
-        }
-      )
+        },
+      })
     })
   }
   // Applying activelink material lib. class to active router
   routerActive: string = "activelink"
 
-  toggleDropdown(menuItem: sidebarMenu): void {
+  toggleDropdown(menuItem: SidebarMenu): void {
     menuItem.showSubmenu = !menuItem.showSubmenu
   }
 
-  sidebarMenu: sidebarMenu[] = [
+  sidebarMenu: SidebarMenu[] = [
     {
       link: "/",
       icon: "truck",
@@ -152,18 +145,18 @@ export class FullComponent implements OnInit {
   ]
 
   logoutAdmin() {
-    this.authService.logout().subscribe(
-      (response: any) => {
+    this.authService.logout().subscribe({
+      next: (response: any) => {
         localStorage.removeItem("adminToken")
         this.toast.success(response.msg, "Success")
 
         this.router.navigate(["/login"])
       },
-      (error) => {
+      error: (error) => {
         console.log(error)
         this.toast.error(error.error.error, "Error Occured")
-      }
-    )
+      },
+    })
   }
 
   ngOnInit(): void {
