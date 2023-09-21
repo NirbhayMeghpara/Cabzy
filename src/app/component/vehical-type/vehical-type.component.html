@@ -1,7 +1,7 @@
 <div class="btn-wrapper" [class.d-none]="showForm">
   <div class="btn-container" *ngIf="!showForm">
-    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleForm()">
-      <i-feather name="user-plus" class="icon-20 mr-10 submit-icon"></i-feather>
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleAddForm()">
+      <i-feather name="user-plus" class="icon-20 m-r-10 submit-icon"></i-feather>
       <span>Add New Vehicle</span>
     </button>
   </div>
@@ -9,7 +9,7 @@
 
 <div class="card form-card" *ngIf="showForm">
   <div class="card-body">
-    <h2 class="mb-12">Manage Vehicle</h2>
+    <h2 class="mb-12">{{ form }} Vehicle</h2>
     <hr class="mb-32" />
     <form [formGroup]="vehicleForm" enctype="multipart/form-data">
       <mat-form-field
@@ -82,18 +82,19 @@
 
       <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
       <button
-        (click)="onVehicleSave()"
+        (click)="onVehicleSubmit()"
+        type="button"
         mat-fab
         extended
         color="accent"
         aria-label="Icon button with a save icon"
-        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab mr-10"
+        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10"
         mat-button-is-fab="true"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
-          <i-feather name="save" class="icon-20 m-r-10 submit-icon"></i-feather>
-          Save
+          <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
+          {{ form === "Add" ? "Save" : "Edit" }}
         </div>
         <span class="mat-mdc-focus-indicator"></span>
         <span class="mat-mdc-button-touch-target"></span>
@@ -103,7 +104,8 @@
       <!-- Cancel Button -->
 
       <button
-        (click)="toggleForm()"
+        (click)="toggleAddForm()"
+        type="button"
         mat-fab
         extended
         color="warn"
@@ -113,7 +115,7 @@
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
-          <i-feather name="x" class="icon-20 m-r-10 submit-icon"></i-feather>
+          <i-feather name="x" class="icon-20 m-r-5 submit-icon"></i-feather>
           Cancel
         </div>
         <span class="mat-mdc-focus-indicator"></span>
@@ -130,10 +132,10 @@
   <div
     class="col-sm-6 col-lg-3 ng-star-inserted"
     *ngFor="let vehicle of vehicleTypeData"
-    (click)="editForm()"
+    (click)="editForm(vehicle._id, vehicle.vehicleType)"
   >
     <mat-card class="mat-mdc-card mdc-card cardWithShadow productcard overflow-hidden position-relative">
-      <input type="hidden" name="vehicleId" value="{{ vehicle._id }}" #vehicleId />
+      <input type="hidden" name="vehicleId" value="{{ vehicle._id }}" />
       <button
         mat-fab
         color="accent"

@@ -1,1 +1,145 @@
-<p>country works!</p>
+<div class="btn-wrapper">
+  <div class="search-box m-l-32">
+    <button class="btn-search"><i class="fas fa-search"></i></button>
+    <input type="text" [(ngModel)]="searchText" class="input-search" placeholder="Type to Search..." />
+  </div>
+
+  <div class="btn-container" *ngIf="!showForm" [class.d-none]="showForm">
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleAddForm()">
+      <i-feather name="user-plus" class="icon-20 m-r-10 submit-icon"></i-feather>
+      <span>Add New Country</span>
+    </button>
+  </div>
+</div>
+
+<div class="card form-card" *ngIf="showForm">
+  <div class="card-body">
+    <h2 class="mb-12">Add Country</h2>
+    <hr class="mb-32" />
+    <form [formGroup]="countryForm">
+      <mat-form-field
+        class="w-100 fs-16"
+        [class.mb-16]="countryName?.invalid && countryName?.touched"
+        appearance="outline"
+      >
+        <mat-label>Country Name</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Enter country name"
+          formControlName="countryName"
+          (keyup.enter)="fetchData()"
+          (blur)="fetchData()"
+        />
+        <mat-error class="m-t-6" *ngIf="countryName?.invalid && countryName?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="countryName?.hasError('required')">Please enter the name of country !!</span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="d-flex align-items-center m-b-30">
+        <h4 class="m-r-12">Country Flag :</h4>
+        <img #countryFlag class="countryFlag" width="50" src="" />
+      </div>
+
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Currency</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Country currency"
+          formControlName="currency"
+          tabindex="-1"
+        />
+      </mat-form-field>
+
+      <br />
+
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Time Zone</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Country Time Zone"
+          formControlName="timeZone"
+          tabindex="-1"
+        />
+      </mat-form-field>
+
+      <br />
+
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Country calling code</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Country code"
+          formControlName="countryCode"
+          tabindex="-1"
+        />
+      </mat-form-field>
+
+      <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+      <button
+        type="button"
+        mat-fab
+        extended
+        color="accent"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10 m-t-15"
+        mat-button-is-fab="true"
+        (click)="onCountrySubmit()"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
+          Add
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
+
+      <!-- Cancel Button -->
+
+      <button
+        (click)="toggleAddForm()"
+        type="button"
+        mat-fab
+        extended
+        color="warn"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="x" class="icon-20 m-r-5 submit-icon"></i-feather>
+          Cancel
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <ng-container *ngFor="let country of countryData">
+    <div
+      class="col-sm-6 col-lg-3 ng-star-inserted"
+      *ngIf="searchText == '' || country.name.toLowerCase().includes(searchText)"
+    >
+      <mat-card class="mat-mdc-card mdc-card cardWithShadow">
+        <mat-card-content class="mat-mdc-card-content p-y-24">
+          <img alt="flag" src="{{ country.flag }}" />
+          <mat-card-title class="mat-mdc-card-title m-t-16">{{ country.name }}</mat-card-title>
+          <p class="m-t-12 m-b-2"><b>Currency : </b>{{ country.currency }}</p>
+          <p class="m-b-2"><b>Time Zone : </b>{{ country.timezone }}</p>
+          <p class="m-b-2"><b>Calling code : </b>{{ country.code }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>

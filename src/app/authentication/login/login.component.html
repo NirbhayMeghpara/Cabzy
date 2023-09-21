@@ -37,13 +37,18 @@
             </mat-form-field>
             <!-- password -->
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
-            <mat-form-field appearance="outline" class="w-100" color="primary">
+            <mat-form-field
+              appearance="outline"
+              [ngClass]="{ 'm-b-10': password?.hasError('minlength') }"
+              class="w-100"
+              color="primary"
+            >
               <input matInput type="password" formControlName="password" />
               <mat-error class="m-t-6"
                 ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
                 <span *ngIf="password?.hasError('required')">Please enter your password</span>
                 <span *ngIf="password?.hasError('minlength')"
-                  >Please enter valid length of password</span
+                  >Password must be at least 8 characters long</span
                 >
               </mat-error>
             </mat-form-field>

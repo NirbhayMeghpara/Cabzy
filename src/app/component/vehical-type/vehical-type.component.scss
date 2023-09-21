@@ -63,7 +63,8 @@
 }
 
 .btn-wrapper {
-  margin-bottom: 35px;
+  margin: 0px 30px 70px 0px;
+  text-align: right;
 }
 
 .btn-container {
@@ -108,12 +109,4 @@
   width: 200px;
   outline: 1px solid rgba(251, 150, 120, 0.7);
   font-weight: 500;
-}
-
-.d-none{
-  display: none;
-}
-
-.mr-10 {
-  margin-right: 10px;
 }
