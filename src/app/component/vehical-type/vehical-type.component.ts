@@ -4,6 +4,8 @@ import { ToastService } from "src/app/services/toast.service"
 import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 
+type FormType = "Add" | "Edit"
+
 @Component({
   selector: "app-vehical-type",
   templateUrl: "./vehical-type.component.html",
@@ -12,8 +14,10 @@ import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 export class VehicalTypeComponent implements OnInit {
   selectedFile: any = null
   fileSizeLarge: boolean = false
+  form: FormType = "Add"
   invalidFile: boolean = false
   showForm: boolean = false
+  editID: string = ""
 
   vehicleTypeData!: VehicleType[]
 
@@ -27,25 +31,29 @@ export class VehicalTypeComponent implements OnInit {
     this.getVehicle()
   }
 
-  toggleForm() {
-    if (this.showForm) {
-      this.vehicleForm.reset()
-    }
-    this.showForm = !this.showForm
-  }
-
-  editForm() {
-    if (!this.showForm) this.showForm = !this.showForm
-
-    this.vehicleType
-  }
-
   vehicleForm: FormGroup = this.fb.group({
     vehicleType: ["", [Validators.required]],
     vehicleImage: ["", [Validators.required]],
   })
 
-  onVehicleSave() {
+  toggleAddForm() {
+    if (this.showForm) {
+      this.vehicleForm.reset()
+    }
+    this.form = "Add"
+    this.showForm = !this.showForm
+  }
+
+  editForm(id: string, type: string) {
+    this.vehicleForm.reset()
+
+    this.form = "Edit"
+    if (!this.showForm) this.showForm = !this.showForm
+    this.editID = id
+    this.vehicleType?.setValue(type)
+  }
+
+  onVehicleSubmit() {
     if (this.fileSizeLarge) {
       const errors = { ...this.vehicleImage?.errors, fileSizeExceeded: true }
       this.vehicleImage?.setErrors(errors)
@@ -60,20 +68,37 @@ export class VehicalTypeComponent implements OnInit {
       this.vehicleForm.markAllAsTouched()
       return
     }
-    this.vehicleTypeService.addVehicle(this.vehicleType?.value, this.selectedFile).subscribe({
-      next: (resposne: any) => {
-        this.toast.success(resposne?.msg, "Added")
-        this.getVehicle()
-      },
-      error: (error) => this.toast.error(error.error.error, "Error Occured"),
+
+    if (this.form === "Add") {
+      this.vehicleTypeService.addVehicle(this.vehicleType?.value, this.selectedFile).subscribe({
+        next: (resposne: any) => {
+          this.toast.success(resposne?.msg, "Added")
+          this.getVehicle()
+        },
+        error: (error) => this.toast.error(error.error.error, "Error Occured"),
+      })
+    } else if (this.form === "Edit") {
+      this.vehicleTypeService
+        .editVehicle(this.editID, this.vehicleType?.value, this.selectedFile)
+        .subscribe({
+          next: (resposne: any) => {
+            this.toast.success(resposne?.msg, "Success")
+            this.getVehicle()
+          },
+          error: (error) => this.toast.error(error.error.error, "Error Occured"),
+        })
+    }
+    Object.values(this.vehicleForm.controls).forEach((control) => {
+      control.setErrors(null)
     })
+    this.vehicleForm.reset()
+    this.toggleAddForm()
   }
 
   getVehicle() {
     this.vehicleTypeService.fetchVehicle().subscribe({
       next: (response: any) => {
         this.vehicleTypeData = response
-        console.log(this.vehicleTypeData)
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")

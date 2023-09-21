@@ -42,13 +42,13 @@ export class FullComponent implements OnInit {
         next: (response) => {
           localStorage.removeItem("adminToken")
 
-          this.toast.info("Opps you are logged out !!", "Timeout", 10000)
+          this.toast.info("Oops you are logged out !!", "Timeout", 10000)
           this.router.navigate(["/login"])
         },
         error: (error) => {
           localStorage.removeItem("adminToken")
 
-          this.toast.info("Opps you are logged out !!", "Timeout", 10000)
+          this.toast.info("Oops you are logged out !!", "Timeout", 10000)
           this.router.navigate(["/login"])
         },
       })
