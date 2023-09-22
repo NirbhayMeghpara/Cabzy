@@ -20,7 +20,7 @@ export class FullComponent implements OnInit {
   )
 
   idleTimer = 1170 // 19 min 30 sec in seconds
-  timeoutTimer = 1200 // 20 min in seconds
+  timeoutTimer = 30 // 30 sec after that admin will be timedOut
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -30,7 +30,7 @@ export class FullComponent implements OnInit {
     private idle: Idle
   ) {
     idle.setIdle(this.idleTimer) // How long can they be inactive before considered idle, in seconds
-    idle.setTimeout(this.idleTimer) // How long can they be idle before considered timed out, in seconds
+    idle.setTimeout(this.timeoutTimer) // How long can they be idle before considered timed out, in seconds
     idle.setInterrupts(DEFAULT_INTERRUPTSOURCES) // Different sources that will "interrupt" (provide events indicating that user is active)
 
     idle.onIdleStart.subscribe(() => {

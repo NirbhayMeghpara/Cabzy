@@ -1,6 +1,6 @@
 <div class="btn-wrapper" [class.d-none]="showForm">
   <div class="btn-container" *ngIf="!showForm">
-    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleAddForm()">
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleForm()">
       <i-feather name="user-plus" class="icon-20 m-r-10 submit-icon"></i-feather>
       <span>Add New Vehicle</span>
     </button>
@@ -104,7 +104,7 @@
       <!-- Cancel Button -->
 
       <button
-        (click)="toggleAddForm()"
+        (click)="toggleForm()"
         type="button"
         mat-fab
         extended
@@ -128,7 +128,7 @@
 
 <!-- -------- Added Vehicle Type -------- -->
 
-<div class="d-flex justify-content-center row">
+<div class="row">
   <div
     class="col-sm-6 col-lg-3 ng-star-inserted"
     *ngFor="let vehicle of vehicleTypeData"
