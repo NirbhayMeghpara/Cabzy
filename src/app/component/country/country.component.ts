@@ -33,7 +33,7 @@ export class CountryComponent implements OnInit {
     countryCode: ["", [Validators.required]],
   })
 
-  toggleAddForm() {
+  toggleForm() {
     if (this.showForm) {
       this.countryForm.reset()
     }
@@ -74,10 +74,12 @@ export class CountryComponent implements OnInit {
     this.countryService.addCountry(name, flag, currency, timezone, code).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Added")
-        console.log(this.countryService.getCountryData())
+        this.getCountry()
       },
       error: (error) => this.toast.error(error.error.error, "Error Occured"),
     })
+    this.toggleForm()
+    this.countryForm.reset()
   }
 
   getCountry() {

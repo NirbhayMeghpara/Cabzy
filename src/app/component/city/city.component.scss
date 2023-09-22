@@ -1,0 +1,126 @@
+.nameCol{
+  width: 160px;
+}
+
+#country {
+  width: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: transparent;
+  border-radius: 5px;
+  padding: 15px 20px;
+}
+
+.action{
+  text-align: center;
+}
+
+.icon-18{
+  height: fit-content;
+  display: inline;
+  cursor: pointer;
+}
+
+.edit{
+  width: 20px;
+  height: 20px;
+  color: orange;
+}
+
+.inputContainer {
+  height: 80vh;
+  margin-right: 3rem
+}
+
+.select-menu{
+  width: 100%;
+  margin-bottom: 30px
+}
+
+.disable{
+  opacity: 0.4;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+}
+
+.select-menu .select-btn{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  background: #fff;
+  padding: 0px 30px;
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+.select-btn .arrow{
+  width: 25px;
+  transition: 0.3s;
+}
+
+.rotate180 {
+  transform: rotate(180deg);
+}
+
+.select-menu.active .select-btn img{
+  transform: rotate(-180deg);
+}
+.select-menu .options{
+  padding: 13px 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  display: none;
+}
+.select-menu.active .options{
+  display: block;
+  height: 250px;
+  width: 93%;
+  position: absolute;
+  z-index: 100;
+  overflow: scroll;
+}
+.options .option{
+  display: flex;
+  height: 55px;
+  cursor: pointer;
+  padding: 0 16px;
+  border-radius: 8px;
+  align-items: center;
+  background: #fff;
+}
+.options .option:hover{
+  background: #F2F2F2;
+}
+.option img{
+  width: 25px;
+  height: 17px;
+  border-radius: 2px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  margin-right: 18px;
+}
+.option .option-text{
+  font-size: 18px;
+  color: #333;
+}
+
+.cityCard {
+  max-width: 400px; 
+  min-width: 270px;
+  position: absolute;
+  bottom: 0px;
+}
+
+.map-container{
+  width: 60%;
+  height: 70vh;
+  margin-top: 2rem;
+}
+
+.map-container .map {
+  height: 100%;
+  width: 100%;
+}

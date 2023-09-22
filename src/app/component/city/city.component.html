@@ -1,1 +1,123 @@
-<p>city works!</p>
+<div class="d-flex w-100">
+  <div class="inputContainer col-sm-4 m-b-48">
+    <div
+      class="select-menu"
+      [class.active]="isActive"
+      [class.disable]="isDisable"
+      (click)="toggleDropdown()"
+    >
+      <div class="select-btn">
+        <span>{{ selectedCountry || "-- Select Country --" }}</span>
+        <i-feather name="chevron-down" [class.rotate180]="isActive" class="arrow"></i-feather>
+      </div>
+      <ul class="options">
+        <li class="option" *ngFor="let country of countries" (click)="onSelect(countryName.innerText)">
+          <img src="{{ country.flag }}" />
+          <span class="option-text" #countryName>{{ country.name }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <form>
+      <mat-form-field class="w-100 fs-16" appearance="outline">
+        <mat-label>Country Name</mat-label>
+        <input matInput type="text" placeholder="Enter country name" formControlName="countryName" />
+        <!-- <mat-error class="m-t-6" *ngIf="countryName?.invalid && countryName?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="countryName?.hasError('required')">Please enter the name of country !!</span>
+        </mat-error> -->
+      </mat-form-field>
+
+      <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+      <button
+        type="button"
+        mat-fab
+        extended
+        color="accent"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10 m-t-15"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
+          Add
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
+
+      <!-- Cancel Button -->
+
+      <button
+        type="button"
+        mat-fab
+        extended
+        color="warn"
+        aria-label="Icon button with a save icon"
+        class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+        mat-button-is-fab="true"
+      >
+        <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+        <div class="mdc-button__label d-flex align-items-center submit-text">
+          <i-feather name="x" class="icon-20 m-r-5 submit-icon"></i-feather>
+          Cancel
+        </div>
+        <span class="mat-mdc-focus-indicator"></span>
+        <span class="mat-mdc-button-touch-target"></span>
+        <span class="mat-mdc-button-ripple"></span>
+      </button>
+    </form>
+
+    <mat-card class="w-100 cityCard">
+      <mat-card-content>
+        <h2 class="m-b-20 m-l-6">Cities</h2>
+
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" class="text-nowrap w-100">
+            <!-- Id Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>Id</th>
+              <td mat-cell class="fw-medium" *matCellDef="let element">{{ element.id }}</td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th class="nameCol" mat-header-cell *matHeaderCellDef>Name</th>
+              <td class="nameCol" mat-cell *matCellDef="let element">
+                <p class="mb-0 fw-medium">{{ element.name }}</p>
+              </td>
+            </ng-container>
+
+            <!-- Budget Column -->
+            <ng-container matColumnDef="action">
+              <th class="action" mat-header-cell *matHeaderCellDef>Action</th>
+              <td class="action" mat-cell *matCellDef="let element">
+                <a class="icon-18">
+                  <i-feather name="edit" class="edit"></i-feather>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="map-container">
+    <div class="map" id="map">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11787.92759325946!2d-71.2217903!3d42.3855321!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x861ff9c80e2690aa!2sBentley%20University!5e0!3m2!1sen!2sin!4v1646132441970!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style="border: 0"
+        allowfullscreen=""
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+</div>

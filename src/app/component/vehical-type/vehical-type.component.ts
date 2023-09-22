@@ -36,7 +36,7 @@ export class VehicalTypeComponent implements OnInit {
     vehicleImage: ["", [Validators.required]],
   })
 
-  toggleAddForm() {
+  toggleForm() {
     if (this.showForm) {
       this.vehicleForm.reset()
     }
@@ -92,7 +92,7 @@ export class VehicalTypeComponent implements OnInit {
       control.setErrors(null)
     })
     this.vehicleForm.reset()
-    this.toggleAddForm()
+    this.toggleForm()
   }
 
   getVehicle() {
