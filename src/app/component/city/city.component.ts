@@ -156,6 +156,7 @@ export class CityComponent implements OnInit, AfterViewInit {
 
       this.autocompleteCity.addListener("place_changed", () => {
         const selectedPlace = this.autocompleteCity.getPlace()
+        this.cityInputTag?.setValue(selectedPlace.vicinity)
         this.onSelectPlace(selectedPlace)
       })
 
