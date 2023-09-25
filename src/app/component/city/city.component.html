@@ -11,21 +11,37 @@
         <i-feather name="chevron-down" [class.rotate180]="isActive" class="arrow"></i-feather>
       </div>
       <ul class="options">
-        <li class="option" *ngFor="let country of countries" (click)="onSelect(countryName.innerText)">
+        <li
+          class="option"
+          *ngFor="let country of countries"
+          (click)="onSelect(countryName.innerText, lat.value, lng.value, countryAlphaCode.value)"
+        >
           <img src="{{ country.flag }}" />
           <span class="option-text" #countryName>{{ country.name }}</span>
+          <input
+            type="hidden"
+            name="countryAlphaCode"
+            value="{{ country.alphaCode }}"
+            #countryAlphaCode
+          />
+          <input type="hidden" name="lat" value="{{ country.latLong[0] }}" #lat />
+          <input type="hidden" name="lng" value="{{ country.latLong[1] }}" #lng />
         </li>
       </ul>
     </div>
 
-    <form>
-      <mat-form-field class="w-100 fs-16" appearance="outline">
-        <mat-label>Country Name</mat-label>
-        <input matInput type="text" placeholder="Enter country name" formControlName="countryName" />
-        <!-- <mat-error class="m-t-6" *ngIf="countryName?.invalid && countryName?.touched"
+    <form [formGroup]="cityForm">
+      <mat-form-field
+        class="w-100 fs-16"
+        [class.mb-20]="cityInputTag?.invalid && cityInputTag?.touched"
+        appearance="outline"
+      >
+        <mat-label>City Name</mat-label>
+        <input matInput type="text" placeholder="Enter city name" formControlName="city" #city />
+        <mat-error class="m-t-6" *ngIf="cityInputTag?.pristine || cityInputTag?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-          <span *ngIf="countryName?.hasError('required')">Please enter the name of country !!</span>
-        </mat-error> -->
+          <span *ngIf="cityInputTag?.hasError('required')"> Please enter city name !! </span>
+        </mat-error>
       </mat-form-field>
 
       <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
@@ -37,6 +53,8 @@
         aria-label="Icon button with a save icon"
         class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10 m-t-15"
         mat-button-is-fab="true"
+        *ngIf="currentPolygon"
+        (click)="onCitySubmit()"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
@@ -58,6 +76,8 @@
         aria-label="Icon button with a save icon"
         class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
         mat-button-is-fab="true"
+        *ngIf="currentPolygon"
+        (click)="onCancel()"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
@@ -109,15 +129,6 @@
   </div>
 
   <div class="map-container">
-    <div class="map" id="map">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d11787.92759325946!2d-71.2217903!3d42.3855321!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x861ff9c80e2690aa!2sBentley%20University!5e0!3m2!1sen!2sin!4v1646132441970!5m2!1sen!2sin"
-        width="100%"
-        height="100%"
-        style="border: 0"
-        allowfullscreen=""
-        loading="lazy"
-      ></iframe>
-    </div>
+    <div class="map" id="map"></div>
   </div>
 </div>
