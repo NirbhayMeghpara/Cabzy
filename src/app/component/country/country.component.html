@@ -79,6 +79,9 @@
         />
       </mat-form-field>
 
+      <input type="hidden" name="alphaCode" formControlName="countryAlphaCode" />
+      <input type="hidden" name="latLong" formControlName="coord" />
+
       <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
       <button
         type="button"
@@ -134,7 +137,9 @@
       <mat-card class="mat-mdc-card mdc-card cardWithShadow">
         <mat-card-content class="mat-mdc-card-content p-y-24">
           <img alt="flag" src="{{ country.flag }}" />
-          <mat-card-title class="mat-mdc-card-title m-t-16">{{ country.name }}</mat-card-title>
+          <mat-card-title class="mat-mdc-card-title m-t-16"
+            >{{ country.name }} ({{ country.alphaCode }})</mat-card-title
+          >
           <p class="m-t-12 m-b-2"><b>Currency : </b>{{ country.currency }}</p>
           <p class="m-b-2"><b>Time Zone : </b>{{ country.timezone }}</p>
           <p class="m-b-2"><b>Calling code : </b>{{ country.code }}</p>

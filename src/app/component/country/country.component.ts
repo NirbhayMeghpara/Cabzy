@@ -31,6 +31,8 @@ export class CountryComponent implements OnInit {
     currency: ["", [Validators.required]],
     timeZone: ["", [Validators.required]],
     countryCode: ["", [Validators.required]],
+    countryAlphaCode: ["", [Validators.required]],
+    coord: ["", [Validators.required]],
   })
 
   toggleForm() {
@@ -70,8 +72,10 @@ export class CountryComponent implements OnInit {
     const currency = this.currency?.value
     const timezone = this.timeZone?.value
     const code = this.countryCode?.value
+    const alphaCode = this.alphaCode?.value
+    const latLong = this.coord?.value
 
-    this.countryService.addCountry(name, flag, currency, timezone, code).subscribe({
+    this.countryService.addCountry(name, flag, currency, timezone, code, alphaCode, latLong).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Added")
         this.getCountry()
@@ -102,10 +106,10 @@ export class CountryComponent implements OnInit {
     const currency =
       response[0].currencies[currencyKey].name + ` (${response[0].currencies[currencyKey].symbol})`
     this.currency?.setValue(currency)
-
     this.timeZone?.setValue(response[0].timezones[0])
-
     this.countryCode?.setValue(response[0].idd.root + response[0].idd.suffixes[0])
+    this.alphaCode?.setValue(response[0].cca2)
+    this.coord?.setValue(response[0].latlng)
 
     this.countryForm.updateValueAndValidity()
   }
@@ -121,5 +125,11 @@ export class CountryComponent implements OnInit {
   }
   get countryCode() {
     return this.countryForm.get("countryCode")
+  }
+  get alphaCode() {
+    return this.countryForm.get("countryAlphaCode")
+  }
+  get coord() {
+    return this.countryForm.get("coord")
   }
 }

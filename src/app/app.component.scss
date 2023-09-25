@@ -945,3 +945,45 @@ mat-error i {
 .p-b-48 {
   padding-bottom: 48px!important
 }
+
+
+/* Styling autosuggestion box */
+
+.pac-container {
+  font-family: "Ubuntu", "Poppins", sans-serif;
+  background-color: rgb(248, 248, 248);
+  padding: 0px;
+  margin-top: 22px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+}
+
+.pac-item {
+  padding: 0.3rem 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.pac-item:hover,
+.pac-item-selected {
+  background-color: rgb(224, 224, 224);
+}
+
+.pac-icon,
+.pac-item > span:last-child {
+  font-size: 0.7rem;
+  color: rgb(53, 53, 53);
+  margin-left: 5px;
+}
+
+.pac-matched,
+.pac-item-query {
+  font-size: 0.9rem;
+  color: rgb(41, 41, 41);
+}
+
+.pac-logo::after {
+  height: 0px;
+  background-image: none;
+}
