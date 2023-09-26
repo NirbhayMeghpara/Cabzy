@@ -39,6 +39,7 @@ export class CountryComponent implements OnInit {
     if (this.showForm) {
       this.countryForm.reset()
     }
+    this.countryName?.reset()
     this.countryForm.get("currency")?.disable()
     this.countryForm.get("timeZone")?.disable()
     this.countryForm.get("countryCode")?.disable()

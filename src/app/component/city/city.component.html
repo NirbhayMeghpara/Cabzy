@@ -2,19 +2,19 @@
   <div class="inputContainer col-sm-4 m-b-48">
     <div
       class="select-menu"
-      [class.active]="isActive"
+      [class.active]="showDropdown"
       [class.disable]="isDisable"
       (click)="toggleDropdown()"
     >
       <div class="select-btn">
         <span>{{ selectedCountry || "-- Select Country --" }}</span>
-        <i-feather name="chevron-down" [class.rotate180]="isActive" class="arrow"></i-feather>
+        <i-feather name="chevron-down" [class.rotate180]="showDropdown" class="arrow"></i-feather>
       </div>
       <ul class="options">
         <li
           class="option"
           *ngFor="let country of countries"
-          (click)="onSelect(countryName.innerText, lat.value, lng.value, countryAlphaCode.value)"
+          (click)="onSelectCountry(countryName.innerText, lat.value, lng.value, countryAlphaCode.value)"
         >
           <img src="{{ country.flag }}" />
           <span class="option-text" #countryName>{{ country.name }}</span>
@@ -77,7 +77,7 @@
         class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
         mat-button-is-fab="true"
         *ngIf="currentPolygon"
-        (click)="onCancel()"
+        (click)="resetForm()"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
@@ -90,16 +90,22 @@
       </button>
     </form>
 
-    <mat-card class="w-100 cityCard">
+    <mat-card class="w-100 cityCard" *ngIf="selectedCountry">
       <mat-card-content>
         <h2 class="m-b-20 m-l-6">Cities</h2>
 
-        <div class="table-responsive">
+        <img
+          src="../../../assets/images/noCity.png"
+          class="d-block m-auto"
+          width="180px"
+          *ngIf="!dataSource.length"
+        />
+        <div class="table-responsive" *ngIf="dataSource.length">
           <table mat-table [dataSource]="dataSource" class="text-nowrap w-100">
             <!-- Id Column -->
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>Id</th>
-              <td mat-cell class="fw-medium" *matCellDef="let element">{{ element.id }}</td>
+              <td mat-cell class="fw-medium" *matCellDef="let i = index">{{ i + 1 }}</td>
             </ng-container>
 
             <!-- Name Column -->
@@ -123,6 +129,16 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
+          <mat-paginator
+            class="paginator"
+            [length]="10"
+            [pageSize]="4"
+            [showFirstLastButtons]="true"
+            [hidePageSize]="true"
+            [pageIndex]="2"
+            aria-label="Select page"
+          >
+          </mat-paginator>
         </div>
       </mat-card-content>
     </mat-card>

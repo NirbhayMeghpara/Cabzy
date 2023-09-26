@@ -1,6 +1,7 @@
 import { CityService } from "./../../services/city/city.service"
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { count } from "rxjs"
 import { CountryService } from "src/app/services/country/country.service"
 import { ToastService } from "src/app/services/toast.service"
 
@@ -21,26 +22,14 @@ interface Coordinate {
   lng: number
 }
 
-type Coordinates = Array<{ lat: number; lng: number }>
+interface Cities {
+  name: string
+  country: string
+  location: string
+  coordinates: Coordinates
+}
 
-const ELEMENT_DATA: City[] = [
-  {
-    id: 1,
-    name: "Rajkot",
-  },
-  {
-    id: 2,
-    name: "Ahmedabad",
-  },
-  {
-    id: 3,
-    name: "Surat",
-  },
-  {
-    id: 4,
-    name: "Vadodara",
-  },
-]
+type Coordinates = Array<{ lat: number; lng: number }>
 
 @Component({
   selector: "app-city",
@@ -49,13 +38,15 @@ const ELEMENT_DATA: City[] = [
 })
 export class CityComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ["id", "name", "action"]
-  dataSource = ELEMENT_DATA
+  dataSource = []
   countries!: Country[]
   polygonCoordinates: Coordinates = []
+  polygonPaths: any = []
+  cityPolygons: google.maps.Polygon[] = []
 
-  isActive: boolean = false
+  showDropdown: boolean = false
   isDisable: boolean = false
-  selectedCountry: string = ""
+  selectedCountry!: string
 
   @ViewChild("city") cityInput!: ElementRef
 
@@ -96,17 +87,29 @@ export class CityComponent implements OnInit, AfterViewInit {
     if (this.isDisable) {
       return
     }
-    this.isActive = !this.isActive
+    this.showDropdown = !this.showDropdown
   }
 
-  onSelect(countryName: string, lat: string, lng: string, alphaCode: string) {
+  onSelectCountry(countryName: string, lat: string, lng: string, alphaCode: string) {
     this.cityInputTag?.enable()
+    this.cityInputTag?.reset()
+    if (countryName !== this.selectedCountry) {
+      this.selectedCountry = countryName
+      this.fetchCityData(this.selectedCountry)
+      // Map configuration
 
-    this.selectedCountry = countryName
-    this.map.setCenter({ lat: parseInt(lat), lng: parseInt(lng) })
-    this.map.setZoom(5)
+      console.log(countryName)
+      console.log(lat)
+      console.log(lng)
+      this.map.setCenter({ lat: parseInt(lat), lng: parseInt(lng) })
+      this.map.setZoom(5)
+      this.drawingManager.setMap(null)
+      this.autocompleteCity.setComponentRestrictions({ country: `${alphaCode}` })
+    }
 
-    this.autocompleteCity.setComponentRestrictions({ country: `${alphaCode}` })
+    if (this.cityPolygons.length) {
+      this.removePolygons()
+    }
   }
 
   onCitySubmit() {
@@ -115,16 +118,48 @@ export class CityComponent implements OnInit, AfterViewInit {
       return
     }
 
-    const name = this.cityInputTag?.value
+    const location = this.cityInputTag?.value
 
-    this.cityService.addCity(name, this.polygonCoordinates).subscribe({
-      next: (response: any) => {
-        this.toast.success(response.msg, "Added")
-        // this.getCity()
+    if (this.selectedPlace.vicinity && location) {
+      this.cityService
+        .addCity(this.selectedPlace.vicinity, this.selectedCountry, location, this.polygonCoordinates)
+        .subscribe({
+          next: (response: any) => {
+            this.toast.success(response.msg, "Created")
+            this.fetchCityData(this.selectedCountry)
+          },
+          error: (error) => this.toast.error(error.error.error, "Error Occured"),
+        })
+    }
+    this.resetForm()
+    console.log(this.polygonCoordinates)
+  }
+
+  fetchCityData(country: string) {
+    this.cityService.getCities(country).subscribe({
+      next: (data: any) => {
+        this.dataSource = data
+        this.polygonPaths = this.dataSource.map((city: any) => JSON.parse(city.coordinates[0]))
+
+        for (let i = 0; i <= this.polygonPaths.length; i++) {
+          const polygon = new google.maps.Polygon({
+            paths: this.polygonPaths[i],
+          })
+          polygon.setMap(this.map)
+          this.cityPolygons.push(polygon)
+        }
       },
-      error: (error) => this.toast.error(error.error.error, "Error Occured"),
+      error: (error) => {
+        this.dataSource = []
+        if (error.status === 404) this.toast.info(error.error.msg, "404")
+      },
     })
-    this.onCancel()
+  }
+
+  removePolygons() {
+    this.cityPolygons.forEach((polygon) => {
+      polygon.setMap(null)
+    })
   }
 
   // Google Map
@@ -132,8 +167,9 @@ export class CityComponent implements OnInit, AfterViewInit {
   map!: google.maps.Map
   marker!: google.maps.Marker
   drawingManager!: google.maps.drawing.DrawingManager
-  autocompleteCity!: any
+  autocompleteCity!: google.maps.places.Autocomplete
   currentPolygon!: any
+  selectedPlace!: google.maps.places.PlaceResult
 
   async initMap() {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -155,9 +191,9 @@ export class CityComponent implements OnInit, AfterViewInit {
       )
 
       this.autocompleteCity.addListener("place_changed", () => {
-        const selectedPlace = this.autocompleteCity.getPlace()
-        this.cityInputTag?.setValue(selectedPlace.vicinity)
-        this.onSelectPlace(selectedPlace)
+        this.selectedPlace = this.autocompleteCity.getPlace()
+        this.cityInputTag?.setValue(this.selectedPlace.formatted_address)
+        this.onSelectPlace(this.selectedPlace)
       })
 
       this.drawingManager = new google.maps.drawing.DrawingManager({
@@ -186,8 +222,13 @@ export class CityComponent implements OnInit, AfterViewInit {
             const lng = coordinates[i].lng()
             this.polygonCoordinates.push({ lat, lng })
           }
-          console.log(this.polygonCoordinates)
         }
+      })
+
+      google.maps.event.addListener(this.drawingManager, "drawingmode_changed", () => {
+        const isDrawingMode = this.drawingManager.getDrawingMode() !== null
+        if (isDrawingMode || this.currentPolygon) this.cityInputTag?.disable()
+        else this.cityInputTag?.enable()
       })
     })
   }
@@ -203,12 +244,14 @@ export class CityComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onCancel() {
-    this.cityForm.reset()
-    this.cityInputTag?.setErrors(null)
+  resetForm() {
     this.currentPolygon.setMap(null)
     this.currentPolygon = null
-    this.polygonCoordinates = []
+    // this.polygonCoordinates = []
+    this.drawingManager.setDrawingMode(null)
+    this.drawingManager.setMap(null)
+    this.cityForm.reset()
+    this.cityInputTag?.setErrors(null)
     this.cityForm.updateValueAndValidity()
   }
 
