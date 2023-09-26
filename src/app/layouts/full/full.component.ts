@@ -153,7 +153,6 @@ export class FullComponent implements OnInit {
         this.router.navigate(["/login"])
       },
       error: (error) => {
-        console.log(error)
         this.toast.error(error.error.error, "Error Occured")
       },
     })

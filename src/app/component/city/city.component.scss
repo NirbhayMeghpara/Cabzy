@@ -111,7 +111,7 @@
   max-width: 400px; 
   min-width: 270px;
   position: absolute;
-  bottom: 0px;
+  bottom: -50px;
 }
 
 .map-container{
@@ -123,4 +123,9 @@
 .map-container .map {
   height: 100%;
   width: 100%;
+}
+
+.paginator{
+  padding-top: 10px;
+  transform: scale(0.95);
 }
