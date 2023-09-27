@@ -7,7 +7,7 @@
       (click)="toggleDropdown()"
     >
       <div class="select-btn">
-        <span>{{ selectedCountry || "-- Select Country --" }}</span>
+        <span #country>-- Select Country --</span>
         <i-feather name="chevron-down" [class.rotate180]="showDropdown" class="arrow"></i-feather>
       </div>
       <ul class="options">
@@ -55,11 +55,12 @@
         mat-button-is-fab="true"
         *ngIf="currentPolygon"
         (click)="onCitySubmit()"
+        [disabled]="disableEditBtn"
       >
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
           <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
-          Add
+          {{ form === "Add" ? "Add" : "Edit" }}
         </div>
         <span class="mat-mdc-focus-indicator"></span>
         <span class="mat-mdc-button-touch-target"></span>
@@ -105,7 +106,9 @@
             <!-- Id Column -->
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>Id</th>
-              <td mat-cell class="fw-medium" *matCellDef="let i = index">{{ i + 1 }}</td>
+              <td mat-cell class="fw-medium" *matCellDef="let i = index">
+                {{ i + (pageIndex - 1) * 4 + 1 }}
+              </td>
             </ng-container>
 
             <!-- Name Column -->
@@ -119,8 +122,8 @@
             <!-- Budget Column -->
             <ng-container matColumnDef="action">
               <th class="action" mat-header-cell *matHeaderCellDef>Action</th>
-              <td class="action" mat-cell *matCellDef="let element">
-                <a class="icon-18">
+              <td class="action" mat-cell *matCellDef="let element; let i = index">
+                <a class="icon-18" (click)="editPolygon(i)">
                   <i-feather name="edit" class="edit"></i-feather>
                 </a>
               </td>
@@ -131,11 +134,13 @@
           </table>
           <mat-paginator
             class="paginator"
-            [length]="10"
-            [pageSize]="4"
+            (page)="handlePage($event)"
+            [length]="totalCityCounts"
+            [pageSize]="pageSize"
+            [disabled]="isDisable"
             [showFirstLastButtons]="true"
             [hidePageSize]="true"
-            [pageIndex]="2"
+            [pageIndex]="pageIndex - 1"
             aria-label="Select page"
           >
           </mat-paginator>
