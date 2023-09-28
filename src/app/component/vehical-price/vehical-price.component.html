@@ -1,1 +1,253 @@
-<p>vehical-price works!</p>
+<div class="card form-card">
+  <div class="card-body">
+    <h2 class="mb-12">Add Vehicle Pricing</h2>
+    <hr class="mb-32" />
+    <form [formGroup]="pricingForm" autocomplete="off" enctype="multipart/form-data">
+      <div class="inputContainer d-flex">
+        <div class="d-flex inputBox" [class.m-b-18]="country?.invalid && country?.touched">
+          <label for="country">Country : </label>
+          <mat-form-field>
+            <mat-select id="country" placeholder="Select Country" formControlName="country">
+              <ng-container *ngFor="let country of countries">
+                <mat-option value="{{ country }}" (click)="fetchCity(country)">{{ country }}</mat-option>
+              </ng-container>
+            </mat-select>
+            <mat-error class="m-t-6" *ngIf="country?.invalid && country?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="country?.hasError('required')">Please select country</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="d-flex inputBox" [class.m-b-18]="city?.invalid && city?.touched">
+          <label for="city">City : </label>
+          <mat-form-field>
+            <mat-select id="city" placeholder="Select City" formControlName="city">
+              <ng-container *ngFor="let city of cities">
+                <mat-option value="{{ city }}">{{ city }}</mat-option>
+              </ng-container>
+            </mat-select>
+            <mat-error class="m-t-6" *ngIf="city?.invalid && city?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="city?.hasError('required')">Please select city</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="d-flex inputBox" [class.m-b-18]="vehicleType?.invalid && vehicleType?.touched">
+          <label for="vehicleType">Vehicle Type : </label>
+          <mat-form-field>
+            <mat-select id="vehicleType" placeholder="Select Vehicle Type" formControlName="vehicleType">
+              <ng-container *ngFor="let vehicle of vehicles">
+                <mat-option value="{{ vehicle }}">{{ vehicle }}</mat-option>
+              </ng-container>
+            </mat-select>
+            <mat-error class="m-t-6" *ngIf="vehicleType?.invalid && vehicleType?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="vehicleType?.hasError('required')">Please select vehicle type</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="inputBox">
+          <hr class="divider mb-32 mt-24" />
+        </div>
+
+        <div class="d-flex inputBox" [class.m-b-18]="driverProfit?.invalid && driverProfit?.touched">
+          <label for="driverProfit">Driver Profit : </label>
+          <mat-form-field floatLabel="always">
+            <input
+              matInput
+              type="number"
+              id="driverProfit"
+              class="driverProfit example-right-align"
+              placeholder="0"
+              min="0"
+              max="80"
+              formControlName="driverProfit"
+            />
+
+            <span matTextSuffix>%</span>
+            <mat-error class="m-t-6" *ngIf="driverProfit?.invalid && driverProfit?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="driverProfit?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="driverProfit?.hasError('required')">Please enter driver profit</span>
+              <span *ngIf="driverProfit?.hasError('aboveEighty')">Maximum allowed profit is 80%</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="d-flex inputBox" [class.m-b-18]="minFare?.invalid && minFare?.touched">
+          <label for="minFare">Minimum Fare : </label>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              min="0"
+              id="minFare"
+              placeholder="Enter minimum fare price"
+              formControlName="minFare"
+            />
+            <mat-error class="m-t-6" *ngIf="minFare?.invalid && minFare?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="minFare?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="minFare?.hasError('required')">Please enter minimum fare</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div
+          class="d-flex inputBox"
+          [class.m-b-18]="basePriceDistance?.invalid && basePriceDistance?.touched"
+        >
+          <label for="bpd">Distance for Base Price : </label>
+          <mat-form-field>
+            <mat-select
+              id="vehicleType"
+              placeholder="Select base price distance"
+              formControlName="basePriceDistance"
+            >
+              <ng-container *ngFor="let distance of distances">
+                <mat-option value="{{ distance }}">{{ distance }}</mat-option>
+              </ng-container>
+            </mat-select>
+
+            <mat-error class="m-t-6" *ngIf="basePriceDistance?.invalid && basePriceDistance?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="basePriceDistance?.hasError('required')"
+                >Please select distance for base price</span
+              >
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="d-flex inputBox" [class.m-b-18]="basePrice?.invalid && basePrice?.touched">
+          <label for="basePrice">Base Price : </label>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              min="0"
+              id="basePrice"
+              placeholder="Enter base price"
+              formControlName="basePrice"
+            />
+            <mat-error class="m-t-6" *ngIf="basePrice?.invalid && basePrice?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="basePrice?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="basePrice?.hasError('required')">Please enter base price</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div
+          class="d-flex inputBox"
+          [class.m-b-18]="unitDistancePrice?.invalid && unitDistancePrice?.touched"
+        >
+          <label for="udp">Price per Unit Distance : </label>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              min="0"
+              id="udp"
+              placeholder="Enter unit distance price"
+              formControlName="unitDistancePrice"
+            />
+            <mat-error class="m-t-6" *ngIf="unitDistancePrice?.invalid && unitDistancePrice?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="unitDistancePrice?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="unitDistancePrice?.hasError('required')"
+                >Please enter price per unit distance</span
+              >
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="d-flex inputBox" [class.m-b-18]="unitTimePrice?.invalid && unitTimePrice?.touched">
+          <label for="udp">Price per Unit Time (min) : </label>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              min="0"
+              id="udp"
+              placeholder="Enter unit time price"
+              formControlName="unitTimePrice"
+            />
+            <mat-error class="m-t-6" *ngIf="unitTimePrice?.invalid && unitTimePrice?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="unitTimePrice?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="unitTimePrice?.hasError('required')">Please enter price per unit time</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="d-flex inputBox" [class.m-b-18]="maxSpace?.invalid && maxSpace?.touched">
+          <label for="udp">Max space : </label>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              min="0"
+              id="udp"
+              placeholder="Enter maximum seats"
+              formControlName="maxSpace"
+            />
+            <mat-error class="m-t-6" *ngIf="maxSpace?.invalid && maxSpace?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="maxSpace?.hasError('min')">Value must be a positive number</span>
+              <span *ngIf="maxSpace?.hasError('required')">Please enter maximum seating space</span>
+              <span *ngIf="maxSpace?.hasError('maxAllowedSpace')">Maximum allowed space is 12 only</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="formBtn">
+        <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+        <button
+          (click)="addVehiclePricing()"
+          type="button"
+          mat-fab
+          extended
+          color="accent"
+          aria-label="Icon button with a save icon"
+          class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10"
+          mat-button-is-fab="true"
+        >
+          <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+          <div class="mdc-button__label d-flex align-items-center submit-number" min="0">
+            <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
+            "Add"
+          </div>
+          <span class="mat-mdc-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+          <span class="mat-mdc-button-ripple"></span>
+        </button>
+
+        <!-- Cancel Button -->
+
+        <button
+          (click)="resetForm()"
+          type="button"
+          mat-fab
+          extended
+          color="warn"
+          aria-label="Icon button with a save icon"
+          class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+          mat-button-is-fab="true"
+        >
+          <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+          <div class="mdc-button__label d-flex align-items-center submit-number" min="0">
+            <i-feather name="x" class="icon-20 m-r-5 submit-icon"></i-feather>
+            Cancel
+          </div>
+          <span class="mat-mdc-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+          <span class="mat-mdc-button-ripple"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

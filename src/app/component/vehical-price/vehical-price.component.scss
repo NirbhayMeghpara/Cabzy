@@ -1,0 +1,77 @@
+.form-card {
+  max-width: 600px;
+  margin: 0rem auto 5rem;
+}
+
+.inputContainer{
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.example-right-align {
+  text-align: right;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+.driverProfit {
+  padding-right: 2px;
+  display: inline;
+}
+
+.inputBox{
+  width: 100% !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputBox mat-form-field {
+  width: 300px !important;
+  margin-bottom: 0px;
+  height: 70px;
+}
+
+mat-error{
+  font-size: 14px;
+  margin-left: -5px;
+}
+
+.inputBox > label {
+  display: inline;
+  min-width: 210px;
+  margin: 0px 20px 16px 0px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.divider{
+  width: 60%; 
+  border-top: 2px dashed rgba(0, 0, 0, 0.75);
+}
+
+.formBtn{
+  text-align: right;
+}
+
+.formBtn button {
+  margin: 0px 8px 10px 5px;
+}
+
+@media screen and (max-width: 800px) {
+
+  .inputBox{
+    flex-direction: column;
+  }
+
+  .inputBox, .inputBox > label{
+    width: 90% !important;
+  }
+
+  .inputBox mat-form-field {
+    width: 100% !important;
+  }
+}
