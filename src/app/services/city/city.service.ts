@@ -28,10 +28,9 @@ export class CityService {
     return this.http.get(encodedURL)
   }
 
-  editCity(id: string, location: string, coordinates: Coordinates) {
+  editCity(id: string, coordinates: Coordinates) {
     const formData = new FormData()
     formData.append("id", id)
-    formData.append("location", location)
     formData.append("coordinates", JSON.stringify(coordinates))
 
     return this.http.patch(this._editCityUrl, formData)

@@ -1,6 +1,7 @@
 import { CityService } from "./../../services/city/city.service"
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { count } from "rxjs"
 import { CountryService } from "src/app/services/country/country.service"
 import { ToastService } from "src/app/services/toast.service"
 
@@ -111,7 +112,7 @@ export class CityComponent implements OnInit {
         lng: parseFloat(lng),
         alphaCode,
       }
-
+      this.pageIndex = 1
       this.fetchCityData(this.selectedCountry.name)
       // Map configuration
       this.centerMap(parseInt(lat), parseInt(lng), 5)
@@ -140,7 +141,7 @@ export class CityComponent implements OnInit {
     this.cityService.addCity(country, location, coordinates).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Created")
-        this.pageIndex = (this.totalCityCounts + 1) / 4
+        this.pageIndex = Math.ceil((this.totalCityCounts + 1) / 4)
         this.fetchCityData(this.selectedCountry.name, this.pageIndex)
         this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
       },
@@ -151,10 +152,10 @@ export class CityComponent implements OnInit {
   onEditCity(location: string) {
     this.polygonCoordinates = this.fetchPolygonCoordinate(this.currentPolygon)
 
-    this.cityService.editCity(this.editCityID, location, this.polygonCoordinates).subscribe({
+    this.cityService.editCity(this.editCityID, this.polygonCoordinates).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Success")
-        this.fetchCityData(this.selectedCountry.name)
+        this.fetchCityData(this.selectedCountry.name, this.pageIndex)
         this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
       },
       error: (error) => this.toast.error(error.error.error, "Error Occured"),
@@ -171,15 +172,8 @@ export class CityComponent implements OnInit {
 
         this.totalCityCounts = data.cityCount
         this.dataSource = data.cities
-        this.polygonPaths = this.dataSource.map((city: any) => JSON.parse(city.coordinates[0]))
-
-        for (let i = 0; i < this.polygonPaths.length; i++) {
-          const polygon = new google.maps.Polygon({
-            paths: this.polygonPaths[i],
-          })
-          polygon.setMap(this.map)
-          this.cityPolygons.push(polygon)
-        }
+        this.displayCityPolygons(this.dataSource)
+        console.log(this.cityPolygons)
       },
       error: (error) => {
         this.dataSource = []
@@ -227,6 +221,18 @@ export class CityComponent implements OnInit {
   centerMap(lat: number, lng: number, zoomLevel: number) {
     this.map.setCenter({ lat, lng })
     this.map.setZoom(zoomLevel)
+  }
+
+  displayCityPolygons(cities: City[]) {
+    this.polygonPaths = cities.map((city: any) => JSON.parse(city.coordinates[0]))
+
+    for (let i = 0; i < this.polygonPaths.length; i++) {
+      const polygon = new google.maps.Polygon({
+        paths: this.polygonPaths[i],
+      })
+      polygon.setMap(this.map)
+      this.cityPolygons.push(polygon)
+    }
   }
 
   removePolygons() {
@@ -318,8 +324,10 @@ export class CityComponent implements OnInit {
   resetForm() {
     this.currentPolygon.setMap(null)
     this.currentPolygon = null
-    this.drawingManager.setDrawingMode(null)
-    this.drawingManager.setMap(null)
+    if (this.form === "Add") {
+      this.drawingManager.setDrawingMode(null)
+      this.drawingManager.setMap(null)
+    }
     this.cityForm.reset()
     this.cityInputTag?.enable()
     this.cityInputTag?.setErrors(null)
@@ -328,6 +336,7 @@ export class CityComponent implements OnInit {
     this.form = "Add"
     this.isDisable = false
     this.disableEditBtn = false
+    this.displayCityPolygons(this.dataSource)
   }
 
   get cityInputTag() {

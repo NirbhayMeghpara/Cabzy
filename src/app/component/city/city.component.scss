@@ -36,6 +36,11 @@
   margin-bottom: 30px
 }
 
+button[type="button"] {
+  margin-bottom: 5px;
+}
+        
+
 .disable{
   opacity: 0.4;
   border-radius: 8px;
@@ -128,4 +133,39 @@
 .paginator{
   padding-top: 10px;
   transform: scale(0.95);
+}
+
+@media screen and (max-width: 1080px) {
+
+  .wrapper{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .inputContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    max-width: none!important;
+    margin-right: 0rem;
+  }
+  
+  .map-container {
+    width: 90%;
+    height: 75vh
+  }
+ 
+  .cityCard {
+    position: relative;
+  }
+
+  .select-menu, form {
+    width: 50%;
+  }
+
+  .options{
+    width: 48% !important;
+  }
 }
