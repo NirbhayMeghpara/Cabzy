@@ -173,7 +173,6 @@ export class CityComponent implements OnInit {
         this.totalCityCounts = data.cityCount
         this.dataSource = data.cities
         this.displayCityPolygons(this.dataSource)
-        console.log(this.cityPolygons)
       },
       error: (error) => {
         this.dataSource = []

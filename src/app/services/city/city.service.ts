@@ -10,6 +10,7 @@ export class CityService {
   constructor(private http: HttpClient) {}
 
   private _addCityUrl = "http://localhost:3000/city/add"
+  private _getAllCitiesUrl = "http://localhost:3000/city/fetchAll/"
   private _getCitiesUrl = "http://localhost:3000/city/fetch/"
   private _editCityUrl = "http://localhost:3000/city/edit"
 
@@ -20,6 +21,12 @@ export class CityService {
     formData.append("coordinates", JSON.stringify(coordinates))
 
     return this.http.post(this._addCityUrl, formData)
+  }
+
+  getAllCities(country: string) {
+    country = encodeURIComponent(country)
+    const encodedURL = `${this._getAllCitiesUrl}${country}`
+    return this.http.get(encodedURL)
   }
 
   getCities(country: string, page: number) {
