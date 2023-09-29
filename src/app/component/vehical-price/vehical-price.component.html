@@ -1,15 +1,22 @@
 <div class="card form-card">
   <div class="card-body">
-    <h2 class="mb-12">Add Vehicle Pricing</h2>
+    <h2 class="mb-12">{{ form }} Vehicle Pricing</h2>
     <hr class="mb-32" />
     <form [formGroup]="pricingForm" autocomplete="off" enctype="multipart/form-data">
       <div class="inputContainer d-flex">
         <div class="d-flex inputBox" [class.m-b-18]="country?.invalid && country?.touched">
           <label for="country">Country : </label>
           <mat-form-field>
-            <mat-select id="country" placeholder="Select Country" formControlName="country">
+            <mat-select
+              id="country"
+              placeholder="Select Country"
+              formControlName="country"
+              [disabled]="isDisable"
+            >
               <ng-container *ngFor="let country of countries">
-                <mat-option value="{{ country }}" (click)="fetchCity(country)">{{ country }}</mat-option>
+                <mat-option value="{{ country }}" (click)="fetchCity(country)" [disabled]="isDisable">{{
+                  country
+                }}</mat-option>
               </ng-container>
             </mat-select>
             <mat-error class="m-t-6" *ngIf="country?.invalid && country?.touched"
@@ -22,14 +29,22 @@
         <div class="d-flex inputBox" [class.m-b-18]="city?.invalid && city?.touched">
           <label for="city">City : </label>
           <mat-form-field>
-            <mat-select id="city" placeholder="Select City" formControlName="city">
-              <ng-container *ngFor="let city of cities">
-                <mat-option value="{{ city }}">{{ city }}</mat-option>
+            <mat-select
+              id="city"
+              placeholder="Select City"
+              formControlName="city"
+              [disabled]="isDisable"
+            >
+              <ng-container *ngFor="let city of cities; let i = index">
+                <mat-option value="{{ city }}" (click)="onSelectCity(i)" [disabled]="isDisable">{{
+                  city
+                }}</mat-option>
               </ng-container>
             </mat-select>
             <mat-error class="m-t-6" *ngIf="city?.invalid && city?.touched"
               ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-              <span *ngIf="city?.hasError('required')">Please select city</span>
+              <span *ngIf="!country?.value">Please select country first</span>
+              <span *ngIf="country?.value && city?.hasError('required')">Please select city</span>
             </mat-error>
           </mat-form-field>
         </div>
@@ -37,14 +52,22 @@
         <div class="d-flex inputBox" [class.m-b-18]="vehicleType?.invalid && vehicleType?.touched">
           <label for="vehicleType">Vehicle Type : </label>
           <mat-form-field>
-            <mat-select id="vehicleType" placeholder="Select Vehicle Type" formControlName="vehicleType">
+            <mat-select
+              id="vehicleType"
+              placeholder="Select Vehicle Type"
+              formControlName="vehicleType"
+              [disabled]="isDisable"
+            >
               <ng-container *ngFor="let vehicle of vehicles">
-                <mat-option value="{{ vehicle }}">{{ vehicle }}</mat-option>
+                <mat-option value="{{ vehicle }}" [disabled]="isDisable">{{ vehicle }}</mat-option>
               </ng-container>
             </mat-select>
             <mat-error class="m-t-6" *ngIf="vehicleType?.invalid && vehicleType?.touched"
               ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-              <span *ngIf="vehicleType?.hasError('required')">Please select vehicle type</span>
+              <span *ngIf="!country?.value">Please select country first</span>
+              <span *ngIf="country?.value && vehicleType?.hasError('required')"
+                >Please select vehicle type</span
+              >
             </mat-error>
           </mat-form-field>
         </div>
@@ -207,7 +230,7 @@
       <div class="formBtn">
         <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
         <button
-          (click)="addVehiclePricing()"
+          (click)="onSubmitPricing()"
           type="button"
           mat-fab
           extended
@@ -219,7 +242,7 @@
           <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
           <div class="mdc-button__label d-flex align-items-center submit-number" min="0">
             <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
-            "Add"
+            {{ form }}
           </div>
           <span class="mat-mdc-focus-indicator"></span>
           <span class="mat-mdc-button-touch-target"></span>
@@ -251,3 +274,116 @@
     </form>
   </div>
 </div>
+
+<mat-card class="w-100 cityCard" *ngIf="selectedCity">
+  <mat-card-content>
+    <h2 class="m-b-20 m-l-6">Cities</h2>
+
+    <img
+      src="../../../assets/images/nothingFound.png"
+      class="d-block m-auto"
+      width="250px"
+      *ngIf="!dataSource.length"
+    />
+    <div class="table-responsive" *ngIf="dataSource.length">
+      <table mat-table [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+        <!-- Id Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>Id</th>
+          <td mat-cell class="fw-medium" *matCellDef="let i = index">
+            {{ i + (pageIndex - 1) * 4 + 1 }}
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="city">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>City</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.city }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="vehicleType">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Vehicle Type</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.vehicleType }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="driverProfit">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Driver Profit (%)</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.driverProfit }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="minFare">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Min. Fare</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.minFare }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="basePriceDistance">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Base Price Distance</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.basePriceDistance }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="basePrice">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Base Price</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.basePrice }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitDistancePrice">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Unit Distance Price</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.unitDistancePrice }}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="unitTimePrice">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Unit Time Price</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.unitTimePrice }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="maxSpace">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Max Space</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.maxSpace }}</p>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th class="action" mat-header-cell *matHeaderCellDef>Action</th>
+          <td class="action" mat-cell *matCellDef="let element; let i = index">
+            <a class="icon-18">
+              <i-feather name="edit" class="edit" (click)="editPricing(i)"></i-feather>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <mat-paginator
+      class="paginator"
+      (page)="handlePage($event)"
+      [length]="totalPricingCounts"
+      [pageSize]="pageSize"
+      [disabled]="isDisable"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="true"
+      [pageIndex]="pageIndex - 1"
+      aria-label="Select page"
+      *ngIf="dataSource.length"
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

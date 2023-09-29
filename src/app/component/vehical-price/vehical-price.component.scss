@@ -61,6 +61,22 @@ mat-error{
   margin: 0px 8px 10px 5px;
 }
 
+.icon-18{
+  height: fit-content;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.edit{
+  width: 20px;
+  height: 20px;
+  color: orange;
+}
+
+th,td {
+  text-align: center;
+}
+
 @media screen and (max-width: 800px) {
 
   .inputBox{

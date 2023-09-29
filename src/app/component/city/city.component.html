@@ -60,7 +60,7 @@
         <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
         <div class="mdc-button__label d-flex align-items-center submit-text">
           <i-feather name="save" class="icon-20 m-r-5 submit-icon"></i-feather>
-          {{ form === "Add" ? "Add" : "Edit" }}
+          {{ form }}
         </div>
         <span class="mat-mdc-focus-indicator"></span>
         <span class="mat-mdc-button-touch-target"></span>
@@ -119,7 +119,7 @@
               </td>
             </ng-container>
 
-            <!-- Budget Column -->
+            <!-- Action Column -->
             <ng-container matColumnDef="action">
               <th class="action" mat-header-cell *matHeaderCellDef>Action</th>
               <td class="action" mat-cell *matCellDef="let element; let i = index">
