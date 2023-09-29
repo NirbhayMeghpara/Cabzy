@@ -1,11 +1,13 @@
-import { HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http"
+import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http"
 import { Injectable } from "@angular/core"
 import { AuthService } from "../auth.service"
+import { catchError, tap, throwError } from "rxjs"
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthInterceptorService implements HttpInterceptor {
+  router: any
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
@@ -17,6 +19,18 @@ export class AuthInterceptorService implements HttpInterceptor {
     const modifiedRequest = req.clone({
       headers: req.headers.append("Authorization", `Bearer ${this.authService.getToken()}`),
     })
-    return next.handle(modifiedRequest)
+    return next.handle(modifiedRequest).pipe(
+      tap(
+        () => {},
+        (err: any) => {
+          if (err instanceof HttpErrorResponse) {
+            if (err.status !== 401) {
+              return
+            }
+            this.router.navigate(["login"])
+          }
+        }
+      )
+    )
   }
 }

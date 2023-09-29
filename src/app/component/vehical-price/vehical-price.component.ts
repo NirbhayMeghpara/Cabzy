@@ -1,12 +1,26 @@
+import { max } from "rxjs"
 import { VehiclePriceService } from "./../../services/vehiclePrice/vehiclePrice.service"
 import { Component, OnInit } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
-import { max, min } from "rxjs"
 import { CityService } from "src/app/services/city/city.service"
 import { CountryService } from "src/app/services/country/country.service"
 import { ToastService } from "src/app/services/toast.service"
 import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
 import { aboveEighty, maxAllowedSpace } from "src/app/shared/custom-validators/vehiclePricing.validator"
+
+export interface Pricing {
+  _id: string
+  country: string
+  city: string
+  vehicleType: string
+  driverProfit: number
+  minFare: number
+  basePriceDistance: number
+  basePrice: number
+  unitDistancePrice: number
+  unitTimePrice: number
+  maxSpace: number
+}
 
 @Component({
   selector: "app-vehical-price",
@@ -14,11 +28,33 @@ import { aboveEighty, maxAllowedSpace } from "src/app/shared/custom-validators/v
   styleUrls: ["./vehical-price.component.scss"],
 })
 export class VehicalPriceComponent implements OnInit {
+  displayedColumns: string[] = [
+    "id",
+    "city",
+    "vehicleType",
+    "driverProfit",
+    "minFare",
+    "basePriceDistance",
+    "basePrice",
+    "unitDistancePrice",
+    "unitTimePrice",
+    "maxSpace",
+    "action",
+  ]
   selectedCountry: string = ""
-  countries!: String[]
-  cities!: String[]
-  vehicles!: String[]
+  selectedCity: string = ""
+  countries!: string[]
+  cities!: string[]
+  vehicles!: string[]
   distances: Number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+  dataSource: Pricing[] = []
+  pageIndex: number = 1
+  pageSize: number = 4
+  totalPricingCounts!: number
+  isDisable: boolean = false
+  form: string = "Add"
+  editPricingID!: string
 
   constructor(
     private countryService: CountryService,
@@ -53,7 +89,7 @@ export class VehicalPriceComponent implements OnInit {
     maxSpace: ["", [Validators.required, maxAllowedSpace]],
   })
 
-  addVehiclePricing() {
+  onSubmitPricing() {
     if (this.pricingForm.invalid) {
       this.pricingForm.markAllAsTouched()
       return
@@ -64,14 +100,52 @@ export class VehicalPriceComponent implements OnInit {
     const vehicleType = this.vehicleType?.value
     const driverProfit = this.driverProfit?.value
     const minFare = this.minFare?.value
-    const basePriceDistance = this.basePriceDistance?.value
+    const basePriceDistance = parseInt(this.basePriceDistance?.value)
     const basePrice = this.basePrice?.value
     const unitDistancePrice = this.unitDistancePrice?.value
     const unitTimePrice = this.unitTimePrice?.value
     const maxSpace = this.maxSpace?.value
 
-    // Repeat the above pattern for other variables (2 through 10)
+    if (this.form === "Add") {
+      this.onAddVehiclePricing(
+        country,
+        city,
+        vehicleType,
+        driverProfit,
+        minFare,
+        basePriceDistance,
+        basePrice,
+        unitDistancePrice,
+        unitTimePrice,
+        maxSpace
+      )
+    } else if (this.form === "Edit") {
+      this.onEditVehiclePricing(
+        this.editPricingID,
+        driverProfit,
+        minFare,
+        basePriceDistance,
+        basePrice,
+        unitDistancePrice,
+        unitTimePrice,
+        maxSpace
+      )
+    }
+    this.resetForm()
+  }
 
+  onAddVehiclePricing(
+    country: string,
+    city: string,
+    vehicleType: string,
+    driverProfit: number,
+    minFare: number,
+    basePriceDistance: number,
+    basePrice: number,
+    unitDistancePrice: number,
+    unitTimePrice: number,
+    maxSpace: number
+  ) {
     this.vehiclePriceService
       .addVehiclePrice(
         country,
@@ -88,6 +162,8 @@ export class VehicalPriceComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           this.toast.success(response.msg, "Added")
+          this.pageIndex = Math.ceil((this.totalPricingCounts + 1) / 4)
+          this.fetchPricingData(this.selectedCity, this.pageIndex)
         },
         error: (error) => {
           if (error.status === 409) {
@@ -97,15 +173,54 @@ export class VehicalPriceComponent implements OnInit {
           this.toast.error(error.error.error, "Error")
         },
       })
-    this.resetForm()
+  }
+
+  onEditVehiclePricing(
+    id: string,
+    driverProfit: number,
+    minFare: number,
+    basePriceDistance: number,
+    basePrice: number,
+    unitDistancePrice: number,
+    unitTimePrice: number,
+    maxSpace: number
+  ) {
+    this.vehiclePriceService
+      .editVehiclePrice(
+        id,
+        driverProfit,
+        minFare,
+        basePriceDistance,
+        basePrice,
+        unitDistancePrice,
+        unitTimePrice,
+        maxSpace
+      )
+      .subscribe({
+        next: (response: any) => {
+          this.toast.success(response.msg, "Success")
+          this.fetchPricingData(this.selectedCity, this.pageIndex)
+        },
+        error: (error) => {
+          this.toast.error(error.error.error, "Error")
+        },
+      })
   }
 
   resetForm() {
     this.pricingForm.reset()
     this.pricingForm.updateValueAndValidity()
+    this.form = "Add"
+    this.country?.setValue(this.selectedCountry)
+    this.city?.setValue(this.selectedCity)
+    this.isDisable = false
   }
 
   fetchCity(country: String) {
+    if (this.isDisable) {
+      return
+    }
+
     if (String(country) === this.selectedCountry) {
       return
     }
@@ -129,6 +244,50 @@ export class VehicalPriceComponent implements OnInit {
         if (error.status === 404) this.toast.info(error.error.msg, "404")
       },
     })
+  }
+
+  handlePage(event: any) {
+    this.pageIndex = event.pageIndex + 1
+    this.fetchPricingData(this.selectedCity, this.pageIndex)
+  }
+
+  onSelectCity(index: number) {
+    if (this.isDisable) {
+      return
+    }
+    this.selectedCity = this.cities[index]
+    this.fetchPricingData(this.selectedCity, this.pageIndex)
+  }
+
+  fetchPricingData(city: string, page: number = 1) {
+    this.vehiclePriceService.getPricing(city, page).subscribe({
+      next: (data: any) => {
+        this.totalPricingCounts = data.pricingCount
+        this.dataSource = data.pricing
+      },
+      error: (error) => {
+        this.dataSource = []
+        if (error.status === 404) this.toast.info(error.error.msg, "404")
+      },
+    })
+  }
+
+  editPricing(index: number) {
+    this.form = "Edit"
+    this.isDisable = true
+    const vehiclePricing: Pricing = this.dataSource[index]
+    this.editPricingID = vehiclePricing._id
+
+    this.country?.setValue(vehiclePricing.country)
+    this.city?.setValue(vehiclePricing.city)
+    this.vehicleType?.setValue(vehiclePricing.vehicleType)
+    this.driverProfit?.setValue(vehiclePricing.driverProfit)
+    this.minFare?.setValue(vehiclePricing.minFare)
+    this.basePriceDistance?.setValue(String(vehiclePricing.basePriceDistance))
+    this.basePrice?.setValue(vehiclePricing.basePrice)
+    this.unitDistancePrice?.setValue(vehiclePricing.unitDistancePrice)
+    this.unitTimePrice?.setValue(vehiclePricing.unitTimePrice)
+    this.maxSpace?.setValue(vehiclePricing.maxSpace)
   }
 
   get country() {
