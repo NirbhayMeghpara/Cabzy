@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http"
 import { Injectable } from "@angular/core"
 import { AuthService } from "../auth.service"
-import { catchError, tap, throwError } from "rxjs"
+import { tap } from "rxjs"
 
 @Injectable({
   providedIn: "root",

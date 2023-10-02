@@ -53,7 +53,7 @@ export class VehicalPriceComponent implements OnInit {
   pageSize: number = 4
   totalPricingCounts!: number
   isDisable: boolean = false
-  form: string = "Add"
+  form: "Add" | "Edit" = "Add"
   editPricingID!: string
 
   constructor(

@@ -28,7 +28,8 @@ import { SettingsComponent } from "./component/settings/settings.component"
 import { LoadingSpinnerComponent } from "./shared/loading-spinner/loading-spinner.component"
 import { ToastrModule } from "ngx-toastr"
 import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.service"
-import { NgIdleModule } from "@ng-idle/core"
+import { NgIdleModule } from "@ng-idle/core";
+import { CardComponent } from './component/users/card/card.component'
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { NgIdleModule } from "@ng-idle/core"
     VehicalPriceComponent,
     SettingsComponent,
     LoadingSpinnerComponent,
+    CardComponent,
   ],
   imports: [
     BrowserModule,
