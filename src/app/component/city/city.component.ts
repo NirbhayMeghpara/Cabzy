@@ -49,7 +49,7 @@ export class CityComponent implements OnInit {
   editCityID!: string
   pageIndex: number = 1
   pageSize: number = 4
-  totalCityCounts!: number
+  totalCityCounts: number = 0
 
   @ViewChild("country") countryElement!: ElementRef
   @ViewChild("city") cityElement!: ElementRef

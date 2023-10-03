@@ -1,4 +1,27 @@
-<div class="card form-card">
+<div class="btn-wrapper">
+  <div class="search-box m-l-32">
+    <button class="btn-search" (click)="userSearch()">
+      <i class="fas fa-search"></i>
+    </button>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      class="input-search"
+      (keydown.backspace)="clearSearch()"
+      (keydown.enter)="userSearch()"
+      placeholder="Type to Search..."
+    />
+  </div>
+
+  <div class="btn-container" *ngIf="!showForm" [class.d-none]="showForm">
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleForm()">
+      <i-feather name="user-plus" class="icon-20 m-r-10 submit-icon"></i-feather>
+      <span>Add User</span>
+    </button>
+  </div>
+</div>
+
+<div class="card form-card" *ngIf="showForm">
   <div class="card-body">
     <h2 class="mb-12">{{ form }} User</h2>
     <hr class="mb-32" />
@@ -30,7 +53,14 @@
               (click)="fileInput.click()"
               formControlName="profile"
             />
-            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/*" />
+            <input
+              hidden
+              (change)="onFileSelected($event)"
+              #fileInput
+              formControlName="profileHidden"
+              type="file"
+              accept="image/*"
+            />
             <button
               type="button"
               mat-stroked-button
@@ -75,7 +105,7 @@
         <mat-error class="m-t-6" *ngIf="email?.invalid && email?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
           <span *ngIf="email?.hasError('required')">Please enter your email</span>
-          <span *ngIf="email?.hasError('email')">Please enter valid email</span>
+          <span *ngIf="email?.hasError('pattern')">Please enter valid email</span>
         </mat-error>
       </mat-form-field>
 
@@ -99,16 +129,16 @@
         <mat-form-field>
           <input
             matInput
-            type="number"
-            min="0"
+            type="text"
+            maxlength="10"
             id="phone"
             placeholder="Enter your phone number"
             formControlName="phone"
           />
           <mat-error class="m-t-6" *ngIf="phone?.invalid && phone?.touched"
             ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-            <span *ngIf="phone?.hasError('min')">Value must be a positive number</span>
             <span *ngIf="phone?.hasError('required')">Please enter your phone number</span>
+            <span *ngIf="phone?.hasError('pattern')">Please enter valid phone number</span>
           </mat-error>
         </mat-form-field>
       </div>
@@ -140,7 +170,7 @@
         <!-- Cancel Button -->
 
         <button
-          (click)="resetForm()"
+          (click)="toggleForm()"
           type="button"
           mat-fab
           extended
@@ -163,12 +193,12 @@
   </div>
 </div>
 
-<mat-card class="w-100 userCard">
+<mat-card class="w-100 userTable">
   <mat-card-content>
     <h2 class="m-b-20 m-l-6">Users</h2>
 
     <img
-      src="../../../assets/images/nothingFound.png"
+      src="../../../assets/images/noUser.png"
       class="d-block m-auto"
       width="250px"
       *ngIf="!dataSource.length"
@@ -177,7 +207,7 @@
       <table mat-table [dataSource]="dataSource" class="text-nowrap w-100" role="table">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef>Id</th>
+          <th mat-header-cell *matHeaderCellDef>#</th>
           <td mat-cell class="fw-medium" *matCellDef="let i = index">
             {{ i + (pageIndex - 1) * 4 + 1 }}
           </td>

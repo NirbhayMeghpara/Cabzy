@@ -1,12 +1,14 @@
 import { CountryService } from "src/app/services/country/country.service"
-import { Component, OnInit } from "@angular/core"
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { CardComponent } from "./card/card.component"
 import { ToastService } from "src/app/services/toast.service"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { UserService } from "src/app/services/user/user.service"
+import { DeleteComponent } from "./delete/delete.component"
 
-interface User {
+export interface User {
+  _id: string
   name: string
   profile: string
   email: string
@@ -25,6 +27,10 @@ interface Countries {
   styleUrls: ["./users.component.scss"],
 })
 export class UsersComponent implements OnInit {
+  showForm: boolean = false
+  searchText: string = ""
+  flag!: boolean
+
   selectedFile: any = null
   countries!: Countries[]
   displayedColumns: string[] = ["id", "profile", "name", "email", "phone", "action"]
@@ -32,51 +38,72 @@ export class UsersComponent implements OnInit {
   dataSource: User[] = []
   pageIndex: number = 1
   pageSize: number = 4
-  totalUserCounts!: number
+  totalUserCounts: number = 0
   isDisable: boolean = false
   form: "Add" | "Edit" = "Add"
   editUserID!: string
   fileSizeLarge: boolean = false
   invalidFile: boolean = false
 
+  @ViewChild("fileInput") fileInput!: ElementRef
+
   constructor(
     private countryService: CountryService,
     private userService: UserService,
     private toast: ToastService,
     private fb: FormBuilder,
-    private matDialog: MatDialog
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
+    this.countryService.getCountryData().subscribe({
+      next: (response: any) => {
+        this.countries = response.map((country: any) => ({
+          flag: country.flag,
+          code: country.code,
+        }))
+      },
+    })
     this.fetchUserData(this.pageIndex)
   }
 
   userForm: FormGroup = this.fb.group({
-    name: ["", [Validators.required, Validators.pattern("^[A-Za-z]+$")]],
+    name: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
     profile: ["", [Validators.required]],
-    email: ["", [Validators.required, Validators.email]],
+    profileHidden: [""],
+    email: [
+      "",
+      [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)],
+    ],
     phoneCode: ["", [Validators.required]],
     phone: ["", [Validators.required, Validators.pattern("[0-9]+")]],
   })
 
-  handlePage(event: any) {
-    this.pageIndex = event.pageIndex + 1
-    // this.fetchUserData(this.pageIndex)
+  toggleForm() {
+    if (this.showForm) {
+      this.resetForm()
+    }
+    this.showForm = !this.showForm
   }
 
-  openDialog() {
-    this.matDialog.open(CardComponent, {
+  handlePage(event: any) {
+    this.pageIndex = event.pageIndex + 1
+    this.fetchUserData(this.pageIndex)
+  }
+
+  openCardDialog() {
+    this.dialog.open(CardComponent, {
       width: "500px",
       enterAnimationDuration: "300ms",
     })
   }
 
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0] ?? null
+    this.selectedFile = event.target.files[0]
 
     if (this.selectedFile) {
-      this.profile?.setValue(this.selectedFile.name)
       this.fileValidator(this.selectedFile)
+      this.profile?.setValue(this.selectedFile.name)
     }
   }
 
@@ -98,13 +125,11 @@ export class UsersComponent implements OnInit {
     if (this.fileSizeLarge) {
       const errors = { ...this.profile?.errors, fileSizeExceeded: true }
       this.profile?.setErrors(errors)
-      console.log("File large")
     }
 
     if (this.invalidFile) {
       const errors = { ...this.profile?.errors, fileInvalid: true }
       this.profile?.setErrors(errors)
-      console.log("File invalid")
     }
 
     if (this.userForm.invalid) {
@@ -118,38 +143,45 @@ export class UsersComponent implements OnInit {
     const phone = this.phone?.value
 
     if (this.form === "Add") {
-      this.onAddVehiclePricing(name, this.selectedFile, email, phoneCode, phone)
+      this.onAddUser(name, this.selectedFile, email, phoneCode, phone)
     } else if (this.form === "Edit") {
-      this.onEditVehiclePricing(this.editUserID, name, this.selectedFile, email, phoneCode, phone)
+      this.onEditUser(this.editUserID, name, this.selectedFile, email, phoneCode, phone)
     }
-    this.resetForm()
+    Object.values(this.userForm.controls).forEach((control) => {
+      control.setErrors(null)
+    })
+    this.toggleForm()
   }
 
-  onAddVehiclePricing(name: string, profile: any, email: string, phoneCode: string, phone: number) {
+  onAddUser(name: string, profile: any, email: string, phoneCode: string, phone: number) {
     this.userService.addUser(name, profile, email, phoneCode, phone).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Added")
-        this.pageIndex = response.pageCount
+        this.pageIndex = Math.ceil((this.totalUserCounts + 1) / 4)
         this.fetchUserData(this.pageIndex)
       },
       error: (error) => {
+        console.log(error)
         if (error.status === 409) {
           this.toast.info(error.error.msg, "Oops !")
           return
+        }
+        if (error.error.field) {
+          if (error.error.field === "phone") {
+            this.toast.info(error.error.msg, "Oops !")
+            return
+          }
+          if (error.error.field === "email") {
+            this.toast.info(error.error.msg, "Oops !")
+            return
+          }
         }
         this.toast.error(error.error.error, "Error")
       },
     })
   }
 
-  onEditVehiclePricing(
-    id: string,
-    name: string,
-    profile: any,
-    email: string,
-    phoneCode: string,
-    phone: number
-  ) {
+  onEditUser(id: string, name: string, profile: any, email: string, phoneCode: string, phone: number) {
     this.userService.editUser(id, name, profile, email, phoneCode, phone).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Success")
@@ -161,8 +193,8 @@ export class UsersComponent implements OnInit {
     })
   }
 
-  fetchUserData(page: number = 1) {
-    this.userService.getUsers(page).subscribe({
+  fetchUserData(page: number = 1, searchText?: string) {
+    this.userService.getUsers(page, searchText).subscribe({
       next: (data: any) => {
         this.totalUserCounts = data.userCount
         this.dataSource = data.users
@@ -174,15 +206,59 @@ export class UsersComponent implements OnInit {
     })
   }
 
-  editUser(index: number) {}
+  editUser(index: number) {
+    if (this.form !== "Edit") this.toggleForm()
+    this.form = "Edit"
+    this.isDisable = true
+    const user: User = this.dataSource[index]
+    this.editUserID = user._id
 
-  deleteUser(index: number) {}
+    this.name?.setValue(user.name)
+    this.email?.setValue(user.email)
+    this.phoneCode?.setValue(String(user.phoneCode))
+    this.phone?.setValue(user.phone)
+  }
+
+  deleteUser(index: number) {
+    const dialogRef = this.dialog.open(DeleteComponent, {
+      width: "400px",
+      enterAnimationDuration: "300ms",
+      data: {
+        user: this.dataSource[index],
+      },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === "Deleted") {
+        this.pageIndex = Math.ceil((this.totalUserCounts - 1) / 4)
+        this.fetchUserData(this.pageIndex)
+      }
+    })
+  }
 
   resetForm() {
+    this.userForm.get("profileHidden")?.reset()
     this.userForm.reset()
     this.userForm.updateValueAndValidity()
     this.form = "Add"
     this.isDisable = false
+  }
+
+  userSearch() {
+    this.flag = false
+    if (this.searchText.length) {
+      this.fetchUserData(1, this.searchText)
+      this.flag = true
+    }
+  }
+
+  clearSearch() {
+    if (this.searchText.length - 1 === 0) {
+      if (this.flag) {
+        this.fetchUserData(1)
+        this.flag = false
+      }
+    }
   }
 
   get name() {

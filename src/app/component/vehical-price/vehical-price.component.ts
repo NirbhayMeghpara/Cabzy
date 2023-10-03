@@ -51,7 +51,7 @@ export class VehicalPriceComponent implements OnInit {
   dataSource: Pricing[] = []
   pageIndex: number = 1
   pageSize: number = 4
-  totalPricingCounts!: number
+  totalPricingCounts: number = 0
   isDisable: boolean = false
   form: "Add" | "Edit" = "Add"
   editPricingID!: string

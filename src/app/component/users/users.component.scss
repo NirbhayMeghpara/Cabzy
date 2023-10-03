@@ -1,3 +1,43 @@
+.btn-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 70px;
+}
+
+.btn-container {
+  display: inline-block;
+  background-color: transparent;
+  white-space: nowrap !important;
+  font-weight: 500;
+  transition: all 0.3s ease-out;
+}
+
+.addBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 2px solid #fec501;
+  border-radius: 5px;
+  color: #1d1d1d !important;
+  text-decoration: none !important;
+  font-size: 1rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.btn-container:hover .addBtn {
+  box-shadow: 0 0 50px 0px rgba(254, 197, 1, 0.25);
+}
+
+.icon-20{
+  width: 18px;
+  height: 20px;
+  margin-right: 6px;
+  margin-top: 2px;
+}
+
 .form-card {
   max-width: 500px;
   margin: 0rem auto 5rem;
@@ -6,6 +46,11 @@
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   display: none;
+}
+
+.userTable{
+  width: 90% !important;
+  margin: auto;
 }
 
 .form-wrapper{
@@ -60,16 +105,75 @@ mat-error{
 }
 
 .edit, .delete{
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: orange;
 }
 
 .delete{
-  margin-left: 10px;
+  margin-left: 8px;
   color: #cf352a;
 }
 
 th,td {
   text-align: center;
+}
+
+
+// Search box
+
+.search-box{
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+.input-search{
+  height: 50px;
+  width: 300px;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid rgba(0,0,0,.5);
+  background-color: transparent;
+  padding: 10px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  transition: all .5s ease-in-out;
+  color: rgba(0,0,0,.8);
+}
+.input-search::placeholder{
+  color:rgba(0, 0,0,.5);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  font-weight: 100;
+}
+.btn-search{
+  padding: 5px;
+  margin: 10px;
+  border-style: none;
+  font-size: 20px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  border-radius: 50%;
+  position: absolute;
+  right: 0px;
+  color: rgba(0,0,0,.7);
+  background-color:transparent;
+  pointer-events: painted;  
+}
+
+@media screen and (max-width: 860px) {
+  .btn-wrapper {
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  .btn-container{
+    margin-bottom: 50px;
+  }
+
+  .search-box{
+    margin-bottom: 35px;
+  }
 }

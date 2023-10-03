@@ -1,0 +1,40 @@
+<h2
+  mat-dialog-title
+  class="mat-mdc-dialog-title mdc-dialog__title f-w-500 m-b-16"
+  id="mat-mdc-dialog-title-1"
+>
+  <strong>Delete</strong>
+</h2>
+<div class="m-l-24 ng-star-inserted">
+  <p>
+    Sure to delete <span class="f-w-600">{{ userName }}</span> ?
+  </p>
+</div>
+<div
+  mat-dialog-actions
+  class="mat-mdc-dialog-actions mdc-dialog__actions p-x-24 p-b-24 ng-star-inserted"
+>
+  <button
+    type="button"
+    mat-button
+    mat-flat-button
+    color="warn"
+    class="mdc-button f-w-400 mat-mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-warn mat-mdc-button-base"
+    (click)="delete()"
+  >
+    <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
+    ><span class="mdc-button__label"> Delete </span><span class="mat-mdc-focus-indicator"></span
+    ><span class="mat-mdc-button-touch-target"></span><span class="mat-mdc-button-ripple"></span>
+  </button>
+  <button
+    type="button"
+    mat-button
+    class="m-l-8 f-w-400 mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
+    mat-button-is-fab="false"
+    matDialogClose
+  >
+    <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
+    ><span class="mdc-button__label">Cancel</span><span class="mat-mdc-focus-indicator"></span
+    ><span class="mat-mdc-button-touch-target"></span><span class="mat-mdc-button-ripple"></span>
+  </button>
+</div>
