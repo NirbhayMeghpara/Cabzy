@@ -23,13 +23,13 @@ export class UserService {
     return this.http.post(this._addUserUrl, formData)
   }
 
-  getUsers(page: number, searchText?: string) {
+  getUsers(page: number, searchText?: string, sort?: string, sortOrder?: string) {
     const url = new URL(this._getUsersUrl)
     url.searchParams.set("page", String(page))
 
-    if (searchText) {
-      url.searchParams.set("search", searchText)
-    }
+    searchText && url.searchParams.set("search", searchText)
+    sort && url.searchParams.set("sort", sort)
+    sortOrder && url.searchParams.set("sortOrder", sortOrder)
 
     return this.http.get(url.toString())
   }
