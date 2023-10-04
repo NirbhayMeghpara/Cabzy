@@ -7,7 +7,7 @@
       type="text"
       [(ngModel)]="searchText"
       class="input-search"
-      (keydown.backspace)="clearSearch()"
+      (keyup)="clearSearch()"
       (keydown.enter)="userSearch()"
       placeholder="Type to Search..."
     />
@@ -204,7 +204,7 @@
       *ngIf="!dataSource.length"
     />
     <div class="table-responsive" *ngIf="dataSource.length">
-      <table mat-table [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+      <table mat-table matSort [dataSource]="dataSource" class="text-nowrap w-100" role="table">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>#</th>
@@ -220,28 +220,52 @@
             <img
               src="http://localhost:3000/{{ element.profile }}"
               alt="user profile"
-              width="40"
+              width="50"
               class="rounded-circle"
             />
           </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Name</th>
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('name')"
+          >
+            Name
+          </th>
           <td class="nameCol" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.name }}</p>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Email</th>
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('email')"
+          >
+            Email
+          </th>
           <td class="nameCol" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.email }}</p>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Phone Number</th>
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('phone')"
+          >
+            Phone Number
+          </th>
           <td class="nameCol" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.phoneCode }} {{ element.phone }}</p>
           </td>
@@ -253,6 +277,16 @@
           <td class="action" mat-cell *matCellDef="let element; let i = index">
             <a class="icon-18">
               <i-feather name="edit" class="edit" (click)="editUser(i)"></i-feather>
+            </a>
+            <a class="icon-18 m-l-8">
+              <img
+                src="../../../assets/images/credit-card.png"
+                class=""
+                alt="credit-card"
+                width="24"
+                height="auto"
+                (click)="openCardDialog(i)"
+              />
             </a>
             <a class="icon-18">
               <i-feather name="trash-2" class="delete" (click)="deleteUser(i)"></i-feather>

@@ -45,6 +45,9 @@ export class UsersComponent implements OnInit {
   fileSizeLarge: boolean = false
   invalidFile: boolean = false
 
+  currentSortOrder: "asc" | "desc" | undefined = "asc"
+  currentSortField: string | undefined = undefined
+
   @ViewChild("fileInput") fileInput!: ElementRef
 
   constructor(
@@ -88,13 +91,16 @@ export class UsersComponent implements OnInit {
 
   handlePage(event: any) {
     this.pageIndex = event.pageIndex + 1
-    this.fetchUserData(this.pageIndex)
+    this.fetchUserData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
   }
 
-  openCardDialog() {
+  openCardDialog(index: number) {
     this.dialog.open(CardComponent, {
       width: "500px",
       enterAnimationDuration: "300ms",
+      data: {
+        user: this.dataSource[index],
+      },
     })
   }
 
@@ -193,8 +199,8 @@ export class UsersComponent implements OnInit {
     })
   }
 
-  fetchUserData(page: number = 1, searchText?: string) {
-    this.userService.getUsers(page, searchText).subscribe({
+  fetchUserData(page: number = 1, searchText?: string, sort?: string, sortOrder?: string) {
+    this.userService.getUsers(page, searchText, sort, sortOrder).subscribe({
       next: (data: any) => {
         this.totalUserCounts = data.userCount
         this.dataSource = data.users
@@ -230,8 +236,11 @@ export class UsersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === "Deleted") {
-        this.pageIndex = Math.ceil((this.totalUserCounts - 1) / 4)
-        this.fetchUserData(this.pageIndex)
+        console.log(this.pageIndex)
+        if (Math.ceil(this.totalUserCounts / 4) === this.pageIndex) {
+          if ((this.totalUserCounts - 1) % 4 === 0) this.pageIndex--
+        }
+        this.fetchUserData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
       }
     })
   }
@@ -247,18 +256,36 @@ export class UsersComponent implements OnInit {
   userSearch() {
     this.flag = false
     if (this.searchText.length) {
-      this.fetchUserData(1, this.searchText)
+      this.fetchUserData(1, this.searchText, this.currentSortField, this.currentSortOrder)
       this.flag = true
     }
   }
 
   clearSearch() {
-    if (this.searchText.length - 1 === 0) {
+    if (this.searchText.length === 0) {
       if (this.flag) {
-        this.fetchUserData(1)
+        this.fetchUserData(1, undefined, this.currentSortField, this.currentSortOrder)
         this.flag = false
       }
     }
+  }
+
+  toggleSort(field: string) {
+    if (field === this.currentSortField) {
+      if (this.currentSortOrder === "desc") {
+        this.fetchUserData(this.pageIndex, this.searchText)
+        this.currentSortOrder = undefined
+        this.currentSortField = undefined
+        return
+      }
+      // If the user clicked on the same field, toggle the sorting order
+      this.currentSortOrder = this.currentSortOrder === "asc" ? "desc" : "asc"
+    } else {
+      // If the user clicked on a different field, set it as the new sorting field
+      this.currentSortField = field
+      this.currentSortOrder = "asc" // Reset to ascending order
+    }
+    this.fetchUserData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
   }
 
   get name() {

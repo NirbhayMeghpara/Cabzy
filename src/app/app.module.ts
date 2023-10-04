@@ -29,8 +29,8 @@ import { LoadingSpinnerComponent } from "./shared/loading-spinner/loading-spinne
 import { ToastrModule } from "ngx-toastr"
 import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.service"
 import { NgIdleModule } from "@ng-idle/core"
-import { CardComponent } from "./component/users/card/card.component";
-import { DeleteComponent } from './component/users/delete/delete.component'
+import { CardComponent } from "./component/users/card/card.component"
+import { DeleteComponent } from "./component/users/delete/delete.component"
 
 @NgModule({
   declarations: [
