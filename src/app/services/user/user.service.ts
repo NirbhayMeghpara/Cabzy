@@ -11,6 +11,10 @@ export class UserService {
   private _getUsersUrl = "http://localhost:3000/user/"
   private _editUserUrl = "http://localhost:3000/user/edit/"
   private _deleteUserUrl = "http://localhost:3000/user/delete/"
+  private _stripeIntentUrl = "http://localhost:3000/user/createStripeIntent"
+  private _addCardUrl = "http://localhost:3000/card/add/"
+  private _fetchCardsUrl = "http://localhost:3000/card/"
+  private _setDefaultCardsUrl = "http://localhost:3000/card/changeDefault"
 
   addUser(name: string, profile: any, email: string, phoneCode: string, phone: number) {
     const formData = new FormData()
@@ -49,5 +53,35 @@ export class UserService {
   deleteUser(id: string) {
     const modifiedURL = `${this._deleteUserUrl}${id}`
     return this.http.delete(modifiedURL)
+  }
+
+  fetchClientSecret(id: string) {
+    const formData = new FormData()
+    formData.append("id", id)
+
+    return this.http.post(this._stripeIntentUrl, formData)
+  }
+
+  addCard(userID: string, token: string) {
+    const formData = new FormData()
+    formData.append("id", userID)
+    formData.append("token", token)
+
+    return this.http.post(this._addCardUrl, formData)
+  }
+
+  fetchCards(userID: string) {
+    const formData = new FormData()
+    formData.append("id", userID)
+
+    return this.http.post(this._fetchCardsUrl, formData)
+  }
+
+  setDefaultCard(cardID: string, userID: string) {
+    const formData = new FormData()
+    formData.append("cardID", cardID)
+    formData.append("userID", userID)
+
+    return this.http.post(this._setDefaultCardsUrl, formData)
   }
 }

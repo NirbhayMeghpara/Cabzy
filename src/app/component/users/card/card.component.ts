@@ -1,5 +1,9 @@
-import { Component, OnInit } from "@angular/core"
-import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { ChangeDetectorRef, Component, Inject, OnInit } from "@angular/core"
+import { MAT_DIALOG_DATA } from "@angular/material/dialog"
+import { ToastService } from "src/app/services/toast.service"
+import { UserService } from "src/app/services/user/user.service"
+
+declare let Stripe: any
 
 @Component({
   selector: "app-card",
@@ -9,77 +13,99 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 export class CardComponent implements OnInit {
   showForm: boolean = false
   form: "Save" | "Add" = "Save"
-  cards = ["345234234242", "345234234242", "345234234242", "345234234242"]
+  cards: any[] = []
 
-  constructor(private fb: FormBuilder) {}
+  clientSecret!: string
+  stripe!: any
+  cardElement: any
+  defaultCard!: string
 
-  creditCardForm: FormGroup = this.fb.group({
-    defaultCard: ["", [Validators.required]],
-    cardHolderName: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
-    cardNumber: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
-    expiryDate: ["", [Validators.required]],
-    cvv: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
-  })
+  constructor(
+    @Inject(MAT_DIALOG_DATA) private data: any,
+    private userService: UserService,
+    private cdRef: ChangeDetectorRef,
+    private toast: ToastService
+  ) {
+    this.stripe = Stripe(
+      "pk_test_51Nxj1JSCeJNK0dB9dHsH4mCS6yv5ukONxyQxGcdodWpV0Rky29UFhRKNWbFPV3DXk7wKPWJy9m5kLpBzse7iQbG100vKCzd1Ym"
+    )
+    this.createSetupIntent(this.data.user._id)
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getCards(this.data.user._id)
+  }
 
-  setMonthAndYear(data: any, widget: any) {
-    const date = new Date(data)
-    this.expiryDate?.setValue(`${date.getMonth() + 1}/${date.getFullYear()}`)
-    widget.close()
+  createSetupIntent(userID: string) {
+    this.userService.fetchClientSecret(userID).subscribe({
+      next: (data: any) => {
+        this.clientSecret = data.clientSecret
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
+    })
+  }
+
+  getCards(userID: string) {
+    this.userService.fetchCards(userID).subscribe({
+      next: (data: any) => {
+        this.cards = data.cards
+        this.defaultCard = data.defaultCard
+        this.cards.forEach((card) => {
+          if (card.id === this.defaultCard) card.defaultCard = true
+        })
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
+    })
   }
 
   toggleForm() {
-    if (this.showForm) {
-      this.resetForm()
-    }
     this.showForm = !this.showForm
-  }
+    this.cdRef.detectChanges()
+    if (this.showForm === true) {
+      this.form = "Add"
+      const appearance = {
+        theme: "flat",
+      }
+      const elements = this.stripe.elements({ clientSecret: this.clientSecret, appearance })
+      this.cardElement = elements.create("card")
 
-  onSubmitCard() {
-    this.defaultCard?.setValue("123321123321")
-    if (this.creditCardForm.invalid) {
-      this.creditCardForm.markAllAsTouched()
-      return
+      this.cardElement.mount("#card-element")
     }
+  }
 
-    const cardHolderName = this.cardHolderName?.value
-    const cardNumber = this.cardNumber?.value
-    const expiryDate = this.expiryDate?.value
-    const cvv = this.cvv?.value
+  async addNewCard() {
+    const { token, error } = await this.stripe.createToken(this.cardElement)
 
-    console.log(this.creditCardForm.value)
+    if (error) {
+      this.toast.error(error.message, "Invalid")
+    } else {
+      this.userService.addCard(this.data.user._id, token.id).subscribe({
+        next: (response: any) => {
+          this.toast.success(response.msg, "Added")
+          this.toggleForm()
+        },
+        error: (error) => {
+          this.toast.error(error.error.error, "Error")
+        },
+      })
+    }
+  }
 
-    // if (this.form === "Save") {
-    //   this.onSaveCard(this.userID, cardNumber)
-    // } else if (this.form === "Add") {
-    //   this.onAddCard(this.userID, cardHolderName, cardNumber, expiryDate, cvv)
-    // }
-    Object.values(this.creditCardForm.controls).forEach((control) => {
-      control.setErrors(null)
+  setDefaultCard(index: number) {
+    const card = this.cards[index]
+    this.userService.setDefaultCard(card.id, this.data.user._id).subscribe({
+      next: (response: any) => {
+        this.toast.success(response.msg, "Success")
+        this.cards.forEach((card) => (card.defaultCard = false))
+        card.defaultCard = true
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
     })
-    this.toggleForm()
-  }
-
-  resetForm() {
-    this.creditCardForm.reset()
-    this.creditCardForm.updateValueAndValidity()
-    this.form = "Save"
-  }
-
-  get defaultCard() {
-    return this.creditCardForm.get("defaultCard")
-  }
-  get cardHolderName() {
-    return this.creditCardForm.get("cardHolderName")
-  }
-  get cardNumber() {
-    return this.creditCardForm.get("cardNumber")
-  }
-  get expiryDate() {
-    return this.creditCardForm.get("expiryDate")
-  }
-  get cvv() {
-    return this.creditCardForm.get("cvv")
   }
 }
