@@ -109,7 +109,11 @@
         </mat-error>
       </mat-form-field>
 
-      <div class="d-flex">
+      <div
+        class="d-flex"
+        [class.m-b-18]="phoneCode?.invalid && phoneCode?.touched"
+        [class.m-b-16]="phone?.invalid && phone?.touched"
+      >
         <div class="country-code m-r-5" style="width: 150px; display: inline-flex">
           <mat-form-field>
             <mat-select id="city" placeholder="-- Select --" formControlName="phoneCode">
@@ -213,7 +217,6 @@
           </td>
         </ng-container>
 
-        <!-- Name Column -->
         <ng-container matColumnDef="profile">
           <th class="nameCol" mat-header-cell *matHeaderCellDef>Profile</th>
           <td class="nameCol" mat-cell *matCellDef="let element">
@@ -221,6 +224,7 @@
               src="http://localhost:3000/{{ element.profile }}"
               alt="user profile"
               width="50"
+              height="50"
               class="rounded-circle"
             />
           </td>

@@ -97,12 +97,17 @@ input[type="number"]::-webkit-inner-spin-button {
   left: 10px;
 }
 
-.menuBtn{
+.menuBtn span{
   letter-spacing: 0px;
   font-size: 15px;
   font-weight: 500;
+  color: #1671e9;
 }
 
 .deleteCard span{
   color: #df1b41;
+}
+
+.alert{
+  letter-spacing: 0px;
 }

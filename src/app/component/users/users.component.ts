@@ -167,7 +167,6 @@ export class UsersComponent implements OnInit {
         this.fetchUserData(this.pageIndex)
       },
       error: (error) => {
-        console.log(error)
         if (error.status === 409) {
           this.toast.info(error.error.msg, "Oops !")
           return
@@ -236,7 +235,6 @@ export class UsersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === "Deleted") {
-        console.log(this.pageIndex)
         if (Math.ceil(this.totalUserCounts / 4) === this.pageIndex) {
           if ((this.totalUserCounts - 1) % 4 === 0) this.pageIndex--
         }

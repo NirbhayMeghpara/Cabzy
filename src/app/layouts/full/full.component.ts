@@ -7,6 +7,7 @@ import { Router } from "@angular/router"
 import { DEFAULT_INTERRUPTSOURCES, Idle } from "@ng-idle/core"
 import { ToastService } from "src/app/services/toast.service"
 import { SidebarMenu } from "src/app/shared/interfaces/sidebar-menu.model"
+import { MatDialog } from "@angular/material/dialog"
 
 @Component({
   selector: "app-full",
@@ -27,7 +28,8 @@ export class FullComponent implements OnInit {
     private authService: AuthService,
     private toast: ToastService,
     private router: Router,
-    private idle: Idle
+    private idle: Idle,
+    private dialogRef: MatDialog
   ) {
     idle.setIdle(this.idleTimer) // How long can they be inactive before considered idle, in seconds
     idle.setTimeout(this.timeoutTimer) // How long can they be idle before considered timed out, in seconds
@@ -43,6 +45,7 @@ export class FullComponent implements OnInit {
           localStorage.removeItem("adminToken")
 
           this.toast.info("Oops you are logged out !!", "Timeout", 10000)
+          this.dialogRef.closeAll()
           this.router.navigate(["/login"])
         },
         error: (error) => {

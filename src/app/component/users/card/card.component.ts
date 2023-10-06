@@ -47,22 +47,8 @@ export class CardComponent implements OnInit {
     })
   }
 
-  getCards(userID: string) {
-    this.userService.fetchCards(userID).subscribe({
-      next: (data: any) => {
-        this.cards = data.cards
-        this.defaultCard = data.defaultCard
-        this.cards.forEach((card) => {
-          if (card.id === this.defaultCard) card.defaultCard = true
-        })
-      },
-      error: (error) => {
-        this.toast.error(error.error.error, "Error")
-      },
-    })
-  }
-
   toggleForm() {
+    this.form = "Save"
     this.showForm = !this.showForm
     this.cdRef.detectChanges()
     if (this.showForm === true) {
@@ -86,6 +72,7 @@ export class CardComponent implements OnInit {
       this.userService.addCard(this.data.user._id, token.id).subscribe({
         next: (response: any) => {
           this.toast.success(response.msg, "Added")
+          this.getCards(this.data.user._id)
           this.toggleForm()
         },
         error: (error) => {
@@ -95,13 +82,45 @@ export class CardComponent implements OnInit {
     }
   }
 
+  getCards(userID: string) {
+    this.userService.fetchCards(userID).subscribe({
+      next: (data: any) => {
+        this.cards = data.cards
+        this.defaultCard = data.defaultCard
+        this.cards.forEach((card) => {
+          if (card.id === this.defaultCard) card.defaultCard = true
+        })
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
+    })
+  }
+
   setDefaultCard(index: number) {
     const card = this.cards[index]
+    if (card.defaultCard) {
+      this.toast.info("This card is already set as default", "Info")
+      return
+    }
     this.userService.setDefaultCard(card.id, this.data.user._id).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Success")
         this.cards.forEach((card) => (card.defaultCard = false))
         card.defaultCard = true
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
+    })
+  }
+
+  deleteCard(index: number) {
+    const card = this.cards[index]
+    this.userService.deleteCard(card.id, this.data.user._id).subscribe({
+      next: (response: any) => {
+        this.toast.success(response.msg, "Deleted")
+        this.getCards(this.data.user._id)
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")
