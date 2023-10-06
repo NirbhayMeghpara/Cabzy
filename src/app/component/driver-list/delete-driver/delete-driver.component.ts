@@ -1,28 +1,28 @@
 import { Component, Inject, OnInit } from "@angular/core"
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog"
 import { ToastService } from "src/app/services/toast.service"
-import { UserService } from "src/app/services/user/user.service"
+import { DriverService } from "src/app/services/driver/driver.service"
 
 @Component({
-  selector: "app-delete",
-  templateUrl: "./delete.component.html",
-  styleUrls: ["./delete.component.scss"],
+  selector: "app-delete-driver",
+  templateUrl: "./delete-driver.component.html",
+  styleUrls: ["./delete-driver.component.scss"],
 })
-export class DeleteComponent implements OnInit {
+export class DeleteDriverComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
-    private userService: UserService,
-    private dialogRef: MatDialogRef<DeleteComponent>,
+    private driverService: DriverService,
+    private dialogRef: MatDialogRef<DeleteDriverComponent>,
     private toast: ToastService
   ) {}
 
-  userName!: string
+  driverName!: string
   ngOnInit(): void {
-    this.userName = this.data.user.name
+    this.driverName = this.data.driver.name
   }
 
   delete() {
-    this.userService.deleteUser(this.data.user._id).subscribe({
+    this.driverService.deleteDriver(this.data.driver._id).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Success")
         this.dialogRef.close("Deleted")

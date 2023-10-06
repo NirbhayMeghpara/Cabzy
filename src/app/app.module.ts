@@ -31,6 +31,8 @@ import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.
 import { NgIdleModule } from "@ng-idle/core"
 import { CardComponent } from "./component/users/card/card.component"
 import { DeleteComponent } from "./component/users/delete/delete.component"
+import { DeleteDriverComponent } from "./component/driver-list/delete-driver/delete-driver.component"
+import { ServiceTypeComponent } from "./component/driver-list/service-type/service-type.component"
 
 @NgModule({
   declarations: [
@@ -51,6 +53,8 @@ import { DeleteComponent } from "./component/users/delete/delete.component"
     LoadingSpinnerComponent,
     CardComponent,
     DeleteComponent,
+    DeleteDriverComponent,
+    ServiceTypeComponent,
   ],
   imports: [
     BrowserModule,

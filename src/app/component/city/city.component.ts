@@ -79,7 +79,6 @@ export class CityComponent implements OnInit {
         }))
       },
       error: (error) => {
-        console.log("error", error)
         this.toast.error(error.error.error, "Error")
       },
     })

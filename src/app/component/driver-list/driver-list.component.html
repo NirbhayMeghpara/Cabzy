@@ -1,1 +1,362 @@
-<p>driver-list works!</p>
+<div class="btn-wrapper">
+  <div class="search-box m-l-32">
+    <button class="btn-search" (click)="driverSearch()">
+      <i class="fas fa-search"></i>
+    </button>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      class="input-search"
+      (keyup)="clearSearch()"
+      (keydown.enter)="driverSearch()"
+      placeholder="Type to Search..."
+    />
+  </div>
+
+  <div class="btn-container" *ngIf="!showForm" [class.d-none]="showForm">
+    <button type="button" class="addBtn" data-toggle="modal" (click)="toggleForm()">
+      <i-feather name="user-plus" class="icon-20 m-r-10 submit-icon"></i-feather>
+      <span>Add Driver</span>
+    </button>
+  </div>
+</div>
+
+<div class="card form-card" *ngIf="showForm">
+  <div class="card-body">
+    <h2 class="mb-12">{{ form }} Driver</h2>
+    <hr class="mb-32" />
+    <form [formGroup]="driverForm" autocomplete="off" enctype="multipart/form-data">
+      <mat-form-field
+        class="w-100 fs-16"
+        [class.mb-16]="name?.invalid && name?.touched"
+        appearance="outline"
+      >
+        <mat-label>Name</mat-label>
+        <input matInput type="text" placeholder="Enter your name type" formControlName="name" />
+        <mat-error class="m-t-6" *ngIf="name?.invalid && name?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="name?.hasError('pattern')">Name must not contain digit</span>
+          <span *ngIf="name?.hasError('required')">Please enter your name</span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="mb-10">
+        <mat-form-field class="fs-16" [class.m-b-18]="profile?.invalid && profile?.touched">
+          <div class="form-wrapper">
+            <input
+              style="display: inline"
+              matInput
+              type="text"
+              placeholder="Upload profile..."
+              readonly
+              tabindex="-1"
+              (click)="fileInput.click()"
+              formControlName="profile"
+            />
+            <input
+              hidden
+              (change)="onFileSelected($event)"
+              #fileInput
+              formControlName="profileHidden"
+              type="file"
+              accept="image/*"
+            />
+            <button
+              type="button"
+              mat-stroked-button
+              color="accent"
+              class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-accent mat-mdc-button-base"
+              mat-button-is-fab="false"
+              (keydown.enter)="fileInput.click()"
+              (click)="fileInput.click()"
+            >
+              <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span
+              ><span class="mdc-button__label">Browse File</span
+              ><span class="mat-mdc-focus-indicator"></span
+              ><span class="mat-mdc-button-touch-target"></span
+              ><span class="mat-mdc-button-ripple"></span>
+            </button>
+          </div>
+          <mat-error class="m-t-6" *ngIf="profile?.pristine && profile?.touched"
+            ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+            <span *ngIf="profile?.hasError('required')">
+              Profile image is required. Please upload !!
+            </span>
+            <span *ngIf="profile?.errors?.['fileSizeExceeded']">
+              Please upload file size lesser than 5 MB
+            </span>
+            <span *ngIf="profile?.errors?.['fileInvalid']">
+              Please upload an image in JPG, JPEG, or PNG format
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <small class="info" *ngIf="!(profile?.pristine && profile?.touched)">
+          <i>** Max file size to upload is <b>5 MB</b></i>
+        </small>
+      </div>
+
+      <mat-form-field
+        class="w-100 fs-16"
+        [class.mb-16]="email?.invalid && email?.touched"
+        appearance="outline"
+      >
+        <mat-label>Email</mat-label>
+        <input matInput type="text" placeholder="Enter your email" formControlName="email" />
+        <mat-error class="m-t-6" *ngIf="email?.invalid && email?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="email?.hasError('required')">Please enter your email</span>
+          <span *ngIf="email?.hasError('pattern')">Please enter valid email</span>
+        </mat-error>
+      </mat-form-field>
+
+      <div
+        class="d-flex"
+        [class.m-b-30]="phoneCode?.invalid && phoneCode?.touched"
+        [class.m-b-16]="phone?.invalid && phone?.touched"
+      >
+        <div class="country-code m-r-5" style="width: 150px; display: inline-flex">
+          <mat-form-field>
+            <mat-select
+              id="city"
+              placeholder="-- Select --"
+              formControlName="phoneCode"
+              (keydown)="fetchCityOnKey($event)"
+            >
+              <ng-container *ngFor="let country of countries; let i = index">
+                <mat-option value="{{ country.code }}" (click)="fetchCity(country.name)">
+                  <img #countryFlag class="countryFlag" width="20" src="{{ country.flag }}" />
+                  {{ country.code }}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+            <mat-error class="m-t-6" *ngIf="phoneCode?.invalid && phoneCode?.touched"
+              ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+              <span *ngIf="phoneCode?.hasError('required')">Please select country code</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <input
+            matInput
+            type="text"
+            maxlength="10"
+            id="phone"
+            placeholder="Enter your phone number"
+            formControlName="phone"
+          />
+          <mat-error class="m-t-6" *ngIf="phone?.invalid && phone?.touched"
+            ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+            <span *ngIf="phone?.hasError('required')">Please enter your phone number</span>
+            <span *ngIf="phone?.hasError('pattern')">Please enter valid phone number</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field [class.m-b-20]="city?.invalid && city?.touched">
+        <mat-select id="city" placeholder="Select City" formControlName="city">
+          <ng-container *ngFor="let city of cities; let i = index">
+            <mat-option value="{{ city }}">{{ city }}</mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error class="m-t-6" *ngIf="city?.invalid && city?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="!phoneCode?.value">Please select country code first</span>
+          <span *ngIf="phoneCode?.value && city?.hasError('required')">Please select city</span>
+        </mat-error>
+      </mat-form-field>
+
+      <br />
+
+      <div class="formBtn">
+        <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+        <button
+          (click)="onSubmitDriver()"
+          type="button"
+          mat-fab
+          extended
+          color="accent"
+          aria-label="Icon button with a save icon"
+          class="mdc-fab mat-mdc-fab mat-accent mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab m-r-10"
+          mat-button-is-fab="true"
+        >
+          <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+          <div class="mdc-button__label d-flex align-items-center">
+            <i-feather name="save" class="icon-20 m-r-5"></i-feather>
+            {{ form }}
+          </div>
+          <span class="mat-mdc-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+          <span class="mat-mdc-button-ripple"></span>
+        </button>
+
+        <!-- Cancel Button -->
+
+        <button
+          (click)="toggleForm()"
+          type="button"
+          mat-fab
+          extended
+          color="warn"
+          aria-label="Icon button with a save icon"
+          class="mdc-fab mat-mdc-fab mat-warn mat-mdc-button-base mdc-fab--extended mat-mdc-extended-fab"
+          mat-button-is-fab="true"
+        >
+          <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+          <div class="mdc-button__label d-flex align-items-center">
+            <i-feather name="x" class="icon-20 m-r-5"></i-feather>
+            Cancel
+          </div>
+          <span class="mat-mdc-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+          <span class="mat-mdc-button-ripple"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<mat-card class="w-100 driverTable">
+  <mat-card-content>
+    <h2 class="m-b-20 m-l-6">Drivers</h2>
+
+    <img
+      src="../../../assets/images/nothingFound.png"
+      class="d-block m-auto"
+      width="250px"
+      *ngIf="!dataSource.length"
+    />
+    <div class="table-responsive" *ngIf="dataSource.length">
+      <table mat-table matSort [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+        <!-- Id Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell class="fw-medium" *matCellDef="let i = index">
+            {{ i + (pageIndex - 1) * 4 + 1 }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="profile">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Profile</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <img
+              src="http://localhost:3000/{{ element.profile }}"
+              alt="Driver profile"
+              width="50"
+              height="50"
+              class="rounded-circle"
+            />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('name')"
+          >
+            Name
+          </th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.name }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('email')"
+          >
+            Email
+          </th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.email }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('phone')"
+          >
+            Phone Number
+          </th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.phoneCode }} {{ element.phone }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th
+            class="nameCol"
+            mat-sort-header
+            mat-header-cell
+            *matHeaderCellDef
+            (click)="toggleSort('city')"
+          >
+            City
+          </th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.city }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Status</th>
+          <td class="nameCol" mat-cell *matCellDef="let element; let i = index">
+            <mat-slide-toggle
+              (change)="onToggle($event.checked, i)"
+              [checked]="element.isApproved"
+            ></mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th class="action" mat-header-cell *matHeaderCellDef>Action</th>
+          <td class="action" mat-cell *matCellDef="let element; let i = index">
+            <a class="icon-18">
+              <i-feather name="edit" class="edit" (click)="editDriver(i)"></i-feather>
+            </a>
+            <a class="icon-18 m-l-8">
+              <img
+                src="../../../assets/images/assignCar.png"
+                class=""
+                alt="credit-card"
+                width="22"
+                height="auto"
+                (click)="openServiceTypeDialog(i)"
+              />
+            </a>
+            <a class="icon-18">
+              <i-feather name="trash-2" class="delete" (click)="deleteDriver(i)"></i-feather>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <mat-paginator
+      class="paginator"
+      (page)="handlePage($event)"
+      [length]="totalDriverCounts"
+      [pageSize]="pageSize"
+      [disabled]="isDisable"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="true"
+      [pageIndex]="pageIndex - 1"
+      aria-label="Select page"
+      *ngIf="dataSource.length"
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

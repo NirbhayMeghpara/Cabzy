@@ -8,6 +8,7 @@ export class VehiclePriceService {
   constructor(private http: HttpClient) {}
 
   private _addVehiclePriceUrl = "http://localhost:3000/vehiclePrice/add"
+  private _getAllPricingsUrl = "http://localhost:3000/vehiclePrice/fetchAll/"
   private _getPricingsUrl = "http://localhost:3000/vehiclePrice/fetch/"
   private _editPricingUrl = "http://localhost:3000/vehiclePrice/edit"
 
@@ -36,6 +37,12 @@ export class VehiclePriceService {
     formData.append("maxSpace", String(maxSpace))
 
     return this.http.post(this._addVehiclePriceUrl, formData)
+  }
+
+  getAllPricing(city: string) {
+    city = encodeURIComponent(city)
+    const encodedURL = `${this._getAllPricingsUrl}${city}`
+    return this.http.get(encodedURL)
   }
 
   getPricing(city: string, page: number) {

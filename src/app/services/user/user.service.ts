@@ -15,6 +15,7 @@ export class UserService {
   private _addCardUrl = "http://localhost:3000/card/add/"
   private _fetchCardsUrl = "http://localhost:3000/card/"
   private _setDefaultCardsUrl = "http://localhost:3000/card/changeDefault"
+  private _deleteCardUrl = "http://localhost:3000/card/delete"
 
   addUser(name: string, profile: any, email: string, phoneCode: string, phone: number) {
     const formData = new FormData()
@@ -83,5 +84,13 @@ export class UserService {
     formData.append("userID", userID)
 
     return this.http.post(this._setDefaultCardsUrl, formData)
+  }
+
+  deleteCard(cardID: string, userID: string) {
+    const formData = new FormData()
+    formData.append("cardID", cardID)
+    formData.append("userID", userID)
+
+    return this.http.post(this._deleteCardUrl, formData)
   }
 }
