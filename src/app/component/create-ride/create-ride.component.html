@@ -1,1 +1,199 @@
-<p>create-ride works!</p>
+<div class="wrapper d-flex w-100">
+  <div class="inputContainer col-sm-5 m-b-48">
+    <mat-card>
+      <mat-card-content>
+        <h2 class="m-b-24 f-w-500">Create Ride</h2>
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true" disabled>
+            <mat-expansion-panel-header>
+              <mat-panel-title><b class="f-s-15">Select User</b></mat-panel-title>
+              <mat-panel-description>
+                <i-feather name="user" class="icon-20 submit-icon"></i-feather>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <form [formGroup]="userDetailsForm">
+              <div
+                class="userInput d-flex m-b-6"
+                [class.m-b-40]="phoneCode?.invalid && phoneCode?.touched"
+                [class.m-b-40]="phone?.invalid && phone?.touched"
+              >
+                <div class="country-code m-r-5" style="width: 145px; display: inline-flex">
+                  <mat-form-field>
+                    <mat-select id="city" placeholder="-- Select --" formControlName="phoneCode">
+                      <ng-container *ngFor="let country of countries; let i = index">
+                        <mat-option value="{{ country.code }}">
+                          <img #countryFlag class="countryFlag" width="20" src="{{ country.flag }}" />
+                          {{ country.code }}
+                        </mat-option>
+                      </ng-container>
+                    </mat-select>
+                    <mat-error class="m-t-6" *ngIf="phoneCode?.invalid && phoneCode?.touched"
+                      ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                      <span *ngIf="phoneCode?.hasError('required')">Please select country code</span>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    maxlength="10"
+                    id="phone"
+                    placeholder="Enter your phone number"
+                    formControlName="phone"
+                  />
+                  <mat-error class="m-t-6" *ngIf="phone?.invalid && phone?.touched"
+                    ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                    <span *ngIf="phone?.hasError('required')">Please enter your phone number</span>
+                    <span *ngIf="phone?.hasError('pattern')">Please enter valid phone number</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="formBtn">
+                <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+
+                <button
+                  type="button"
+                  mat-mini-fab
+                  color="accent"
+                  class="m-r-12"
+                  aria-label="Icon button with a user icon"
+                  (click)="getUser()"
+                >
+                  <i-feather name="user" class="icon-20 submit-icon"></i-feather>
+                </button>
+
+                <!-- Cancel Button -->
+
+                <button
+                  type="button"
+                  mat-mini-fab
+                  color="warn"
+                  aria-label="Icon button with a Cancel icon"
+                  (click)="resetForm()"
+                >
+                  <i-feather name="x" class="icon-20"></i-feather>
+                </button>
+              </div>
+            </form>
+
+            <mat-card class="m-t-30 m-b-0 mat-mdc-card mdc-card cardWithShadow" *ngIf="user">
+              <mat-card-content class="mat-mdc-card-content d-flex userCard">
+                <div class="m-r-24">
+                  <img
+                    alt="profile"
+                    class="rounded-circle m-b-6"
+                    src="http://localhost:3000/{{ user.profile }}"
+                  />
+                </div>
+                <div class="user-details">
+                  <mat-card-title class="mat-mdc-card-title">{{ user.name }}</mat-card-title>
+                  <p class="m-t-10 m-b-4"><b>Email : </b>{{ user.email }}</p>
+                  <p><b>Phone : </b>{{ user.phoneCode }} {{ user.phone }}</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-action-row>
+              <button mat-flat-button color="primary" [disabled]="!user" (click)="nextStep()">
+                Next
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true" disabled>
+            <mat-expansion-panel-header>
+              <mat-panel-title><b class="f-s-15">Request a Ride</b></mat-panel-title>
+              <mat-panel-description>
+                <i-feather name="map-pin" class="icon-20 submit-icon"></i-feather>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <form [formGroup]="rideDetailsForm">
+              <mat-form-field
+                class="w-100 fs-16"
+                [class.mb-16]="pickUpLocation?.invalid && pickUpLocation?.touched"
+                appearance="outline"
+              >
+                <mat-label>Pick Up</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Pick up location"
+                  formControlName="pickUpLocation"
+                  #pickUp
+                />
+                <mat-error class="m-t-6" *ngIf="pickUpLocation?.invalid && pickUpLocation?.touched"
+                  ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                  <span *ngIf="pickUpLocation?.hasError('required')">
+                    Please enter your pick up location
+                  </span>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field
+                class="w-100 fs-16"
+                [class.mb-16]="dropOffLocation?.invalid && dropOffLocation?.touched"
+                appearance="outline"
+              >
+                <mat-label>Drop Off</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Drop off location"
+                  formControlName="dropOffLocation"
+                  #dropOff
+                />
+                <mat-error class="m-t-6" *ngIf="dropOffLocation?.invalid && dropOffLocation?.touched"
+                  ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                  <span *ngIf="dropOffLocation?.hasError('required')">
+                    Please enter your drop off location
+                  </span>
+                </mat-error>
+              </mat-form-field>
+            </form>
+            <mat-action-row>
+              <button mat-flat-button color="warn" (click)="prevStep()">Previous</button>
+              <button mat-flat-button color="primary" (click)="nextStep()">Next</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true" disabled>
+            <mat-expansion-panel-header>
+              <mat-panel-title><b class="f-s-15">Book a Ride</b></mat-panel-title>
+              <mat-panel-description>
+                <i-feather name="calendar" class="icon-20 submit-icon"></i-feather>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <form [formGroup]="rideDetailsForm">
+              <div class="row">
+                <div class="col-4">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Date</mat-label>
+                    <input
+                      matInput
+                      placeholder="Date"
+                      [matDatepicker]="picker"
+                      (focus)="picker.open()"
+                      readonly
+                      [(ngModel)]="selectedDate"
+                      formControlName="rideDate"
+                    />
+                  </mat-form-field>
+                  <mat-datepicker #picker></mat-datepicker>
+                </div>
+              </div>
+            </form>
+            <mat-action-row>
+              <button mat-flat-button color="warn" (click)="prevStep()">Previous</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="map-container">
+    <div class="map" id="map"></div>
+  </div>
+</div>

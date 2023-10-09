@@ -9,6 +9,7 @@ export class UserService {
 
   private _addUserUrl = "http://localhost:3000/user/add"
   private _getUsersUrl = "http://localhost:3000/user/"
+  private _getUserByPhoneUrl = "http://localhost:3000/user/phone"
   private _editUserUrl = "http://localhost:3000/user/edit/"
   private _deleteUserUrl = "http://localhost:3000/user/delete/"
   private _stripeIntentUrl = "http://localhost:3000/user/createStripeIntent"
@@ -37,6 +38,14 @@ export class UserService {
     sortOrder && url.searchParams.set("sortOrder", sortOrder)
 
     return this.http.get(url.toString())
+  }
+
+  getUserByPhone(phoneCode: string, phone: string) {
+    const formData = new FormData()
+    formData.append("phoneCode", phoneCode)
+    formData.append("phone", phone)
+
+    return this.http.post(this._getUserByPhoneUrl, formData)
   }
 
   editUser(id: string, name: string, profile: any, email: string, phoneCode: string, phone: number) {

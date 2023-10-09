@@ -19,7 +19,7 @@ export interface Driver {
   isApproved: boolean
 }
 
-interface Countries {
+export interface CountryCode {
   name: string
   flag: string
   code: string
@@ -37,7 +37,7 @@ export class DriverListComponent implements OnInit {
 
   selectedCountry: string | null = null
   selectedFile: any = null
-  countries!: Countries[]
+  countries!: CountryCode[]
   cities!: string[]
   displayedColumns: string[] = ["id", "profile", "name", "email", "phone", "city", "status", "action"]
 
