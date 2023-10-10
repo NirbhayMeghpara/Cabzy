@@ -1,1 +1,47 @@
-<p>settings works!</p>
+<div class="card form-card">
+  <div class="card-body">
+    <h2 class="mb-12">Setting</h2>
+    <hr class="mb-32" />
+    <form [formGroup]="settingsForm" autocomplete="off" enctype="multipart/form-data">
+      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Crone Time (In seconds)</mat-label>
+      <mat-form-field [class.mb-16]="croneTime?.invalid && croneTime?.touched">
+        <mat-select placeholder="Select Time" formControlName="croneTime">
+          <ng-container *ngFor="let time of times; let i = index">
+            <mat-option value="{{ time }}" (click)="onSelectTime(i)">{{ time }}</mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error class="m-t-6" *ngIf="croneTime?.invalid && croneTime?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="croneTime?.hasError('required')">Please select crone time</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Number of stops</mat-label>
+      <mat-form-field [class.mb-16]="stops?.invalid && stops?.touched">
+        <mat-select placeholder="Select stops" formControlName="stops">
+          <ng-container *ngFor="let stop of allowedStops; let i = index">
+            <mat-option value="{{ stop }}" (click)="onSelectStop(i)">{{ stop }}</mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error class="m-t-6" *ngIf="stops?.invalid && stops?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="stops?.hasError('required')">Please select maximum allowed stops</span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="formBtn m-t-24">
+        <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
+        <button type="button" extended mat-fab color="accent" (click)="onSubmitSettings()">
+          <span class="mat-mdc-button-persistent-ripple mdc-fab__ripple"></span>
+          <div class="mdc-button__label d-flex align-items-center">
+            <i-feather name="save" class="icon-20 m-r-5"></i-feather>
+            Save
+          </div>
+          <span class="mat-mdc-focus-indicator"></span>
+          <span class="mat-mdc-button-touch-target"></span>
+          <span class="mat-mdc-button-ripple"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -8,7 +8,7 @@
             <mat-expansion-panel-header>
               <mat-panel-title><b class="f-s-15">Select User</b></mat-panel-title>
               <mat-panel-description>
-                <i-feather name="user" class="icon-20 submit-icon"></i-feather>
+                <i-feather name="user" class="icon-20"></i-feather>
               </mat-panel-description>
             </mat-expansion-panel-header>
             <form [formGroup]="userDetailsForm">
@@ -61,7 +61,7 @@
                   aria-label="Icon button with a user icon"
                   (click)="getUser()"
                 >
-                  <i-feather name="user" class="icon-20 submit-icon"></i-feather>
+                  <i-feather name="user" class="icon-20"></i-feather>
                 </button>
 
                 <!-- Cancel Button -->
@@ -96,7 +96,13 @@
             </mat-card>
 
             <mat-action-row>
-              <button mat-flat-button color="primary" [disabled]="!user" (click)="nextStep()">
+              <button
+                type="button"
+                mat-flat-button
+                color="primary"
+                [disabled]="!user"
+                (click)="nextStep()"
+              >
                 Next
               </button>
             </mat-action-row>
@@ -106,7 +112,7 @@
             <mat-expansion-panel-header>
               <mat-panel-title><b class="f-s-15">Request a Ride</b></mat-panel-title>
               <mat-panel-description>
-                <i-feather name="map-pin" class="icon-20 submit-icon"></i-feather>
+                <i-feather name="map-pin" class="icon-20"></i-feather>
               </mat-panel-description>
             </mat-expansion-panel-header>
             <form [formGroup]="rideDetailsForm">
@@ -131,6 +137,100 @@
                 </mat-error>
               </mat-form-field>
 
+              <!-- <div formArrayName="stops">
+                <div *ngFor="let stop of stops.controls; let i = index" class="stopContainer">
+                  <mat-form-field
+                    class="w-100 fs-16"
+                    [class.mb-16]="stop?.invalid && stop?.touched"
+                    appearance="outline"
+                  >
+                    <mat-label>Stops</mat-label>
+                    <input matInput type="text" placeholder="Add stop location" #stopInput />
+                    <mat-error class="m-t-6" *ngIf="stop?.invalid && stop?.touched"
+                      ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                      <span *ngIf="stop?.hasError('required')"> Please enter your stop location </span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <i-feather
+                    name="minus-circle"
+                    class="icon-20 m-l-16 m-b-18"
+                    (click)="removeStopInput(i)"
+                  >
+                  </i-feather>
+                </div>
+              </div> -->
+
+              <div>
+                <div *ngFor="let stop of stopList; let i = index" class="stopContainer">
+                  <mat-form-field
+                    class="w-100 fs-16"
+                    [class.mb-16]="
+                      rideDetailsForm.get(stop)?.invalid && rideDetailsForm.get(stop)?.touched
+                    "
+                    appearance="outline"
+                  >
+                    <mat-label>Stops</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      id="{{ stop }}"
+                      placeholder="Add stop location"
+                      formControlName="{{ stop }}"
+                      #stopInput
+                    />
+                    <mat-error
+                      class="m-t-6"
+                      *ngIf="rideDetailsForm.get(stop)?.invalid && rideDetailsForm.get(stop)?.touched"
+                      ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                      <span *ngIf="rideDetailsForm.get(stop)?.hasError('required')">
+                        Please enter your stop location
+                      </span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <i-feather
+                    name="minus-circle"
+                    class="icon-20 m-l-16 m-b-18"
+                    (click)="removeStopInput(stop)"
+                  >
+                  </i-feather>
+                </div>
+              </div>
+
+              <i-feather
+                name="plus-circle"
+                class="icon-20 m-b-18"
+                (click)="addStopInput()"
+                *ngIf="currentStops < maxStops"
+              ></i-feather>
+
+              <!-- <div class="stopContainer" *ngIf="showStopInput">
+                <mat-form-field
+                  class="w-100 fs-16"
+                  [class.mb-16]="stopLocation?.invalid && stopLocation?.touched"
+                  appearance="outline"
+                >
+                  <mat-label>Stops</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Add stop location"
+                    formControlName="stopLocation"
+                    #stopInput
+                  />
+                  <mat-error class="m-t-6" *ngIf="stopLocation?.invalid && stopLocation?.touched"
+                    ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                    <span *ngIf="stopLocation?.hasError('required')">
+                      Please enter your stop location
+                    </span>
+                  </mat-error>
+                </mat-form-field>
+
+                <i-feather name="minus-circle" class="icon-20 m-l-16 m-b-18" (click)="removeStopInput()">
+                </i-feather>
+              </div> -->
+
               <mat-form-field
                 class="w-100 fs-16"
                 [class.mb-16]="dropOffLocation?.invalid && dropOffLocation?.touched"
@@ -151,10 +251,33 @@
                   </span>
                 </mat-error>
               </mat-form-field>
+
+              <div class="mapControlBtn">
+                <button
+                  type="button"
+                  class="m-t-12 m-r-10"
+                  mat-flat-button
+                  color="accent"
+                  (click)="addStop()"
+                  *ngIf="showAddStopBtn"
+                >
+                  Add this stop
+                </button>
+
+                <button
+                  type="button"
+                  class="m-t-12"
+                  mat-flat-button
+                  color="accent"
+                  (click)="calculateRoute()"
+                >
+                  Show Ride !!
+                </button>
+              </div>
             </form>
             <mat-action-row>
-              <button mat-flat-button color="warn" (click)="prevStep()">Previous</button>
-              <button mat-flat-button color="primary" (click)="nextStep()">Next</button>
+              <button type="button" mat-flat-button color="warn" (click)="prevStep()">Previous</button>
+              <button type="button" mat-flat-button color="primary" (click)="nextStep()">Next</button>
             </mat-action-row>
           </mat-expansion-panel>
 
@@ -162,12 +285,12 @@
             <mat-expansion-panel-header>
               <mat-panel-title><b class="f-s-15">Book a Ride</b></mat-panel-title>
               <mat-panel-description>
-                <i-feather name="calendar" class="icon-20 submit-icon"></i-feather>
+                <i-feather name="calendar" class="icon-20"></i-feather>
               </mat-panel-description>
             </mat-expansion-panel-header>
             <form [formGroup]="rideDetailsForm">
-              <div class="row">
-                <div class="col-4">
+              <div class="row m-t-24">
+                <div class="col-lg-5">
                   <mat-form-field appearance="outline">
                     <mat-label>Date</mat-label>
                     <input
@@ -182,10 +305,23 @@
                   </mat-form-field>
                   <mat-datepicker #picker></mat-datepicker>
                 </div>
+                <div class="col-lg-5">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Time</mat-label>
+                    <input
+                      matInput
+                      placeholder="Select Time"
+                      [ngxTimepicker]="timePicker"
+                      readonly
+                      formControlName="rideTime"
+                    />
+                  </mat-form-field>
+                  <ngx-material-timepicker #timePicker></ngx-material-timepicker>
+                </div>
               </div>
             </form>
             <mat-action-row>
-              <button mat-flat-button color="warn" (click)="prevStep()">Previous</button>
+              <button type="button" mat-flat-button color="warn" (click)="prevStep()">Previous</button>
             </mat-action-row>
           </mat-expansion-panel>
         </mat-accordion>

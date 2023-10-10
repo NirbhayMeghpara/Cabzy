@@ -57,6 +57,12 @@ mat-panel-description{
 .inputContainer mat-card {
   width: 100%;
 }
+
+.stopContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
   
 .map-container{
   width: 60%;

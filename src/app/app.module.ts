@@ -33,6 +33,7 @@ import { CardComponent } from "./component/users/card/card.component"
 import { DeleteComponent } from "./component/users/delete/delete.component"
 import { DeleteDriverComponent } from "./component/driver-list/delete-driver/delete-driver.component"
 import { ServiceTypeComponent } from "./component/driver-list/service-type/service-type.component"
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker"
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { ServiceTypeComponent } from "./component/driver-list/service-type/servi
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxMaterialTimepickerModule,
     HttpClientModule,
     NgIdleModule.forRoot(),
     ToastrModule.forRoot({
