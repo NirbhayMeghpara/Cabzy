@@ -1,6 +1,6 @@
 import { UserService } from "src/app/services/user/user.service"
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core"
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { CityService } from "src/app/services/city/city.service"
 import { CountryService } from "src/app/services/country/country.service"
 import { DriverService } from "src/app/services/driver/driver.service"
@@ -8,6 +8,7 @@ import { ToastService } from "src/app/services/toast.service"
 import { CountryCode } from "../driver-list/driver-list.component"
 import { User } from "../users/users.component"
 import { SettingService } from "src/app/services/setting/setting.service"
+import { DatePipe } from "@angular/common"
 
 @Component({
   selector: "app-create-ride",
@@ -17,10 +18,10 @@ import { SettingService } from "src/app/services/setting/setting.service"
 export class CreateRideComponent implements OnInit {
   countries!: CountryCode[]
   user!: User | undefined
+  vehicles: string[] = ["Suv", "Sedan"]
   step = 0
-  showStopInput: boolean = false
-  showAddStopBtn: boolean = false
   stopList: string[] = []
+  stopLocation: { lat: number; lng: number }[] = []
 
   userID!: string | undefined
   selectedDate: Date = new Date()
@@ -28,9 +29,14 @@ export class CreateRideComponent implements OnInit {
   maxStops!: number
   currentStops = 0
 
+  basePrice!: number
+  basePriceDistance!: number
+  unitDistancePrice!: number
+  unitTimePrice!: number
+  totalFarePrice!: number
+
   @ViewChild("pickUp") pickUpInput!: ElementRef
   @ViewChild("dropOff") dropOffInput!: ElementRef
-  @ViewChild("stopInput") stopInput!: ElementRef
 
   constructor(
     private countryService: CountryService,
@@ -72,11 +78,26 @@ export class CreateRideComponent implements OnInit {
 
   nextStep() {
     this.step++
-    if (this.step === 1) this.userID = this.user?._id
+    if (this.step === 1) {
+      this.userID = this.user?._id
+    }
+    if (this.step === 2) {
+      // this.rideBookForm.reset()
+      // this.rideBookForm.updateValueAndValidity()
+    }
   }
 
   prevStep() {
     this.step--
+    if (this.step === 1) {
+      this.rideDetailsForm.reset()
+      this.rideDetailsForm.updateValueAndValidity()
+      this.directionsRenderer.setMap(null)
+      this.map.setCenter(this.myCoordinate)
+      this.map.setZoom(10)
+      this.journeyDistance = 0
+      this.journeyTime = 0
+    }
   }
 
   userDetailsForm: FormGroup = this.fb.group({
@@ -87,10 +108,12 @@ export class CreateRideComponent implements OnInit {
   rideDetailsForm: FormGroup = this.fb.group({
     pickUpLocation: ["", [Validators.required]],
     dropOffLocation: ["", [Validators.required]],
-    // stopLocation: ["", [Validators.required]],
-    // rideDate: ["", [Validators.required]],
-    // rideTime: ["", [Validators.required]],
-    // stops: this.fb.array([]),
+  })
+
+  rideBookForm: FormGroup = this.fb.group({
+    vehicleType: ["", [Validators.required]],
+    rideDate: [Date.now(), [Validators.required]],
+    rideTime: ["", [Validators.required]],
   })
 
   getUser() {
@@ -130,8 +153,8 @@ export class CreateRideComponent implements OnInit {
     this.stopList.push(`stop${index}`)
     this.cdRef.detectChanges()
 
-    console.log(`stop${index}`)
-    console.log(this.stopList)
+    // console.log(`stop${index}`)
+    // console.log(this.stopList)
     const autocomplete = new google.maps.places.Autocomplete(
       document.getElementById(`stop${index}`) as HTMLInputElement
     )
@@ -140,6 +163,11 @@ export class CreateRideComponent implements OnInit {
       const place = autocomplete.getPlace()
       this.rideDetailsForm.get(`stop${index}`)?.setValue(place.formatted_address)
       if (place.geometry && place.geometry.location) {
+        this.stopLocation.push({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        })
+
         this.waypoints.push({
           location: place.geometry.location,
           stopover: true,
@@ -147,6 +175,7 @@ export class CreateRideComponent implements OnInit {
         this.toast.info(`${this.currentStops} stop added.`, "Info")
       }
     })
+    this.calculateRoute()
     this.currentStops++
   }
 
@@ -157,11 +186,12 @@ export class CreateRideComponent implements OnInit {
       this.rideDetailsForm.removeControl(stop)
       this.stopList.splice(i, 1)
       this.waypoints.splice(i, 1)
+      this.stopLocation.splice(i, 1)
       this.currentStops--
       this.rideDetailsForm.updateValueAndValidity()
     }
-    console.log(stop)
-    console.log(this.stopList)
+    // console.log(stop)
+    // console.log(this.stopList)
   }
 
   // addStopInput() {
@@ -198,6 +228,15 @@ export class CreateRideComponent implements OnInit {
     this.user = undefined
   }
 
+  calculateRideFare(distance: number, time: number) {
+    if (distance > this.basePriceDistance) {
+      this.totalFarePrice =
+        this.basePrice +
+        (distance - this.basePriceDistance) * this.unitDistancePrice +
+        time * this.unitTimePrice
+    }
+  }
+
   // Google Map
 
   map!: google.maps.Map
@@ -208,14 +247,17 @@ export class CreateRideComponent implements OnInit {
   selectedDropOffPlace!: google.maps.places.PlaceResult
   directionsService!: google.maps.DirectionsService
   directionsRenderer!: google.maps.DirectionsRenderer
+  myCoordinate!: { lat: number; lng: number }
 
   waypoints: google.maps.DirectionsWaypoint[] = []
+  journeyDistance: number = 0
+  journeyTime: number = 0
 
   private async initMap() {
     navigator.geolocation.getCurrentPosition((position) => {
-      const myCoordinate = { lat: position.coords.latitude, lng: position.coords.longitude }
+      this.myCoordinate = { lat: position.coords.latitude, lng: position.coords.longitude }
       const mapOptions = {
-        center: myCoordinate,
+        center: this.myCoordinate,
         zoom: 10,
         mapTypeId: "roadmap",
       }
@@ -228,31 +270,6 @@ export class CreateRideComponent implements OnInit {
       this.autocompletePickUp.addListener("place_changed", () => {
         this.selectedPickUpPlace = this.autocompletePickUp.getPlace()
         this.pickUpLocation?.setValue(this.selectedPickUpPlace.formatted_address)
-
-        if (this.selectedPickUpPlace.address_components) {
-          // Access the address components
-          const addressComponent = this.selectedPickUpPlace.address_components
-
-          let city, state, country
-
-          // Loop through address components
-          for (let i = 0; i < addressComponent.length; i++) {
-            const types = addressComponent[i].types
-
-            if (types.includes("locality")) {
-              city = addressComponent[i].long_name
-            } else if (types.includes("administrative_area_level_1")) {
-              state = addressComponent[i].long_name
-            } else if (types.includes("country")) {
-              country = addressComponent[i].long_name
-            }
-          }
-
-          const location = `${city}, ${state}, ${country}`
-          console.log(location)
-        } else {
-          console.log("No results found")
-        }
 
         this.onSelectPickUp(this.selectedPickUpPlace)
       })
@@ -273,21 +290,6 @@ export class CreateRideComponent implements OnInit {
 
   onSelectPickUp(location: google.maps.places.PlaceResult) {
     // const
-  }
-
-  addStop() {
-    if (this.currentStops < this.maxStops) {
-      const place = this.autocompleteStop.getPlace()
-      if (place.geometry && place.geometry.location) {
-        this.waypoints.push({
-          location: place.geometry.location,
-          stopover: true,
-        })
-        this.currentStops++
-        this.calculateRoute()
-        this.toast.info(`${this.currentStops} stop added.`, "Info")
-      }
-    }
   }
 
   calculateRoute() {
@@ -315,32 +317,19 @@ export class CreateRideComponent implements OnInit {
           this.directionsRenderer.setDirections(response)
           if (response) {
             // Calculating data related to route
-            let distance: number = 0
-            let time: number = 0
 
-            console.log(response)
             const route = response.routes[0]
             route.legs.forEach((leg) => {
               if (leg.distance?.value) {
-                distance = distance + leg?.distance?.value
+                this.journeyDistance = this.journeyDistance + leg?.distance?.value
               }
               if (leg.duration?.value) {
-                time = time + leg?.duration?.value
+                this.journeyTime = this.journeyTime + leg?.duration?.value
               }
             })
-            // const distance = route?.legs[0]?.distance?.text
-            // const time = route?.legs[0]?.duration?.text
-            distance = distance / 1000
-            time = parseFloat((time / 60).toFixed(0))
-
-            console.log("Km", distance)
-            console.log("Min", time)
+            this.journeyDistance = parseFloat((this.journeyDistance / 1000).toFixed(2))
+            this.journeyTime = parseFloat((this.journeyTime / 60).toFixed(0))
           }
-
-          // document.getElementById('distance').innerText = `Distance: ${distance}`;
-          // document.getElementById('time').innerText = `Time: ${time}`;
-
-          // document.getElementById('meterBox').style.display = 'flex'
         } else if (status === "NOT_FOUND") {
           this.toast.error("One or more locations could not be found.", "Error")
         } else if (status === "ZERO_RESULTS") {
@@ -355,22 +344,19 @@ export class CreateRideComponent implements OnInit {
     }
   }
 
+  get phoneCode() {
+    return this.userDetailsForm.get("phoneCode")
+  }
+  get phone() {
+    return this.userDetailsForm.get("phone")
+  }
   get pickUpLocation() {
     return this.rideDetailsForm.get("pickUpLocation")
   }
   get dropOffLocation() {
     return this.rideDetailsForm.get("dropOffLocation")
   }
-  get stops() {
-    return this.rideDetailsForm.get("stops") as FormArray
-  }
-  get stopLocation() {
-    return this.rideDetailsForm.get("stopLocation")
-  }
-  get phoneCode() {
-    return this.userDetailsForm.get("phoneCode")
-  }
-  get phone() {
-    return this.userDetailsForm.get("phone")
+  get vehicleType() {
+    return this.rideBookForm.get("vehicleType")
   }
 }
