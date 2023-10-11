@@ -197,7 +197,7 @@ export class CityComponent implements OnInit {
     this.cityInputTag?.disable()
 
     this.currentPolygon = new google.maps.Polygon({
-      paths: JSON.parse(`${city.coordinates[0]}`),
+      paths: city.coordinates,
     })
 
     const path = this.currentPolygon.getPath()
@@ -223,7 +223,7 @@ export class CityComponent implements OnInit {
   }
 
   displayCityPolygons(cities: City[]) {
-    this.polygonPaths = cities.map((city: any) => JSON.parse(city.coordinates[0]))
+    this.polygonPaths = cities.map((city: any) => city.coordinates)
 
     for (let i = 0; i < this.polygonPaths.length; i++) {
       const polygon = new google.maps.Polygon({

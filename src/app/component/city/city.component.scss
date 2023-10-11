@@ -135,12 +135,27 @@ button[type="button"] {
   transform: scale(0.95);
 }
 
+@media screen and (max-width: 1300px) {
+  .wrapper{
+    height: 100vh;
+  }
+
+  .inputContainer{ 
+    height: 90vh;
+  }
+
+  .map-container{ 
+    height: 80vh;
+  }
+}  
+
 @media screen and (max-width: 1080px) {
 
   .wrapper{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100%;
   }
 
   .inputContainer{

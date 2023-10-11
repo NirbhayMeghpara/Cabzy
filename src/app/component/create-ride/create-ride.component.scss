@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Patrick+Hand&display=swap');
 
 .icon-20{
   width: 20px;
@@ -75,9 +76,73 @@ mat-panel-description{
   width: 100%;
 }
 
+.showRide{
+  color: white;
+}
+
+/* Estimated Meter */
+
+.box {
+  display: flex;
+  color: #414141;
+  margin: 0px;
+  padding: 12px 20px 12px 20px;
+  flex-direction: column;
+  position: relative;
+  font-size: 1.25rem;
+  border: 2px solid #E2E2E2;
+  border-radius: 10px;
+}
+
+.box > h4 {
+  font-size: 25px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  font-family: "Bubblegum Sans", sans-serif !important;
+}
+
+.box .d-flex{
+  flex-wrap: wrap;
+}
+
+.box .distance img,
+.box .time img {
+  display: inline;
+  width: 25px;
+  height: 25px;
+  margin-right: 7px;
+}
+
+.box .time img {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+}
+
+.box .distance,
+.box .time {
+  display: flex;
+  align-items: center;
+}
+
+.box .distance,
+.box .time,
+.box .distance span,
+.box .time span {
+  text-wrap: nowrap;
+  letter-spacing: 1px;
+  font-size: 19px;
+  font-family: 'Patrick Hand', cursive !important;
+}
+
+#distance, #time {
+  margin-left: 3px;
+}
+
 @media screen and (max-width: 1380px) {
   .userCard{
     flex-direction: column;
+    flex-wrap: wrap;
   }
 }
 
@@ -114,5 +179,11 @@ mat-panel-description{
   .map-container {
     width: 90%;
     height: 75vh
+  }
+}
+
+@media screen and (max-width: 555px) {
+  .userCard{
+    flex-direction: column;
   }
 }
