@@ -24,7 +24,6 @@ export class CreateRideComponent implements OnInit {
   stopLocation: { lat: number; lng: number }[] = []
 
   userID!: string | undefined
-  selectedDate: Date = new Date()
 
   maxStops!: number
   currentStops = 0
@@ -82,8 +81,9 @@ export class CreateRideComponent implements OnInit {
       this.userID = this.user?._id
     }
     if (this.step === 2) {
-      // this.rideBookForm.reset()
-      // this.rideBookForm.updateValueAndValidity()
+      this.rideBookForm.reset()
+      this.rideBookForm.updateValueAndValidity()
+      this.rideDate?.setValue("123")
     }
   }
 
@@ -175,7 +175,6 @@ export class CreateRideComponent implements OnInit {
         this.toast.info(`${this.currentStops} stop added.`, "Info")
       }
     })
-    this.calculateRoute()
     this.currentStops++
   }
 
@@ -358,5 +357,8 @@ export class CreateRideComponent implements OnInit {
   }
   get vehicleType() {
     return this.rideBookForm.get("vehicleType")
+  }
+  get rideDate() {
+    return this.rideBookForm.get("rideDate")
   }
 }
