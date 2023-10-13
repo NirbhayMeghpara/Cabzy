@@ -60,7 +60,6 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.markAllAsTouched()
       return
     }
-    console.log(this.submitFlag)
 
     if (!this.submitFlag) {
       this.toast.info("This settings is already exists", "Info")

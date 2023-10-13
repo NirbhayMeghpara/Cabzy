@@ -13,6 +13,7 @@ export class CityService {
   private _getAllCitiesUrl = "http://localhost:3000/city/fetchAll/"
   private _getCitiesUrl = "http://localhost:3000/city/fetch/"
   private _editCityUrl = "http://localhost:3000/city/edit"
+  private _findCityUrl = "http://localhost:3000/city/find"
 
   addCity(country: string, location: string, coordinates: Coordinates) {
     const formData = new FormData()
@@ -41,5 +42,13 @@ export class CityService {
     formData.append("coordinates", JSON.stringify(coordinates))
 
     return this.http.patch(this._editCityUrl, formData)
+  }
+
+  findCity(lat: number, lng: number) {
+    const formData = new FormData()
+    formData.append("lat", String(lat))
+    formData.append("lng", String(lng))
+
+    return this.http.post(this._findCityUrl, formData)
   }
 }
