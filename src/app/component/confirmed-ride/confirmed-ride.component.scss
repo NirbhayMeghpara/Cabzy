@@ -1,0 +1,144 @@
+.btn-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 70px;
+}
+
+table{
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+.icon-18{
+  height: fit-content;
+  display: inline-flex;
+  margin: 6px;
+  cursor: pointer;
+}
+
+.action, .status{
+  text-align: center;
+}
+
+.action > .d-flex {
+  align-items: center;
+}
+
+.cancel{
+  width: 28px;
+  height: 28px;
+  color: #cf352a;
+}
+
+// Search box
+
+.search-box{
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+.input-search{
+  height: 50px;
+  width: 300px;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid rgba(0,0,0,.5);
+  background-color: transparent;
+  padding: 10px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  transition: all .5s ease-in-out;
+  color: rgba(0,0,0,.8);
+}
+.input-search::placeholder{
+  color:rgba(0, 0,0,.5);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  font-weight: 100;
+}
+.btn-search{
+  padding: 5px;
+  margin: 10px;
+  border-style: none;
+  font-size: 20px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  border-radius: 50%;
+  position: absolute;
+  right: 0px;
+  color: rgba(0,0,0,.7);
+  background-color:transparent;
+  pointer-events: painted;  
+}
+
+td span{
+  white-space: nowrap;
+}
+
+.mat-body-2 {
+  font-size: 12px;
+  line-height: 22px;
+  letter-spacing: normal;
+  margin: 0;
+  color: #2a3547;
+}
+
+.rounded-pill {
+  border-radius: 25px!important
+}
+
+
+.bg-light-error {
+  background-color: #f9e7eb!important;
+}
+
+.text-light-error {
+  color: #f9e7eb!important
+}
+
+.bg-light-accent {
+  background-color: #e5fafb!important
+}
+
+.text-light-accent {
+  color: #e5fafb!important
+}
+
+.bg-light-success {
+  background-color: #d6ffe9!important;
+}
+
+.text-light-success {
+  color: #ebfaf2!important
+}
+
+.bg-light-warning {
+  background-color: #fff8ec!important
+}
+
+.text-light-warning {
+  color: #fff8ec!important
+}
+
+.bg-light-primary {
+  background-color: #ffe5dc!important
+}
+
+.text-light-primary {
+  color: #ffe5dc!important
+}
+
+
+
+@media screen and (max-width: 860px) {
+  .btn-wrapper {
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  .search-box{
+    margin-bottom: 35px;
+  }
+}
