@@ -156,7 +156,7 @@ export class FullComponent implements OnInit {
         this.router.navigate(["/login"])
       },
       error: (error) => {
-        this.toast.error(error.error.error, "Error Occured")
+        this.toast.error(error.error.error, "Error")
       },
     })
   }

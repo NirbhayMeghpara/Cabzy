@@ -81,7 +81,7 @@ export class CountryComponent implements OnInit {
         this.toast.success(response.msg, "Added")
         this.getCountry()
       },
-      error: (error) => this.toast.error(error.error.error, "Error Occured"),
+      error: (error) => this.toast.error(error.error.error, "Error"),
     })
     this.toggleForm()
     this.countryForm.reset()

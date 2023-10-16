@@ -207,6 +207,13 @@ mat-panel-description {
     width: 100% !important;
   }
 }
+@media screen and (max-width: 1200px) {
+  .scheduleRide{
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+}
 
 @media screen and (max-width: 1080px) {
   .wrapper {

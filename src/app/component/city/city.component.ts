@@ -145,7 +145,7 @@ export class CityComponent implements OnInit {
         this.fetchCityData(this.selectedCountry.name, this.pageIndex)
         this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
       },
-      error: (error) => this.toast.error(error.error.error, "Error Occured"),
+      error: (error) => this.toast.error(error.error.error, "Error"),
     })
   }
 
@@ -158,7 +158,7 @@ export class CityComponent implements OnInit {
         this.fetchCityData(this.selectedCountry.name, this.pageIndex)
         this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
       },
-      error: (error) => this.toast.error(error.error.error, "Error Occured"),
+      error: (error) => this.toast.error(error.error.error, "Error"),
     })
   }
 

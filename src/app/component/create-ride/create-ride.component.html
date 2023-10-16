@@ -109,7 +109,7 @@
 
           <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true" disabled>
             <mat-expansion-panel-header>
-              <mat-panel-title><b class="f-s-15">Request a Ride</b></mat-panel-title>
+              <mat-panel-title><b class="f-s-15">Select Location</b></mat-panel-title>
               <mat-panel-description>
                 <i-feather name="map-pin" class="icon-20"></i-feather>
               </mat-panel-description>
@@ -285,14 +285,38 @@
                 class="m-b-12"
                 role="radiogroup"
                 aria-label="Select an option"
+                formControlName="paymentType"
+                [class.m-b-18]="paymentType?.invalid && paymentType?.touched"
+              >
+                <div class="scheduleRide">
+                  <h4 class="m-r-6">Payment Type:</h4>
+                  <div>
+                    <mat-radio-button value="cash">Cash</mat-radio-button>
+                    <mat-radio-button value="card">Card</mat-radio-button>
+                  </div>
+                </div>
+                <mat-error class="radioError m-t-6" *ngIf="paymentType?.invalid && paymentType?.touched"
+                  ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+                  <span *ngIf="paymentType?.hasError('required')"
+                    >Please select payment type for ride</span
+                  >
+                </mat-error>
+              </mat-radio-group>
+
+              <mat-radio-group
+                class="m-b-12"
+                role="radiogroup"
+                aria-label="Select an option"
                 formControlName="scheduleRide"
                 [class.m-b-18]="scheduleRide?.invalid && scheduleRide?.touched"
                 (change)="onRadioChange($event)"
               >
                 <div class="scheduleRide">
                   <h4 class="m-r-6">Schedule Ride:</h4>
-                  <mat-radio-button value="now">Now</mat-radio-button>
-                  <mat-radio-button value="later">Later</mat-radio-button>
+                  <div>
+                    <mat-radio-button value="now">Now</mat-radio-button>
+                    <mat-radio-button value="later">Later</mat-radio-button>
+                  </div>
                 </div>
                 <mat-error
                   class="radioError m-t-6"

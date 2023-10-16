@@ -51,7 +51,7 @@ export class LoginComponent {
       error: (error) => {
         this.isLoading = false
 
-        this.toast.error(error.error.error, "Error Occured")
+        this.toast.error(error.error.error, "Error")
         this.loginForm.reset()
       },
     })

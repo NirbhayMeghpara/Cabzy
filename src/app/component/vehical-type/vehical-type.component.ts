@@ -75,7 +75,7 @@ export class VehicalTypeComponent implements OnInit {
           this.toast.success(resposne?.msg, "Added")
           this.getVehicle()
         },
-        error: (error) => this.toast.error(error.error.error, "Error Occured"),
+        error: (error) => this.toast.error(error.error.error, "Error"),
       })
     } else if (this.form === "Edit") {
       this.vehicleTypeService
@@ -85,7 +85,7 @@ export class VehicalTypeComponent implements OnInit {
             this.toast.success(resposne?.msg, "Success")
             this.getVehicle()
           },
-          error: (error) => this.toast.error(error.error.error, "Error Occured"),
+          error: (error) => this.toast.error(error.error.error, "Error"),
         })
     }
     Object.values(this.vehicleForm.controls).forEach((control) => {

@@ -11,6 +11,7 @@ import { VehiclePriceService } from "src/app/services/vehiclePrice/vehiclePrice.
 import { Pricing } from "../vehical-price/vehical-price.component"
 import { DatePipe } from "@angular/common"
 import { generate } from "rxjs"
+import { CreateRideService } from "src/app/services/createRide/createRide.service"
 
 interface City {
   _id: string
@@ -18,6 +19,11 @@ interface City {
   country: string
   location: string
   coordinates: Object
+}
+
+export interface Stops {
+  lat: number
+  lng: number
 }
 
 @Component({
@@ -34,16 +40,17 @@ export class CreateRideComponent implements OnInit {
   sameRide: boolean = false
   showEstimatedFare: boolean = false
   stopList: string[] = []
-  stopLocation: { lat: number; lng: number }[] = []
+  stopLocation: Stops[] = []
 
-  userID!: string | undefined
+  userID!: string
   maxStops!: number
   currentStops = 0
   minDate!: string
   minTime!: string
-  rideDate!: string | null
-  rideTime!: string | null
+  rideDate!: string
+  rideTime!: string
 
+  selectedServiceType!: Pricing
   basePrice!: number
   basePriceDistance!: number
   unitDistancePrice!: number
@@ -59,6 +66,7 @@ export class CreateRideComponent implements OnInit {
     private cityService: CityService,
     private vehiclePriceService: VehiclePriceService,
     private settingService: SettingService,
+    private createRideService: CreateRideService,
     private toast: ToastService,
     private fb: FormBuilder,
     private cdRef: ChangeDetectorRef
@@ -96,9 +104,12 @@ export class CreateRideComponent implements OnInit {
   nextStep() {
     this.step++
     if (this.step === 1) {
-      this.userID = this.user?._id
+      if (this.user) {
+        this.userID = this.user?._id
+      } else this.step--
     }
     if (this.step === 2) {
+      if (this.sameRide === false) this.calculateRoute()
       this.rideBookForm.reset()
       this.rideBookForm.updateValueAndValidity()
       this.restrictDateAndTime()
@@ -133,6 +144,7 @@ export class CreateRideComponent implements OnInit {
 
   rideBookForm: FormGroup = this.fb.group({
     vehicleType: ["", [Validators.required]],
+    paymentType: ["", [Validators.required]],
     scheduleRide: ["", [Validators.required]],
   })
 
@@ -187,15 +199,27 @@ export class CreateRideComponent implements OnInit {
       this.sameRide = false
       this.rideDetailsForm.get(`stop${index}`)?.setValue(place.formatted_address)
       if (place.geometry && place.geometry.location) {
-        this.stopLocation.push({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        })
+        if (index - 1 < this.waypoints.length) {
+          this.stopLocation.splice(index - 1, 1, {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          })
 
-        this.waypoints.push({
-          location: place.geometry.location,
-          stopover: true,
-        })
+          this.waypoints.splice(index - 1, 1, {
+            location: place.geometry.location,
+            stopover: true,
+          })
+        } else {
+          this.stopLocation.push({
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          })
+
+          this.waypoints.push({
+            location: place.geometry.location,
+            stopover: true,
+          })
+        }
         this.toast.info(`${this.currentStops} stop added.`, "Info")
       }
     })
@@ -211,6 +235,7 @@ export class CreateRideComponent implements OnInit {
       this.waypoints.splice(i, 1)
       this.stopLocation.splice(i, 1)
       this.currentStops--
+      this.sameRide = false
       this.rideDetailsForm.updateValueAndValidity()
     }
   }
@@ -246,7 +271,11 @@ export class CreateRideComponent implements OnInit {
       },
       error: (error) => {
         this.vehicles = []
-        if (error.status === 404) this.toast.info(error.error.msg, "404")
+        this.toast.info(
+          "Unfortunately, there are no available service types at your current location.",
+          "Info"
+        )
+        // if (error.status === 404) this.toast.info(error.error.msg, "404")
       },
     })
   }
@@ -297,7 +326,7 @@ export class CreateRideComponent implements OnInit {
     let date
     if (!scheduleDate) {
       date = new Date()
-      const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")
+      const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
 
       const hours = date.getHours()
       const minutes = date.getMinutes()
@@ -306,36 +335,33 @@ export class CreateRideComponent implements OnInit {
 
       this.rideDate = formattedDate
       this.rideTime = formattedTime
-
-      console.log(this.rideDate)
-      console.log(this.rideTime)
     } else {
       date = new Date(scheduleDate)
-      const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")
+      const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
 
       this.rideDate = formattedDate
     }
   }
 
   calculateRideFare(index: number) {
-    const selectedServiceType = this.vehicles[index]
+    this.selectedServiceType = this.vehicles[index]
 
     this.showEstimatedFare = true
-    if (this.journeyDistance >= selectedServiceType.basePriceDistance) {
+    if (this.journeyDistance >= this.selectedServiceType.basePriceDistance) {
       this.totalFarePrice = Math.round(
-        selectedServiceType.basePrice +
-          (this.journeyDistance - selectedServiceType.basePriceDistance) *
-            selectedServiceType.unitDistancePrice +
-          this.journeyTime * selectedServiceType.unitTimePrice
+        this.selectedServiceType.basePrice +
+          (this.journeyDistance - this.selectedServiceType.basePriceDistance) *
+            this.selectedServiceType.unitDistancePrice +
+          this.journeyTime * this.selectedServiceType.unitTimePrice
       )
     } else {
       this.totalFarePrice = Math.round(
-        selectedServiceType.basePrice + this.journeyTime * selectedServiceType.unitTimePrice
+        this.selectedServiceType.basePrice + this.journeyTime * this.selectedServiceType.unitTimePrice
       )
     }
 
-    if (this.totalFarePrice < selectedServiceType.minFare) {
-      this.totalFarePrice = selectedServiceType.minFare
+    if (this.totalFarePrice < this.selectedServiceType.minFare) {
+      this.totalFarePrice = this.selectedServiceType.minFare
     }
   }
 
@@ -348,6 +374,50 @@ export class CreateRideComponent implements OnInit {
     if (this.scheduleRide?.value === "now") {
       this.generateDateAndTime()
     }
+
+    const cityID = this.pickUpZone[0]._id
+    const userName = this.user?.name
+    const pickUp = this.selectedPickUpPlace.formatted_address
+    const dropOff = this.selectedDropOffPlace.formatted_address
+
+    if (userName && pickUp && dropOff) {
+      this.createRideService
+        .createRide(
+          this.userID,
+          cityID,
+          this.selectedServiceType._id,
+          userName,
+          pickUp,
+          this.stopLocation,
+          dropOff,
+          this.journeyDistance,
+          this.journeyTime,
+          this.totalFarePrice,
+          this.paymentType?.value,
+          this.rideDate,
+          this.rideTime
+        )
+        .subscribe({
+          next: (response: any) => {
+            this.toast.success(response.msg, "Success")
+          },
+          error: (error) => {
+            this.toast.error(error.error.error, "Error")
+          },
+        })
+    }
+    this.resetCreateRideForm()
+  }
+
+  resetCreateRideForm() {
+    this.resetForm()
+    this.rideDetailsForm.reset()
+    this.rideBookForm.reset()
+    this.step = 0
+    this.sameRide = false
+    this.showEstimatedFare = false
+    this.stopList = []
+    this.stopLocation = []
   }
 
   // Google Map
@@ -495,6 +565,9 @@ export class CreateRideComponent implements OnInit {
   }
   get vehicleType() {
     return this.rideBookForm.get("vehicleType")
+  }
+  get paymentType() {
+    return this.rideBookForm.get("paymentType")
   }
   get scheduleRide() {
     return this.rideBookForm.get("scheduleRide")
