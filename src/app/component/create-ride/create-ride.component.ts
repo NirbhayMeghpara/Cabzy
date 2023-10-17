@@ -119,16 +119,7 @@ export class CreateRideComponent implements OnInit {
   prevStep() {
     this.step--
     if (this.step === 1 || this.step === 0) {
-      this.rideDetailsForm.reset()
-      this.dropOffLocation?.disable()
-      this.rideDetailsForm.updateValueAndValidity()
-      this.pickUpZone = []
-      this.directionsRenderer.setMap(null)
-      this.map.setCenter(this.myCoordinate)
-      this.map.setZoom(10)
-      this.journeyDistance = 0
-      this.journeyTime = 0
-      this.showEstimatedFare = false
+      this.resetCreateRideForm()
     }
   }
 
@@ -188,6 +179,11 @@ export class CreateRideComponent implements OnInit {
     this.rideDetailsForm.addControl(`stop${index}`, this.fb.control("", [Validators.required]))
     this.rideDetailsForm.updateValueAndValidity()
     this.stopList.push(`stop${index}`)
+    this.waypoints.push({
+      location: { lat: 0, lng: 0 },
+      stopover: true,
+    })
+    this.stopLocation.push({ lat: 0, lng: 0 })
     this.cdRef.detectChanges()
 
     const autocomplete = new google.maps.places.Autocomplete(
@@ -199,7 +195,7 @@ export class CreateRideComponent implements OnInit {
       this.sameRide = false
       this.rideDetailsForm.get(`stop${index}`)?.setValue(place.formatted_address)
       if (place.geometry && place.geometry.location) {
-        if (index - 1 < this.waypoints.length) {
+        if (index - 1 === this.stopList.indexOf(`stop${index}`)) {
           this.stopLocation.splice(index - 1, 1, {
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng(),
@@ -210,17 +206,21 @@ export class CreateRideComponent implements OnInit {
             stopover: true,
           })
         } else {
-          this.stopLocation.push({
+          this.stopLocation.splice(this.stopList.indexOf(`stop${index}`), 1, {
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng(),
           })
 
-          this.waypoints.push({
+          this.waypoints.splice(this.stopList.indexOf(`stop${index}`), 1, {
             location: place.geometry.location,
             stopover: true,
           })
         }
-        this.toast.info(`${this.currentStops} stop added.`, "Info")
+
+        this.toast.info(
+          `Stop no. ${this.stopList.indexOf(`stop${index}`) + 1} added successfully !.`,
+          "Info"
+        )
       }
     })
     this.currentStops++
@@ -407,17 +407,31 @@ export class CreateRideComponent implements OnInit {
         })
     }
     this.resetCreateRideForm()
+    this.resetForm()
+    this.step = 0
   }
 
   resetCreateRideForm() {
-    this.resetForm()
+    this.dropOffLocation?.disable()
     this.rideDetailsForm.reset()
     this.rideBookForm.reset()
-    this.step = 0
+    this.rideDetailsForm.updateValueAndValidity()
+    this.rideBookForm.updateValueAndValidity()
+    this.journeyDistance = 0
+    this.journeyTime = 0
+    this.currentStops = 0
     this.sameRide = false
     this.showEstimatedFare = false
+    this.stopList.forEach((stop) => {
+      this.rideDetailsForm.removeControl(stop)
+    })
+    this.pickUpZone = []
     this.stopList = []
     this.stopLocation = []
+    this.waypoints = []
+    this.directionsRenderer.setMap(null)
+    this.map.setCenter(this.myCoordinate)
+    this.map.setZoom(10)
   }
 
   // Google Map
@@ -432,7 +446,7 @@ export class CreateRideComponent implements OnInit {
   directionsRenderer!: google.maps.DirectionsRenderer
   myCoordinate!: { lat: number; lng: number }
 
-  waypoints: google.maps.DirectionsWaypoint[] = []
+  waypoints: any[] = []
   journeyDistance: number = 0
   journeyTime: number = 0
 

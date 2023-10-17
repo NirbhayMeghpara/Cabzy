@@ -1,3 +1,7 @@
+.page-wrapper{
+  max-width: 1425px !important;
+}
+
 .btn-wrapper {
   display: flex;
   justify-content: space-between;
@@ -5,6 +9,7 @@
 }
 
 table{
+  width: 100%;
   font-size: 13px;
   letter-spacing: 0.3px;
 }
@@ -28,6 +33,14 @@ table{
   width: 28px;
   height: 28px;
   color: #cf352a;
+}
+
+.table-ride-time {
+  width: 90px;
+}
+
+.jDist, .jTime, .tFare {
+  width: 0px;
 }
 
 // Search box
@@ -76,61 +89,6 @@ table{
 td span{
   white-space: nowrap;
 }
-
-.mat-body-2 {
-  font-size: 12px;
-  line-height: 22px;
-  letter-spacing: normal;
-  margin: 0;
-  color: #2a3547;
-}
-
-.rounded-pill {
-  border-radius: 25px!important
-}
-
-
-.bg-light-error {
-  background-color: #f9e7eb!important;
-}
-
-.text-light-error {
-  color: #f9e7eb!important
-}
-
-.bg-light-accent {
-  background-color: #e5fafb!important
-}
-
-.text-light-accent {
-  color: #e5fafb!important
-}
-
-.bg-light-success {
-  background-color: #d6ffe9!important;
-}
-
-.text-light-success {
-  color: #ebfaf2!important
-}
-
-.bg-light-warning {
-  background-color: #fff8ec!important
-}
-
-.text-light-warning {
-  color: #fff8ec!important
-}
-
-.bg-light-primary {
-  background-color: #ffe5dc!important
-}
-
-.text-light-primary {
-  color: #ffe5dc!important
-}
-
-
 
 @media screen and (max-width: 860px) {
   .btn-wrapper {

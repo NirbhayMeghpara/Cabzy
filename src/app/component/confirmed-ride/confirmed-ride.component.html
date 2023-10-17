@@ -12,6 +12,21 @@
       placeholder="Type to Search..."
     />
   </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date</mat-label>
+    <input
+      matInput
+      placeholder="Date"
+      [matDatepicker]="picker"
+      (focus)="picker.open()"
+      readonly
+      formControlName="rideDateControl"
+      [min]="minDate"
+      (dateChange)="onDateChange($event)"
+    />
+  </mat-form-field>
+  <mat-datepicker #picker></mat-datepicker>
 </div>
 
 <mat-card class="w-100">
@@ -29,8 +44,8 @@
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>#</th>
-          <td mat-cell class="fw-medium" *matCellDef="let i = index">
-            {{ i + (pageIndex - 1) * 4 + 1 }}
+          <td mat-cell class="fw-medium" *matCellDef="let element; let i = index">
+            {{ element.rideID }}
           </td>
         </ng-container>
 
@@ -55,6 +70,12 @@
             <p class="mb-0 fw-medium">{{ element.dropOff }}</p>
           </td>
         </ng-container>
+        <ng-container matColumnDef="serviceType">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Service Type</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.serviceType.vehicleType }}</p>
+          </td>
+        </ng-container>
 
         <ng-container matColumnDef="rideDate">
           <th class="nameCol" mat-header-cell *matHeaderCellDef>Ride Date</th>
@@ -64,29 +85,29 @@
         </ng-container>
 
         <ng-container matColumnDef="rideTime">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Ride Time</th>
-          <td class="nameCol" mat-cell *matCellDef="let element">
+          <th class="table-ride-time" mat-header-cell *matHeaderCellDef>Ride Time</th>
+          <td class="table-ride-time" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.rideTime }}</p>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="journeyDistance">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Journey Distance</th>
-          <td class="nameCol" mat-cell *matCellDef="let element">
+          <th class="jDist" mat-header-cell *matHeaderCellDef>Journey Distance</th>
+          <td class="jDist" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.journeyDistance }}</p>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="journeyTime">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Journey Time</th>
-          <td class="nameCol" mat-cell *matCellDef="let element">
+          <th class="jTime" mat-header-cell *matHeaderCellDef>Journey Time</th>
+          <td class="jTime" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.journeyTime }}</p>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="totalFare">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef>Estimated Fare</th>
-          <td class="nameCol" mat-cell *matCellDef="let element">
+          <th class="tFare" mat-header-cell *matHeaderCellDef>Estimated Fare</th>
+          <td class="tFare" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.totalFare }}</p>
           </td>
         </ng-container>
@@ -94,22 +115,36 @@
         <ng-container matColumnDef="status">
           <th class="status" mat-header-cell *matHeaderCellDef>Status</th>
           <td class="status" mat-cell *matCellDef="let element">
-            <p class="mb-0 fw-medium">{{ element.status }}</p>
-            <span class="bg-light-warning mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-              In Progress
-            </span>
-            <!-- <span class="bg-light-primary mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-              In Progress
-            </span>
-            <span class="bg-light-accent mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-              In Progress
-            </span>
-            <span class="bg-light-success mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-              Open
-            </span>
-            <span class="bg-light-error mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-              Closed
-            </span> -->
+            <ng-container *ngIf="element.status == 1">
+              <span class="bg-light-warning mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                In Progress
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 2"
+              ><span class="bg-light-primary mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Accepted
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 3"
+              ><span class="bg-light-arrived mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Arrived
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 4">
+              <span class="bg-light-picked mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Picked
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 5">
+              <span class="bg-light-accent mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Started
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 6">
+              <span class="bg-light-success mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Completed
+              </span>
+            </ng-container>
           </td>
         </ng-container>
 
@@ -119,7 +154,7 @@
           <td class="action" mat-cell *matCellDef="let element; let i = index">
             <div class="d-flex">
               <a class="icon-18">
-                <i-feather name="x" class="cancel"></i-feather>
+                <i-feather name="x" class="cancel" (click)="cancelRide($event, i)"></i-feather>
               </a>
               <a class="icon-18 m-l-8">
                 <img
@@ -127,6 +162,7 @@
                   alt="assignDriver"
                   width="24"
                   height="auto"
+                  (click)="assignRide($event, i)"
                 />
               </a>
             </div>
