@@ -34,6 +34,7 @@ import { DeleteComponent } from "./component/users/delete/delete.component"
 import { DeleteDriverComponent } from "./component/driver-list/delete-driver/delete-driver.component"
 import { ServiceTypeComponent } from "./component/driver-list/service-type/service-type.component"
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker"
+import { RideDetailsComponent } from "./component/confirmed-ride/ride-details/ride-details.component"
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker"
     DeleteComponent,
     DeleteDriverComponent,
     ServiceTypeComponent,
+    RideDetailsComponent,
   ],
   imports: [
     BrowserModule,

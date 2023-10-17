@@ -1,0 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Patrick+Hand&display=swap");
+
+.profile-card, .ride-card{
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	padding: 0.6rem 1.5rem !important;
+}
+.top-container{
+	display: flex;
+}
+.profile-image {
+	margin: 10px 5px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+.name{
+	font-size: 22px;
+	font-weight: bold;
+	color: #272727;
+	position: relative;
+	top: 8px;
+}
+.mail{
+	font-size: 14px;
+	color: grey;
+	position: relative;
+	top: 8px;
+	display: flex;
+	align-items: center;
+}
+
+.mailBtn {
+	margin-right: 10px;
+	width: 15px;
+	height: 15px;
+	color: grey;
+	margin-bottom: 3px;
+}
+
+.ride-card{
+	padding: 1rem 1.5rem!important;
+}
+
+.ride-detail{
+	display: flex;
+}
+
+.left-container{
+	min-width: 100px;
+}
+
+.rideTime{
+	color: rgb(139, 139, 139);
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	margin-bottom: -2px;
+}
+
+.journeyDistance {
+	font-size: 11px;
+	color: rgb(117, 117, 117);
+}
+
+.right-container{
+	position: relative;
+	margin-left: 20px;
+	height: fit-content;
+}
+
+.right-container::after{
+	content: "";
+  position: absolute;
+  left: -15px;
+  top: 10px;
+  width: 2px;
+  height: 85%;
+  background-color: rgb(153, 153, 153);
+}
+
+.pickUpPoint, .dropOffPoint, .stopPoint{
+	position: relative;
+	font-size: 14px;
+	text-transform: uppercase;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.stopPoint{
+	position: relative;
+	font-size: 12px;
+	letter-spacing: 0px;
+}
+
+.pickUpPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #00c292!important;
+	z-index: 10;
+}
+
+.stopPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #03c9d7!important;
+	z-index: 10;
+}
+
+.dropOffPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #fc4b6c!important;
+	z-index: 10;
+}
+
+.to{
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+
+.box {
+  display: flex;
+  color: #414141;
+  margin: 0px;
+  padding: 12px 20px 12px 20px;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  font-size: 1.25rem;
+  border: 2px solid #e2e2e2;
+  border-radius: 10px;
+}
+
+.box > h4,
+.totalFarePrice {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  font-family: "Bubblegum Sans", sans-serif !important;
+}
+
+.totalFarePrice {
+  font-size: 18px;
+	margin-bottom: 0px;
+}
+
+.box .d-flex {
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 730px) {
+  .ride-detail, .top-container{
+    flex-direction: column;
+  }
+
+	.top-container > div {
+		margin-top: 0px;
+		margin-bottom: 20px;
+	}
+	.top-container > div > h2 {
+		margin-bottom: 8px !important;
+	}
+
+	.right-container{
+		margin-top: 16px;
+	}
+}

@@ -345,9 +345,9 @@
                     />
                     <mat-error class="m-t-6" *ngIf="rideDateControl?.invalid && rideDateControl?.touched"
                       ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-                      <span *ngIf="rideDateControl?.hasError('required')"
-                        >Please select date to schedule ride</span
-                      >
+                      <span *ngIf="rideDateControl?.hasError('required')">
+                        Please select date to schedule ride
+                      </span>
                     </mat-error>
                   </mat-form-field>
                   <mat-datepicker #picker></mat-datepicker>
