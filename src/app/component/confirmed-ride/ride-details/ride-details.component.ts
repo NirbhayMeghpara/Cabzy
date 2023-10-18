@@ -1,4 +1,3 @@
-import { PlatformModule } from "@angular/cdk/platform"
 import { Component, Inject, OnInit } from "@angular/core"
 import { MAT_DIALOG_DATA } from "@angular/material/dialog"
 
@@ -24,7 +23,6 @@ export class RideDetailsComponent implements OnInit {
         if (status === "OK" && results) {
           if (results[0]) {
             this.stopAddress.push(results[0].formatted_address)
-            console.log(this.stopAddress)
           }
         } else {
           console.error("Geocoder failed due to: " + status)

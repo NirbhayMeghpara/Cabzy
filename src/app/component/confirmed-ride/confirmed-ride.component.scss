@@ -1,11 +1,8 @@
-.page-wrapper{
-  max-width: 1425px !important;
-}
-
 .btn-wrapper {
   display: flex;
   justify-content: space-between;
   margin-bottom: 70px;
+  position: relative;
 }
 
 table{
@@ -42,6 +39,17 @@ table{
 .jDist, .jTime, .tFare {
   width: 0px;
 }
+
+.dataPicker{
+  width: 140px;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 
 // Search box
 
@@ -90,11 +98,48 @@ td span{
   white-space: nowrap;
 }
 
-@media screen and (max-width: 860px) {
+mat-error {
+  font-size: 13px;
+  margin-left: -5px;
+}
+
+.serviceType{
+  width: 160px;
+}
+
+.filterBtn, .filterActionBtn{
+  border-radius: 20px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.filterActionBtn{
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.mdc-button__label{
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 1150px) {
   .btn-wrapper {
     flex-direction: column;
     margin-bottom: 40px;
   }
+
+  .filterBtn{
+    max-width: 100px;
+  }
+
+  .filter, .filterBtn{
+    margin-top: 20px;
+    margin-left: 30px;
+  }
+}
+@media screen and (max-width: 860px) {
 
   .search-box{
     margin-bottom: 35px;

@@ -34,7 +34,8 @@ import { DeleteComponent } from "./component/users/delete/delete.component"
 import { DeleteDriverComponent } from "./component/driver-list/delete-driver/delete-driver.component"
 import { ServiceTypeComponent } from "./component/driver-list/service-type/service-type.component"
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker"
-import { RideDetailsComponent } from "./component/confirmed-ride/ride-details/ride-details.component"
+import { RideDetailsComponent } from "./component/confirmed-ride/ride-details/ride-details.component";
+import { AssignDialogComponent } from './component/confirmed-ride/assign-dialog/assign-dialog.component'
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { RideDetailsComponent } from "./component/confirmed-ride/ride-details/ri
     DeleteDriverComponent,
     ServiceTypeComponent,
     RideDetailsComponent,
+    AssignDialogComponent,
   ],
   imports: [
     BrowserModule,

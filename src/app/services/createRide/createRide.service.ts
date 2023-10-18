@@ -46,13 +46,24 @@ export class CreateRideService {
     return this.http.post(this._createRideUrl, formData)
   }
 
-  getRides(page: number, searchText?: string, sort?: string, sortOrder?: string) {
+  getRides(
+    page: number,
+    searchText?: string,
+    sort?: string,
+    sortOrder?: string,
+    rideDate?: string,
+    vehicleType?: string,
+    status?: string
+  ) {
     const url = new URL(this._getRidesUrl)
     url.searchParams.set("page", String(page))
 
     searchText && url.searchParams.set("search", searchText)
     sort && url.searchParams.set("sort", sort)
     sortOrder && url.searchParams.set("sortOrder", sortOrder)
+    rideDate && url.searchParams.set("rideDate", rideDate)
+    vehicleType && url.searchParams.set("vehicleType", vehicleType)
+    status && url.searchParams.set("status", status)
 
     return this.http.get(url.toString())
   }
