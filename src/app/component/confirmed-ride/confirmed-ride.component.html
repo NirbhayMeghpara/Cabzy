@@ -13,20 +13,81 @@
     />
   </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Date</mat-label>
-    <input
-      matInput
-      placeholder="Date"
-      [matDatepicker]="picker"
-      (focus)="picker.open()"
-      readonly
-      formControlName="rideDateControl"
-      [min]="minDate"
-      (dateChange)="onDateChange($event)"
-    />
-  </mat-form-field>
-  <mat-datepicker #picker></mat-datepicker>
+  <div class="filter" *ngIf="showFilter">
+    <form [formGroup]="filterForm">
+      <mat-form-field class="dataPicker m-r-12" appearance="outline">
+        <mat-label>Date</mat-label>
+        <input
+          matInput
+          placeholder="Date"
+          [matDatepicker]="picker"
+          (focus)="picker.open()"
+          readonly
+          formControlName="filterDate"
+          [min]="minDate"
+          (dateChange)="onDateChange($event)"
+        />
+      </mat-form-field>
+      <mat-datepicker #picker></mat-datepicker>
+
+      <mat-form-field class="serviceType m-r-10">
+        <mat-select id="vehicleType" placeholder="Vehicle Type" formControlName="vehicleType">
+          <ng-container *ngFor="let vehicle of vehicles; let i = index">
+            <mat-option value="{{ vehicle.vehicleType }}" (click)="onVehicleTypeSelect(i)">{{
+              vehicle.vehicleType
+            }}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="serviceType">
+        <mat-select id="vehicleType" placeholder="Status" formControlName="vehicleType">
+          <ng-container *ngFor="let status of statusList; let i = index">
+            <mat-option value="{{ i + 1 }}" (click)="onStatusClick(i)">{{ status }}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <div class="formBtn">
+      <button
+        class="filterActionBtn m-r-10"
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="applyFilter()"
+      >
+        <span class="mdc-button__label">
+          <i-feather name="check-circle" class="applyFilter m-r-6"></i-feather>
+          <span>Apply</span>
+        </span>
+      </button>
+      <button
+        class="filterActionBtn"
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="toggleFilter()"
+      >
+        <span class="mdc-button__label">
+          <img src="../../../assets/images/cancle.png" class="m-r-6" width="16px" /><span>Cancel</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <button
+    *ngIf="!showFilter"
+    class="filterBtn"
+    type="button"
+    mat-raised-button
+    color="accent"
+    (click)="toggleFilter()"
+  >
+    <span class="mdc-button__label">
+      <img src="../../../assets/images/setting.png" class="m-r-6" width="16px" /><span>Filter</span>
+    </span>
+  </button>
 </div>
 
 <mat-card class="w-100">
@@ -117,7 +178,7 @@
           <td class="status" mat-cell *matCellDef="let element">
             <ng-container *ngIf="element.status == 1">
               <span class="bg-light-warning mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
-                In Progress
+                Pending
               </span>
             </ng-container>
             <ng-container *ngIf="element.status == 2"

@@ -7,6 +7,9 @@ import { RideDetailsComponent } from "./ride-details/ride-details.component"
 import { User } from "../users/users.component"
 import { Pricing } from "../vehical-price/vehical-price.component"
 import { DatePipe } from "@angular/common"
+import { FormBuilder, FormGroup, Validators } from "@angular/forms"
+import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
+import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 
 interface Ride {
   _id: string
@@ -49,12 +52,18 @@ export class ConfirmedRideComponent implements OnInit {
     "action",
   ]
   dataSource: Ride[] = []
+  vehicles: VehicleType[] = []
+  statusList: string[] = ["Pending", "Accepted", "Arrived", "Started", "Completed"]
   pageIndex: number = 1
   pageSize: number = 4
   totalRideCounts: number = 0
   flag!: boolean
-  searchDate!: string
   minDate!: string
+  showFilter!: boolean
+  filteredDate!: boolean
+  filterRideDate!: string
+  filterVehicleType!: string
+  filterStatus!: string
 
   searchText: string = ""
   currentSortOrder: "asc" | "desc" | undefined = "asc"
@@ -63,11 +72,19 @@ export class ConfirmedRideComponent implements OnInit {
   constructor(
     private createRideService: CreateRideService,
     private toast: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private fb: FormBuilder,
+    private vehicleTypeService: VehicleTypeService
   ) {}
+
+  filterForm: FormGroup = this.fb.group({
+    vehicleType: ["", [Validators.required]],
+    filterDate: ["", [Validators.required]],
+  })
 
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
+    this.getVehicle()
     this.restrictDate()
   }
 
@@ -76,17 +93,63 @@ export class ConfirmedRideComponent implements OnInit {
     this.fetchRideData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
   }
 
-  fetchRideData(page: number = 1, searchText?: string, sort?: string, sortOrder?: string) {
-    this.createRideService.getRides(page, searchText, sort, sortOrder).subscribe({
-      next: (data: any) => {
-        this.totalRideCounts = data.rideCount
-        this.dataSource = data.rides
-      },
-      error: (error) => {
-        this.dataSource = []
-        if (error.status === 404) this.toast.info(error.error.msg, "404")
-      },
-    })
+  onVehicleTypeSelect(index: number) {
+    this.filterVehicleType = this.vehicles[index].vehicleType
+  }
+  onStatusClick(index: number) {
+    this.filterStatus = (index + 1).toString()
+  }
+
+  applyFilter() {
+    this.fetchRideData(
+      this.pageIndex,
+      this.searchText,
+      this.currentSortField,
+      this.currentSortOrder,
+      this.filterRideDate,
+      this.filterVehicleType,
+      this.filterStatus
+    )
+    this.filteredDate = true
+  }
+
+  toggleFilter() {
+    if (this.showFilter) {
+      this.resetFilterForm()
+      this.filterRideDate = ""
+      this.filterVehicleType = ""
+      this.filterStatus = ""
+      if (this.filteredDate) this.fetchRideData()
+    }
+    this.showFilter = !this.showFilter
+  }
+
+  resetFilterForm() {
+    this.filterForm.reset()
+    this.filterForm.updateValueAndValidity()
+  }
+
+  fetchRideData(
+    page: number = 1,
+    searchText?: string,
+    sort?: string,
+    sortOrder?: string,
+    rideDate?: string,
+    vehicleType?: string,
+    status?: string
+  ) {
+    this.createRideService
+      .getRides(page, searchText, sort, sortOrder, rideDate, vehicleType, status)
+      .subscribe({
+        next: (data: any) => {
+          this.totalRideCounts = data.rideCount
+          this.dataSource = data.rides
+        },
+        error: (error) => {
+          this.dataSource = []
+          if (error.status === 404) this.toast.info(error.error.msg, "404")
+        },
+      })
   }
 
   rideSearch() {
@@ -116,8 +179,7 @@ export class ConfirmedRideComponent implements OnInit {
     const date = new Date(event.value)
     const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
 
-    this.searchDate = formattedDate
-    console.log(this.searchDate)
+    this.filterRideDate = formattedDate
   }
 
   onTRclick(index: number) {
@@ -135,5 +197,23 @@ export class ConfirmedRideComponent implements OnInit {
   assignRide(event: any, index: number) {
     event.stopPropagation()
     console.log(this.dataSource[index])
+  }
+
+  getVehicle() {
+    this.vehicleTypeService.fetchVehicle().subscribe({
+      next: (response: any) => {
+        this.vehicles = response
+      },
+      error: (error) => {
+        this.toast.error(error.error.error, "Error")
+      },
+    })
+  }
+
+  get vehicleType() {
+    return this.filterForm.get("vehicleType")
+  }
+  get filterDate() {
+    return this.filterForm.get("filterDate")
   }
 }
