@@ -10,6 +10,7 @@ import { DatePipe } from "@angular/common"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
+import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 
 interface Ride {
   _id: string
@@ -197,6 +198,12 @@ export class ConfirmedRideComponent implements OnInit {
   assignRide(event: any, index: number) {
     event.stopPropagation()
     console.log(this.dataSource[index])
+
+    const assignRideDialog = this.dialog.open(AssignDialogComponent, {
+      width: "800px",
+      enterAnimationDuration: "300ms",
+      data: this.dataSource[index],
+    })
   }
 
   getVehicle() {

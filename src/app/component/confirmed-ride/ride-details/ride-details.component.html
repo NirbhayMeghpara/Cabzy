@@ -28,11 +28,12 @@
         </div>
 
         <div class="ride-card m-t-12">
-          <h4 class="m-b-16">{{ ride.rideDate }}</h4>
+          <h4>{{ ride.rideDate }}</h4>
+          <h5 class="rideTime m-b-16">{{ ride.rideTime }}</h5>
           <div class="ride-detail">
             <div class="left-container">
-              <h5 class="rideTime">{{ ride.rideTime }}</h5>
               <h6 class="journeyDistance">{{ ride.journeyDistance }} Km</h6>
+              <h6 class="journeyTime">{{ ride.journeyTime }} min</h6>
             </div>
             <div class="right-container">
               <p class="pickUpPoint m-b-10">{{ ride.pickUp }}</p>
