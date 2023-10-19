@@ -1,9 +1,10 @@
 <div class="card m-b-0">
   <div class="card-body">
-    <mat-dialog-content style="max-width: 600px">
+    <mat-dialog-content style="max-width: 800px">
       <h2 class="mb-12">Assign Drivers</h2>
       <hr class="mb-20" />
       <div class="wrapper">
+        <h4 class="mb-12">Ride: #{{ ride.rideID }}</h4>
         <!-- <div
           class="alert alert-border-info alert-text-info background-none d-flex fs-14 f-w-400 align-items-center rounded m-b-16 m-t-16"
           role="alert"
@@ -20,6 +21,30 @@
           <i-feather name="info" class="text-info feather-base me-12"></i-feather>
           <span>No service type assigned to this driver</span>
         </div> -->
+        <div>
+          <ul>
+            <li *ngFor="let subtask of subtasks">
+              <mat-checkbox [(ngModel)]="subtask.completed" color="warn">
+                {{ subtask.name }}
+              </mat-checkbox>
+            </li>
+          </ul>
+        </div>
+
+        <div class="assignBtn m-t-16">
+          <button class="filterActionBtn m-r-10" type="button" mat-raised-button color="primary">
+            <span class="mdc-button__label">
+              <i-feather name="check-circle" class="assignSelectedDriver m-r-6"></i-feather>
+              <span>Assign Selected Driver</span>
+            </span>
+          </button>
+          <button class="filterActionBtn m-r-10" type="button" mat-raised-button color="accent">
+            <span class="mdc-button__label">
+              <i-feather name="clock" class="assignSelectedDriver m-r-6"></i-feather>
+              <span>Assign Nearest Driver</span>
+            </span>
+          </button>
+        </div>
       </div>
     </mat-dialog-content>
   </div>
