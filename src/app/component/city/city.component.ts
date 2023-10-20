@@ -12,12 +12,12 @@ interface Country {
   latLong: Coordinate[]
 }
 
-interface Coordinate {
+export interface Coordinate {
   lat: number
   lng: number
 }
 
-interface City {
+export interface City {
   _id: string
   name: string
   country: string

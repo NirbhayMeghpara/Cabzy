@@ -1,5 +1,5 @@
 import { CountryService } from "src/app/services/country/country.service"
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core"
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { CardComponent } from "./card/card.component"
 import { ToastService } from "src/app/services/toast.service"
@@ -42,6 +42,7 @@ export class UsersComponent implements OnInit {
   isDisable: boolean = false
   form: "Add" | "Edit" = "Add"
   editUserID!: string
+  editTrIndex!: number
   fileSizeLarge: boolean = false
   invalidFile: boolean = false
 
@@ -54,6 +55,7 @@ export class UsersComponent implements OnInit {
     private countryService: CountryService,
     private userService: UserService,
     private toast: ToastService,
+    private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialog: MatDialog
   ) {}
@@ -189,8 +191,10 @@ export class UsersComponent implements OnInit {
   onEditUser(id: string, name: string, profile: any, email: string, phoneCode: string, phone: number) {
     this.userService.editUser(id, name, profile, email, phoneCode, phone).subscribe({
       next: (response: any) => {
-        this.toast.success(response.msg, "Success")
-        this.fetchUserData(this.pageIndex)
+        this.dataSource[this.editTrIndex] = response
+        this.dataSource = [...this.dataSource]
+        this.toast.success("User edited successfully!!", "Success")
+        this.cdRef.detectChanges()
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")
@@ -212,6 +216,7 @@ export class UsersComponent implements OnInit {
   }
 
   editUser(index: number) {
+    this.editTrIndex = index
     if (this.form !== "Edit") this.toggleForm()
     this.form = "Edit"
     this.isDisable = true

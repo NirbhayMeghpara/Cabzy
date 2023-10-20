@@ -15,16 +15,20 @@ export class ServiceTypeComponent implements OnInit {
   serviceTypeElement: any
   alert: boolean = true
   noServiceType!: boolean
+  changeOccured: boolean = false
+  callback: Function
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private driverService: DriverService,
     private vehiclePriceService: VehiclePriceService,
     private toast: ToastService
-  ) {}
+  ) {
+    this.callback = data.callback
+  }
 
   ngOnInit(): void {
-    this.getVehicleTypes(this.data.driver.city)
+    this.getVehicleTypes(this.data.driver.city.name)
   }
 
   getVehicleTypes(city: string) {
@@ -32,7 +36,7 @@ export class ServiceTypeComponent implements OnInit {
       next: (data: any) => {
         this.serviceTypes = data
         this.serviceTypes.forEach((serviceType) => {
-          if (serviceType.vehicleType === this.data.driver.serviceType) {
+          if (serviceType._id === this.data.driver.serviceTypeID) {
             this.alert = false
             serviceType.isAssigned = true
           }
@@ -54,12 +58,13 @@ export class ServiceTypeComponent implements OnInit {
       this.toast.info("This service type is already assigned to driver", "Info")
       return
     }
-    this.driverService.setServiceType(serviceType.vehicleType, this.data.driver._id).subscribe({
+    this.driverService.setServiceType(serviceType._id, this.data.driver._id).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Success")
         this.serviceTypes.forEach((serviceType) => (serviceType.isAssigned = false))
         serviceType.isAssigned = true
         this.alert = false
+        this.changeOccured = true
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")
@@ -68,12 +73,13 @@ export class ServiceTypeComponent implements OnInit {
   }
 
   removeType(index: number) {
-    const serviceType = this.serviceTypes[index]
+    // const serviceType = this.serviceTypes[index]
     this.driverService.removeServiceType(this.data.driver._id).subscribe({
       next: (response: any) => {
-        this.toast.success(response.msg, "Removed")
+        this.toast.warning(response.msg, "Removed", 5000)
         this.serviceTypes.forEach((serviceType) => (serviceType.isAssigned = false))
         this.alert = true
+        this.changeOccured = true
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")

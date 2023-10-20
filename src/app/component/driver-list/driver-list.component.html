@@ -155,7 +155,7 @@
       <mat-form-field [class.m-b-20]="city?.invalid && city?.touched">
         <mat-select id="city" placeholder="Select City" formControlName="city">
           <ng-container *ngFor="let city of cities; let i = index">
-            <mat-option value="{{ city }}">{{ city }}</mat-option>
+            <mat-option value="{{ city.name }}" (click)="onCitySelect(i)">{{ city.name }}</mat-option>
           </ng-container>
         </mat-select>
         <mat-error class="m-t-6" *ngIf="city?.invalid && city?.touched"
@@ -304,7 +304,7 @@
             City
           </th>
           <td class="nameCol" mat-cell *matCellDef="let element">
-            <p class="mb-0 fw-medium">{{ element.city }}</p>
+            <p class="mb-0 fw-medium">{{ element.city.name }}</p>
           </td>
         </ng-container>
 

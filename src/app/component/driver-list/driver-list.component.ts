@@ -1,5 +1,5 @@
 import { CountryService } from "src/app/services/country/country.service"
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core"
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { MatDialog } from "@angular/material/dialog"
 import { ServiceTypeComponent } from "./service-type/service-type.component"
 import { ToastService } from "src/app/services/toast.service"
@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { DriverService } from "src/app/services/driver/driver.service"
 import { DeleteDriverComponent } from "./delete-driver/delete-driver.component"
 import { CityService } from "src/app/services/city/city.service"
+import { City } from "../city/city.component"
 
 export interface Driver {
   _id: string
@@ -15,8 +16,9 @@ export interface Driver {
   email: string
   phoneCode: string
   phone: string
-  city: string
+  cityID: string
   isApproved: boolean
+  city: City
 }
 
 export interface CountryCode {
@@ -38,7 +40,8 @@ export class DriverListComponent implements OnInit {
   selectedCountry: string | null = null
   selectedFile: any = null
   countries!: CountryCode[]
-  cities!: string[]
+  cities!: City[]
+  driverCityID!: string
   displayedColumns: string[] = ["id", "profile", "name", "email", "phone", "city", "status", "action"]
 
   dataSource: Driver[] = []
@@ -50,6 +53,7 @@ export class DriverListComponent implements OnInit {
   editDriverID!: string
   fileSizeLarge: boolean = false
   invalidFile: boolean = false
+  editTrIndex!: number
 
   currentSortOrder: "asc" | "desc" | undefined = "asc"
   currentSortField: string | undefined = undefined
@@ -61,6 +65,7 @@ export class DriverListComponent implements OnInit {
     private cityService: CityService,
     private driverService: DriverService,
     private toast: ToastService,
+    private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialog: MatDialog
   ) {}
@@ -77,6 +82,19 @@ export class DriverListComponent implements OnInit {
     })
     this.fetchDriverData(this.pageIndex)
   }
+
+  driverForm: FormGroup = this.fb.group({
+    name: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
+    profile: ["", [Validators.required]],
+    profileHidden: [""],
+    email: [
+      "",
+      [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)],
+    ],
+    phoneCode: ["", [Validators.required]],
+    phone: ["", [Validators.required, Validators.pattern("[0-9]+")]],
+    city: ["", [Validators.required]],
+  })
 
   fetchCityOnKey(event: any) {
     if (event.key === "ArrowUp" || event.key === "ArrowDown") {
@@ -95,7 +113,7 @@ export class DriverListComponent implements OnInit {
     this.selectedCountry = String(country)
     this.cityService.getAllCities(String(country)).subscribe({
       next: (response: any) => {
-        this.cities = response.map((city: any) => city.name)
+        this.cities = response.map((city: any) => city)
       },
       error: (error) => {
         this.cities = []
@@ -103,19 +121,6 @@ export class DriverListComponent implements OnInit {
       },
     })
   }
-
-  driverForm: FormGroup = this.fb.group({
-    name: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
-    profile: ["", [Validators.required]],
-    profileHidden: [""],
-    email: [
-      "",
-      [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)],
-    ],
-    phoneCode: ["", [Validators.required]],
-    phone: ["", [Validators.required, Validators.pattern("[0-9]+")]],
-    city: ["", [Validators.required]],
-  })
 
   onToggle(status: boolean, index: number) {
     const driver = this.dataSource[index]
@@ -146,8 +151,10 @@ export class DriverListComponent implements OnInit {
       },
     })
 
-    dialogRef.afterClosed().subscribe((result) => {
-      this.fetchDriverData(this.pageIndex)
+    dialogRef.afterClosed().subscribe(() => {
+      if (dialogRef.componentInstance.changeOccured) {
+        this.fetchDriverData(this.pageIndex)
+      }
     })
   }
 
@@ -194,17 +201,28 @@ export class DriverListComponent implements OnInit {
     const email = this.email?.value
     const phoneCode = this.phoneCode?.value
     const phone = this.phone?.value
-    const city = this.city?.value
 
     if (this.form === "Add") {
-      this.onAddDriver(name, this.selectedFile, email, phoneCode, phone, city)
+      this.onAddDriver(name, this.selectedFile, email, phoneCode, phone, this.driverCityID)
     } else if (this.form === "Edit") {
-      this.onEditDriver(this.editDriverID, name, this.selectedFile, email, phoneCode, phone, city)
+      this.onEditDriver(
+        this.editDriverID,
+        name,
+        this.selectedFile,
+        email,
+        phoneCode,
+        phone,
+        this.driverCityID
+      )
     }
     Object.values(this.driverForm.controls).forEach((control) => {
       control.setErrors(null)
     })
     this.toggleForm()
+  }
+
+  onCitySelect(index: number) {
+    this.driverCityID = this.cities[index]._id
   }
 
   onAddDriver(
@@ -213,9 +231,9 @@ export class DriverListComponent implements OnInit {
     email: string,
     phoneCode: string,
     phone: number,
-    city: string
+    cityID: string
   ) {
-    this.driverService.addDriver(name, profile, email, phoneCode, phone, city).subscribe({
+    this.driverService.addDriver(name, profile, email, phoneCode, phone, cityID).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Added")
         this.pageIndex = Math.ceil((this.totalDriverCounts + 1) / 4)
@@ -248,12 +266,14 @@ export class DriverListComponent implements OnInit {
     email: string,
     phoneCode: string,
     phone: number,
-    city: string
+    cityID: string
   ) {
-    this.driverService.editDriver(id, name, profile, email, phoneCode, phone, city).subscribe({
+    this.driverService.editDriver(id, name, profile, email, phoneCode, phone, cityID).subscribe({
       next: (response: any) => {
-        this.toast.success(response.msg, "Success")
-        this.fetchDriverData(this.pageIndex)
+        this.dataSource[this.editTrIndex] = response
+        this.dataSource = [...this.dataSource]
+        this.toast.success("Driver edited successfully!!", "Success")
+        this.cdRef.detectChanges()
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")
@@ -275,6 +295,7 @@ export class DriverListComponent implements OnInit {
   }
 
   editDriver(index: number) {
+    this.editTrIndex = index
     if (this.form !== "Edit") this.toggleForm()
     this.form = "Edit"
     this.isDisable = true
@@ -285,7 +306,12 @@ export class DriverListComponent implements OnInit {
     this.email?.setValue(driver.email)
     this.phoneCode?.setValue(String(driver.phoneCode))
     this.phone?.setValue(driver.phone)
-    this.city?.setValue(driver.city)
+    const selectedCountry = this.countries.find((country) => country.code === driver.phoneCode)
+    if (selectedCountry) {
+      this.fetchCity(selectedCountry.name)
+    }
+    this.city?.setValue(driver.city.name)
+    this.driverCityID = driver.city._id
   }
 
   deleteDriver(index: number) {

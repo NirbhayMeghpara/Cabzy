@@ -12,7 +12,7 @@ import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.se
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 
-interface Ride {
+export interface Ride {
   _id: string
   userId: string
   cityId: string
@@ -195,9 +195,9 @@ export class ConfirmedRideComponent implements OnInit {
     event.stopPropagation()
     console.log(this.dataSource[index])
   }
+
   assignRide(event: any, index: number) {
     event.stopPropagation()
-    console.log(this.dataSource[index])
 
     const assignRideDialog = this.dialog.open(AssignDialogComponent, {
       width: "800px",

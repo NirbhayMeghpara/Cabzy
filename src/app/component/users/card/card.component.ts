@@ -92,7 +92,7 @@ export class CardComponent implements OnInit {
         })
       },
       error: (error) => {
-        this.toast.error(error.error.error, "Error")
+        this.toast.info(error.error.error, "Info")
       },
     })
   }
