@@ -1,0 +1,25 @@
+
+.icon-18{
+  height: fit-content;
+  display: inline-flex;
+  margin: 6px;
+  cursor: pointer;
+}
+
+.action, .status{
+  text-align: center;
+}
+
+.action > .d-flex {
+  align-items: center;
+}
+
+.cancel, .accept{
+  width: 28px;
+  height: 28px;
+  color: #cf352a;
+}
+
+.accept{
+  color: #00c292
+}
