@@ -22,15 +22,10 @@
           <span>No service type assigned to this driver</span>
         </div> -->
         <div>
-          <mat-radio-group
-            role="radiogroup"
-            aria-label="Select a driver"
-            color="warn"
-            formControlName="driver"
-          >
+          <mat-radio-group role="radiogroup" aria-label="Select a driver" color="warn">
             <div class="scheduleRide">
-              <ng-container *ngFor="let driver of drivers">
-                <mat-radio-button value="cash">
+              <ng-container *ngFor="let driver of drivers; let i = index">
+                <mat-radio-button value="{{ i }}" (change)="onDriverSelected(i)">
                   {{ driver.name }} - ({{ driver.phoneCode }} {{ driver.phone }}) - ({{ driver.email }})
                 </mat-radio-button>
               </ng-container>
@@ -54,7 +49,13 @@
               <span>Assign Selected Driver</span>
             </span>
           </button>
-          <button class="filterActionBtn m-r-10" type="button" mat-raised-button color="accent">
+          <button
+            class="filterActionBtn m-r-10"
+            type="button"
+            (click)="assignToNearestDriver()"
+            mat-raised-button
+            color="accent"
+          >
             <span class="mdc-button__label">
               <i-feather name="clock" class="assignSelectedDriver m-r-6"></i-feather>
               <span>Assign Nearest Driver</span>
