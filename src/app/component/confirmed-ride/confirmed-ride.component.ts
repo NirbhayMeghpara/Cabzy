@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnDestroy, OnInit } from "@angular/core"
 import { Stops } from "../create-ride/create-ride.component"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
 import { ToastService } from "src/app/services/toast.service"
@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
+import { SocketService } from "src/app/services/socket/socket.service"
 
 export interface Ride {
   _id: string
@@ -75,7 +76,8 @@ export class ConfirmedRideComponent implements OnInit {
     private toast: ToastService,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private vehicleTypeService: VehicleTypeService
+    private vehicleTypeService: VehicleTypeService,
+    private socketService: SocketService
   ) {}
 
   filterForm: FormGroup = this.fb.group({
@@ -87,6 +89,7 @@ export class ConfirmedRideComponent implements OnInit {
     this.fetchRideData(this.pageIndex)
     this.getVehicle()
     this.restrictDate()
+    this.socketService.initializeSocket()
   }
 
   handlePage(event: any) {
@@ -120,7 +123,10 @@ export class ConfirmedRideComponent implements OnInit {
       this.filterRideDate = ""
       this.filterVehicleType = ""
       this.filterStatus = ""
-      if (this.filteredDate) this.fetchRideData()
+      if (this.filteredDate) {
+        this.fetchRideData()
+        this.filteredDate = false
+      }
     }
     this.showFilter = !this.showFilter
   }
@@ -203,6 +209,20 @@ export class ConfirmedRideComponent implements OnInit {
       width: "800px",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
+    })
+
+    assignRideDialog.afterClosed().subscribe((result) => {
+      if (result.updatedRide) {
+        this.fetchRideData(
+          this.pageIndex,
+          this.searchText,
+          this.currentSortField,
+          this.currentSortOrder,
+          this.filterRideDate,
+          this.filterVehicleType,
+          this.filterStatus
+        )
+      }
     })
   }
 
