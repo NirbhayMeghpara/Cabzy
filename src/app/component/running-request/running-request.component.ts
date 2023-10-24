@@ -2,10 +2,10 @@ import { Component, OnInit } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
-import { ToastrModule } from "ngx-toastr"
 import { ToastService } from "src/app/services/toast.service"
 import { RideDetailsComponent } from "../confirmed-ride/ride-details/ride-details.component"
 import { MatDialog } from "@angular/material/dialog"
+import { SocketService } from "src/app/services/socket/socket.service"
 
 @Component({
   selector: "app-running-request",
@@ -29,7 +29,7 @@ export class RunningRequestComponent implements OnInit {
   ]
   dataSource: Ride[] = []
   vehicles: VehicleType[] = []
-  statusList: string[] = ["Pending", "Accepted", "Arrived", "Started", "Completed"]
+  statusList: string[] = ["Pending", "Assigning", "Accepted", "Arrived", "Started", "Completed"]
   pageIndex: number = 1
   pageSize: number = 4
   totalRideCounts: number = 0
@@ -37,11 +37,13 @@ export class RunningRequestComponent implements OnInit {
   constructor(
     private createRideService: CreateRideService,
     private toast: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private socketService: SocketService
   ) {}
 
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
+    this.socketService.initializeSocket()
   }
 
   handlePage(event: any) {
@@ -51,12 +53,35 @@ export class RunningRequestComponent implements OnInit {
 
   rejectRide(event: any, index: number) {
     event.stopPropagation()
-    console.log(this.dataSource[index])
+    this.socketService.emit(
+      "requestRejectedByDriver",
+      { ride: this.dataSource[index] },
+      (error, message) => {
+        if (error) {
+          console.error("Error:", error)
+        } else {
+          this.dataSource[index] = JSON.parse(message)
+          this.dataSource = [...this.dataSource]
+        }
+      }
+    )
   }
 
   acceptRide(event: any, index: number) {
     event.stopPropagation()
-    console.log(this.dataSource[index])
+    this.socketService.emit(
+      "requestAcceptedByDriver",
+      { ride: this.dataSource[index] },
+      (error, message) => {
+        if (error) {
+          console.error("Error:", error)
+        } else {
+          console.log(message)
+          this.dataSource[index] = JSON.parse(message)
+          this.dataSource = [...this.dataSource]
+        }
+      }
+    )
   }
 
   onTRclick(index: number) {
@@ -68,7 +93,7 @@ export class RunningRequestComponent implements OnInit {
   }
 
   fetchRideData(page: number = 1) {
-    this.createRideService.getRides(page).subscribe({
+    this.createRideService.getRides({ page, rideStatus: "[2,3,4,5,6]" }).subscribe({
       next: (data: any) => {
         this.totalRideCounts = data.rideCount
         this.dataSource = data.rides

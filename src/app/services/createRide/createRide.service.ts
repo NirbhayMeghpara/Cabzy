@@ -46,24 +46,26 @@ export class CreateRideService {
     return this.http.post(this._createRideUrl, formData)
   }
 
-  getRides(
-    page: number,
-    searchText?: string,
-    sort?: string,
-    sortOrder?: string,
-    rideDate?: string,
-    vehicleType?: string,
+  getRides(data: {
+    page: number
+    searchText?: string
+    sort?: string
+    sortOrder?: string
+    rideDate?: string
+    vehicleType?: string
     status?: string
-  ) {
+    rideStatus?: string
+  }) {
     const url = new URL(this._getRidesUrl)
-    url.searchParams.set("page", String(page))
+    url.searchParams.set("page", String(data.page))
 
-    searchText && url.searchParams.set("search", searchText)
-    sort && url.searchParams.set("sort", sort)
-    sortOrder && url.searchParams.set("sortOrder", sortOrder)
-    rideDate && url.searchParams.set("rideDate", rideDate)
-    vehicleType && url.searchParams.set("vehicleType", vehicleType)
-    status && url.searchParams.set("status", status)
+    data.searchText && url.searchParams.set("search", data.searchText)
+    data.sort && url.searchParams.set("sort", data.sort)
+    data.sortOrder && url.searchParams.set("sortOrder", data.sortOrder)
+    data.rideDate && url.searchParams.set("rideDate", data.rideDate)
+    data.vehicleType && url.searchParams.set("vehicleType", data.vehicleType)
+    data.status && url.searchParams.set("status", data.status)
+    data.rideStatus && url.searchParams.set("rideStatus", data.rideStatus)
 
     return this.http.get(url.toString())
   }
