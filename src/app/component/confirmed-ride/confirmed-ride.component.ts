@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { Stops } from "../create-ride/create-ride.component"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
 import { ToastService } from "src/app/services/toast.service"
@@ -89,7 +89,6 @@ export class ConfirmedRideComponent implements OnInit {
     this.fetchRideData(this.pageIndex)
     this.getVehicle()
     this.restrictDate()
-    this.socketService.initializeSocket()
   }
 
   handlePage(event: any) {
@@ -146,7 +145,7 @@ export class ConfirmedRideComponent implements OnInit {
     status?: string
   ) {
     this.createRideService
-      .getRides(page, searchText, sort, sortOrder, rideDate, vehicleType, status)
+      .getRides({ page, searchText, sort, sortOrder, rideDate, vehicleType, status })
       .subscribe({
         next: (data: any) => {
           this.totalRideCounts = data.rideCount
@@ -212,16 +211,20 @@ export class ConfirmedRideComponent implements OnInit {
     })
 
     assignRideDialog.afterClosed().subscribe((result) => {
-      if (result.updatedRide) {
-        this.fetchRideData(
-          this.pageIndex,
-          this.searchText,
-          this.currentSortField,
-          this.currentSortOrder,
-          this.filterRideDate,
-          this.filterVehicleType,
-          this.filterStatus
-        )
+      if (result && result.updatedRide) {
+        this.dataSource[index] = result.updatedRide
+        this.dataSource = [...this.dataSource]
+        // this.fetchRideData(
+        //   this.pageIndex,
+        //   this.searchText,
+        //   this.currentSortField,
+        //   this.currentSortOrder,
+        //   this.filterRideDate,
+        //   this.filterVehicleType,
+        //   this.filterStatus
+        // )
+      } else if (result && result.error) {
+        console.log(result.error)
       }
     })
   }
