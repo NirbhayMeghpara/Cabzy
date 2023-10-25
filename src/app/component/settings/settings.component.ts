@@ -12,7 +12,7 @@ import { ToastService } from "src/app/services/toast.service"
 export class SettingsComponent implements OnInit {
   times: number[] = [10, 20, 30, 45, 60, 90, 120]
   allowedStops: number[] = [1, 2, 3, 4, 5]
-  selectedCroneTime!: number
+  selectedDriverTimeout!: number
   selectedStops!: number
 
   settingID!: string
@@ -28,9 +28,9 @@ export class SettingsComponent implements OnInit {
     this.settingService.getSettings().subscribe({
       next: (response: any) => {
         this.settingID = response[0]._id
-        this.selectedCroneTime = response[0].croneTime
+        this.selectedDriverTimeout = response[0].driverTimeout
         this.selectedStops = response[0].stops
-        this.croneTime?.setValue(response[0].croneTime)
+        this.driverTimeout?.setValue(response[0].driverTimeout)
         this.stops?.setValue(response[0].stops)
 
         this.submitFlag = false
@@ -42,12 +42,12 @@ export class SettingsComponent implements OnInit {
   }
 
   settingsForm: FormGroup = this.fb.group({
-    croneTime: ["", [Validators.required]],
+    driverTimeout: ["", [Validators.required]],
     stops: ["", [Validators.required]],
   })
 
   onSelectTime(index: number) {
-    this.selectedCroneTime = this.times[index]
+    this.selectedDriverTimeout = this.times[index]
     this.submitFlag = true
   }
   onSelectStop(index: number) {
@@ -68,14 +68,14 @@ export class SettingsComponent implements OnInit {
 
     const setting = {
       id: this.settingID,
-      croneTime: this.selectedCroneTime.toString(),
+      driverTimeout: this.selectedDriverTimeout.toString(),
       stops: this.selectedStops.toString(),
     }
 
     this.settingService.editSetting(setting).subscribe({
       next: (response: any) => {
         this.settingID = response._id
-        this.croneTime?.setValue(response.croneTime)
+        this.driverTimeout?.setValue(response.driverTimeout)
         this.stops?.setValue(response.stops)
 
         this.toast.success("Settings updated successfully", "Success")
@@ -86,8 +86,8 @@ export class SettingsComponent implements OnInit {
     })
   }
 
-  get croneTime() {
-    return this.settingsForm.get("croneTime")
+  get driverTimeout() {
+    return this.settingsForm.get("driverTimeout")
   }
   get stops() {
     return this.settingsForm.get("stops")

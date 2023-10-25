@@ -124,6 +124,11 @@ mat-error {
   align-items: center;
 }
 
+.driverName{
+  justify-content: center;
+  align-items: center;
+}
+
 @media screen and (max-width: 1150px) {
   .btn-wrapper {
     flex-direction: column;

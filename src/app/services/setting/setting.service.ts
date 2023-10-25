@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core"
 
 interface Settings {
   id: string
-  croneTime: string
+  driverTimeout: string
   stops: string
 }
 
@@ -19,7 +19,7 @@ export class SettingService {
   editSetting(settings: Settings) {
     const formData = new FormData()
     formData.append("id", settings.id)
-    formData.append("croneTime", settings.croneTime)
+    formData.append("driverTimeout", settings.driverTimeout)
     formData.append("stops", settings.stops)
 
     return this.http.patch(this._editSettingUrl, formData)

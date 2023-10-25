@@ -150,16 +150,20 @@ export class CityComponent implements OnInit {
   }
 
   onEditCity(location: string) {
-    this.polygonCoordinates = this.fetchPolygonCoordinate(this.currentPolygon)
+    if (!this.disableEditBtn) {
+      this.polygonCoordinates = this.fetchPolygonCoordinate(this.currentPolygon)
 
-    this.cityService.editCity(this.editCityID, this.polygonCoordinates).subscribe({
-      next: (response: any) => {
-        this.toast.success(response.msg, "Success")
-        this.fetchCityData(this.selectedCountry.name, this.pageIndex)
-        this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
-      },
-      error: (error) => this.toast.error(error.error.error, "Error"),
-    })
+      this.cityService.editCity(this.editCityID, this.polygonCoordinates).subscribe({
+        next: (response: any) => {
+          this.toast.success(response.msg, "Success")
+          this.fetchCityData(this.selectedCountry.name, this.pageIndex)
+          this.centerMap(this.selectedCountry.lat, this.selectedCountry.lng, 5)
+        },
+        error: (error) => this.toast.error(error.error.error, "Error"),
+      })
+    } else {
+      this.toast.info("Please dont mess with our code", "Info")
+    }
   }
 
   fetchCityData(country: string, pageIndex: number = 1) {

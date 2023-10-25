@@ -81,6 +81,15 @@
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="driver">
+          <th class="driver" mat-header-cell *matHeaderCellDef>Driver</th>
+          <td class="driver" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">
+              <strong>{{ element.driver.name }}</strong>
+            </p>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="status">
           <th class="status" mat-header-cell *matHeaderCellDef>Status</th>
           <td class="status" mat-cell *matCellDef="let element">

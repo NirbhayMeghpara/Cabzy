@@ -37,7 +37,14 @@
         appearance="outline"
       >
         <mat-label>City Name</mat-label>
-        <input matInput type="text" placeholder="Enter city name" formControlName="city" #city />
+        <input
+          matInput
+          type="text"
+          placeholder="Enter city name"
+          formControlName="city"
+          #city
+          [readonly]="disableEditBtn"
+        />
         <mat-error class="m-t-6" *ngIf="cityInputTag?.pristine || cityInputTag?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
           <span *ngIf="cityInputTag?.hasError('required')"> Please enter city name !! </span>

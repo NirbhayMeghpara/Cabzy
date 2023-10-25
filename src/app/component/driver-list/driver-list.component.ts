@@ -19,6 +19,7 @@ export interface Driver {
   cityID: string
   isApproved: boolean
   city: City
+  status: number
 }
 
 export interface CountryCode {
