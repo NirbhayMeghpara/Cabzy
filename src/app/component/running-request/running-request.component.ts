@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnDestroy, OnInit } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
@@ -6,13 +6,14 @@ import { ToastService } from "src/app/services/toast.service"
 import { RideDetailsComponent } from "../confirmed-ride/ride-details/ride-details.component"
 import { MatDialog } from "@angular/material/dialog"
 import { SocketService } from "src/app/services/socket/socket.service"
+import { RejectRideComponent } from "./reject-ride/reject-ride.component"
 
 @Component({
   selector: "app-running-request",
   templateUrl: "./running-request.component.html",
   styleUrls: ["./running-request.component.scss"],
 })
-export class RunningRequestComponent implements OnInit {
+export class RunningRequestComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [
     "id",
     "userName",
@@ -24,6 +25,7 @@ export class RunningRequestComponent implements OnInit {
     "journeyDistance",
     "journeyTime",
     "totalFare",
+    "driver",
     "status",
     "action",
   ]
@@ -53,18 +55,20 @@ export class RunningRequestComponent implements OnInit {
 
   rejectRide(event: any, index: number) {
     event.stopPropagation()
-    this.socketService.emit(
-      "requestRejectedByDriver",
-      { ride: this.dataSource[index] },
-      (error, message) => {
-        if (error) {
-          console.error("Error:", error)
-        } else {
-          this.dataSource[index] = JSON.parse(message)
-          this.dataSource = [...this.dataSource]
-        }
+    const dialogRef = this.dialog.open(RejectRideComponent, {
+      width: "400px",
+      enterAnimationDuration: "300ms",
+      data: {
+        ride: this.dataSource[index],
+      },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === "Rejected") {
+        this.dataSource.splice(1, index)
+        this.dataSource = [...this.dataSource]
       }
-    )
+    })
   }
 
   acceptRide(event: any, index: number) {
@@ -76,9 +80,9 @@ export class RunningRequestComponent implements OnInit {
         if (error) {
           console.error("Error:", error)
         } else {
-          console.log(message)
           this.dataSource[index] = JSON.parse(message)
           this.dataSource = [...this.dataSource]
+          this.toast.success("Driver confirmed! Your ride is on the way.", "Accepted")
         }
       }
     )
@@ -103,5 +107,9 @@ export class RunningRequestComponent implements OnInit {
         if (error.status === 404) this.toast.info(error.error.msg, "404")
       },
     })
+  }
+
+  ngOnDestroy(): void {
+    this.socketService.disconnectSocket()
   }
 }

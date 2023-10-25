@@ -1,0 +1,39 @@
+<h2
+  mat-dialog-title
+  class="mat-mdc-dialog-title mdc-dialog__title f-w-500 m-b-16"
+  id="mat-mdc-dialog-title-1"
+>
+  <strong>Reject Ride</strong>
+</h2>
+<div class="m-l-24 ng-star-inserted">
+  <p>
+    Sure to reject <span class="f-w-600">Ride #{{ rideID }}</span> ?
+  </p>
+</div>
+<div
+  mat-dialog-actions
+  class="mat-mdc-dialog-actions mdc-dialog__actions p-x-24 p-b-24 ng-star-inserted"
+>
+  <button
+    type="button"
+    mat-flat-button
+    color="warn"
+    class="mdc-button f-w-400 mat-mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-warn mat-mdc-button-base"
+    (click)="reject()"
+  >
+    <span class="mdc-button__label"> Reject </span>
+    <span class="mat-mdc-focus-indicator"></span>
+    <span class="mat-mdc-button-touch-target"></span>
+  </button>
+  <button
+    type="button"
+    mat-stroked-button
+    class="m-l-8 f-w-400 mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
+    mat-button-is-fab="false"
+    matDialogClose
+  >
+    <span class="mdc-button__label"> Cancel </span>
+    <span class="mat-mdc-focus-indicator"></span>
+    <span class="mat-mdc-button-touch-target"></span>
+  </button>
+</div>

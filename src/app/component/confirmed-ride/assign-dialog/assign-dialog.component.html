@@ -22,7 +22,12 @@
           <span>No service type assigned to this driver</span>
         </div> -->
         <div>
-          <mat-radio-group role="radiogroup" aria-label="Select a driver" color="warn">
+          <mat-radio-group
+            role="radiogroup"
+            aria-label="Select a driver"
+            color="warn"
+            *ngIf="drivers.length !== 0"
+          >
             <div class="scheduleRide">
               <ng-container *ngFor="let driver of drivers; let i = index">
                 <mat-radio-button value="{{ i }}" (change)="onDriverSelected(i)">
@@ -34,6 +39,14 @@
           <!-- <mat-checkbox color="warn">
                 {{ driver.name }} - ({{ driver.phoneCode }} {{ driver.phone }}) - ({{ driver.email }})
               </mat-checkbox> -->
+          <div
+            class="alert alert-border-info alert-text-info background-none d-flex fs-14 f-w-400 align-items-center rounded m-b-16 m-t-16"
+            role="alert"
+            *ngIf="drivers.length === 0"
+          >
+            <i-feather name="info" class="text-info feather-base me-12"></i-feather>
+            <span>No driver available !!</span>
+          </div>
         </div>
 
         <div class="assignBtn m-t-16">

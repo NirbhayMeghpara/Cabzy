@@ -11,13 +11,14 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.service"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
-import { SocketService } from "src/app/services/socket/socket.service"
+import { Driver } from "../driver-list/driver-list.component"
 
 export interface Ride {
   _id: string
   userId: string
   cityId: string
   serviceTypeId: string
+  rideID: number
   userName: string
   pickUp: string
   stops: Stops[]
@@ -31,6 +32,7 @@ export interface Ride {
   status: number
   user: User
   serviceType: Pricing
+  driver: Driver
 }
 
 @Component({
@@ -76,8 +78,7 @@ export class ConfirmedRideComponent implements OnInit {
     private toast: ToastService,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private vehicleTypeService: VehicleTypeService,
-    private socketService: SocketService
+    private vehicleTypeService: VehicleTypeService
   ) {}
 
   filterForm: FormGroup = this.fb.group({
@@ -198,7 +199,6 @@ export class ConfirmedRideComponent implements OnInit {
 
   cancelRide(event: any, index: number) {
     event.stopPropagation()
-    console.log(this.dataSource[index])
   }
 
   assignRide(event: any, index: number) {
@@ -214,17 +214,8 @@ export class ConfirmedRideComponent implements OnInit {
       if (result && result.updatedRide) {
         this.dataSource[index] = result.updatedRide
         this.dataSource = [...this.dataSource]
-        // this.fetchRideData(
-        //   this.pageIndex,
-        //   this.searchText,
-        //   this.currentSortField,
-        //   this.currentSortOrder,
-        //   this.filterRideDate,
-        //   this.filterVehicleType,
-        //   this.filterStatus
-        // )
       } else if (result && result.error) {
-        console.log(result.error)
+        this.toast.error(result.error, "Error")
       }
     })
   }

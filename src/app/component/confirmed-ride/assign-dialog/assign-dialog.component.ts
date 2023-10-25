@@ -28,6 +28,11 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
         this.drivers = response
       },
       error: (error) => {
+        this.drivers = []
+        if (error.status === 404) {
+          this.toast.info(error.error.msg, "404")
+          return
+        }
         this.toast.error(error.error.error, "Error")
       },
     })

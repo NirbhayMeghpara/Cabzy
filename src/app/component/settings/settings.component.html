@@ -3,16 +3,16 @@
     <h2 class="mb-12">Setting</h2>
     <hr class="mb-32" />
     <form [formGroup]="settingsForm" autocomplete="off" enctype="multipart/form-data">
-      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Crone Time (In seconds)</mat-label>
-      <mat-form-field [class.mb-16]="croneTime?.invalid && croneTime?.touched">
-        <mat-select placeholder="Select Time" formControlName="croneTime">
+      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Driver Timeout (In seconds)</mat-label>
+      <mat-form-field [class.mb-16]="driverTimeout?.invalid && driverTimeout?.touched">
+        <mat-select placeholder="Select Time" formControlName="driverTimeout">
           <ng-container *ngFor="let time of times; let i = index">
             <mat-option value="{{ time }}" (click)="onSelectTime(i)">{{ time }}</mat-option>
           </ng-container>
         </mat-select>
-        <mat-error class="m-t-6" *ngIf="croneTime?.invalid && croneTime?.touched"
+        <mat-error class="m-t-6" *ngIf="driverTimeout?.invalid && driverTimeout?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
-          <span *ngIf="croneTime?.hasError('required')">Please select crone time</span>
+          <span *ngIf="driverTimeout?.hasError('required')">Please select driver timeout</span>
         </mat-error>
       </mat-form-field>
 
