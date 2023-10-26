@@ -214,6 +214,7 @@ export class ConfirmedRideComponent implements OnInit {
       if (result && result.updatedRide) {
         this.dataSource[index] = result.updatedRide
         this.dataSource = [...this.dataSource]
+        console.log(this.dataSource)
       } else if (result && result.error) {
         this.toast.error(result.error, "Error")
       }

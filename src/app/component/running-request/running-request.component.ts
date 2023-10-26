@@ -46,6 +46,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
     this.socketService.initializeSocket()
+    this.listenSocket()
   }
 
   handlePage(event: any) {
@@ -65,7 +66,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === "Rejected") {
-        this.dataSource.splice(1, index)
+        this.dataSource.splice(index, 1)
         this.dataSource = [...this.dataSource]
       }
     })
@@ -73,19 +74,12 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
   acceptRide(event: any, index: number) {
     event.stopPropagation()
-    this.socketService.emit(
-      "requestAcceptedByDriver",
-      { ride: this.dataSource[index] },
-      (error, message) => {
-        if (error) {
-          console.error("Error:", error)
-        } else {
-          this.dataSource[index] = JSON.parse(message)
-          this.dataSource = [...this.dataSource]
-          this.toast.success("Driver confirmed! Your ride is on the way.", "Accepted")
-        }
-      }
-    )
+    this.socketService.emit("requestAcceptedByDriver", { ride: this.dataSource[index] })
+    this.socketService.listen("rideAccepted").subscribe((ride: any) => {
+      this.dataSource[index] = ride
+      this.dataSource = [...this.dataSource]
+      this.toast.success("Driver confirmed! Your ride is on the way.", "Accepted")
+    })
   }
 
   onTRclick(index: number) {
@@ -107,6 +101,10 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
         if (error.status === 404) this.toast.info(error.error.msg, "404")
       },
     })
+  }
+
+  listenSocket() {
+    this.socketService.listen("error").subscribe((error) => this.toast.error(String(error), "Error"))
   }
 
   ngOnDestroy(): void {

@@ -5,7 +5,7 @@
         <h2 class="m-b-24 f-w-500">Create Ride</h2>
         <mat-accordion>
           <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true" disabled>
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header [class.disableStyle]="step === 0">
               <mat-panel-title><b class="f-s-15">Select User</b></mat-panel-title>
               <mat-panel-description>
                 <i-feather name="user" class="icon-20"></i-feather>
@@ -108,7 +108,7 @@
           </mat-expansion-panel>
 
           <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true" disabled>
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header [class.disableStyle]="step === 1">
               <mat-panel-title><b class="f-s-15">Select Location</b></mat-panel-title>
               <mat-panel-description>
                 <i-feather name="map-pin" class="icon-20"></i-feather>
@@ -228,7 +228,7 @@
           </mat-expansion-panel>
 
           <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true" disabled>
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header [class.disableStyle]="step === 2">
               <mat-panel-title><b class="f-s-15">Book a Ride</b></mat-panel-title>
               <mat-panel-description>
                 <i-feather name="calendar" class="icon-20"></i-feather>
