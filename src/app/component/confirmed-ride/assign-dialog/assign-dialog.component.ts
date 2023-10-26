@@ -37,6 +37,7 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
       },
     })
     this.socketService.initializeSocket()
+    this.listenSocket()
   }
 
   onDriverSelected(index: number) {
@@ -45,19 +46,7 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
 
   assignToSelectedDriver() {
     if (this.selectedDriver) {
-      this.socketService.emit(
-        "assignToSelectedDriver",
-        { ride: this.ride, driver: this.selectedDriver },
-        (error, message) => {
-          if (error) {
-            console.error("Error:", error)
-            this.dialogRef.close({ error })
-          } else {
-            console.log("Message:", message)
-            this.dialogRef.close({ updatedRide: message })
-          }
-        }
-      )
+      this.socketService.emit("assignToSelectedDriver", { ride: this.ride, driver: this.selectedDriver })
     } else {
       this.toast.info("Please select a driver", "Info")
     }
@@ -69,6 +58,15 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
     } else {
       this.toast.info("Please select a driver", "Info")
     }
+  }
+
+  listenSocket() {
+    this.socketService.listen("error").subscribe((error) => this.dialogRef.close({ error }))
+
+    this.socketService.listen("rideAssigned").subscribe((ride: any) => {
+      console.log("Message:", ride)
+      this.dialogRef.close({ updatedRide: ride })
+    })
   }
 
   ngOnDestroy(): void {

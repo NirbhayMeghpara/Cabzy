@@ -23,14 +23,17 @@ export class RejectRideComponent {
   }
 
   reject() {
-    this.socketService.emit("selectedDriverRejectRide", { ride: this.data.ride }, (error, message) => {
-      if (error) {
-        this.toast.error(error, "Error")
-        this.dialogRef.close("Error")
-      } else {
-        this.toast.info(message, "Rejected")
-        this.dialogRef.close("Rejected")
-      }
+    this.socketService.emit("selectedDriverRejectRide", { ride: this.data.ride })
+    this.socketService.listen("rideRejected").subscribe((data: any) => {
+      this.toast.info(data, "Rejected")
+      this.dialogRef.close("Rejected")
+    })
+  }
+
+  listenSocket() {
+    this.socketService.listen("error").subscribe((error: any) => {
+      this.toast.error(error, "Error")
+      this.dialogRef.close("Error")
     })
   }
 }
