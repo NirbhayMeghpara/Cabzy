@@ -3,14 +3,13 @@ import { DriverService } from "src/app/services/driver/driver.service"
 import { Component, Inject, OnDestroy, OnInit } from "@angular/core"
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog"
 import { ToastService } from "src/app/services/toast.service"
-import { SocketService } from "src/app/services/socket/socket.service"
 
 @Component({
   selector: "app-assign-dialog",
   templateUrl: "./assign-dialog.component.html",
   styleUrls: ["./assign-dialog.component.scss"],
 })
-export class AssignDialogComponent implements OnInit, OnDestroy {
+export class AssignDialogComponent implements OnInit {
   drivers: Driver[] = []
   selectedDriver!: Driver
 
@@ -18,8 +17,7 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<AssignDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public ride: any,
     private driverService: DriverService,
-    private toast: ToastService,
-    private socketService: SocketService
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -36,8 +34,6 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
         this.toast.error(error.error.error, "Error")
       },
     })
-    this.socketService.initializeSocket()
-    this.listenSocket()
   }
 
   onDriverSelected(index: number) {
@@ -46,30 +42,19 @@ export class AssignDialogComponent implements OnInit, OnDestroy {
 
   assignToSelectedDriver() {
     if (this.selectedDriver) {
-      this.socketService.emit("assignToSelectedDriver", { ride: this.ride, driver: this.selectedDriver })
+      this.dialogRef.close({
+        assignSelected: true,
+        rideData: { ride: this.ride, driver: this.selectedDriver },
+      })
     } else {
       this.toast.info("Please select a driver", "Info")
     }
   }
 
   assignToNearestDriver() {
-    if (this.selectedDriver) {
-      this.socketService.emit("assignToNearestDriver", this.ride)
-    } else {
-      this.toast.info("Please select a driver", "Info")
-    }
-  }
-
-  listenSocket() {
-    this.socketService.listen("error").subscribe((error) => this.dialogRef.close({ error }))
-
-    this.socketService.listen("rideAssigned").subscribe((ride: any) => {
-      console.log("Message:", ride)
-      this.dialogRef.close({ updatedRide: ride })
+    this.dialogRef.close({
+      assignSelected: false,
+      rideData: { ride: this.ride, driver: this.drivers },
     })
-  }
-
-  ngOnDestroy(): void {
-    this.socketService.disconnectSocket()
   }
 }

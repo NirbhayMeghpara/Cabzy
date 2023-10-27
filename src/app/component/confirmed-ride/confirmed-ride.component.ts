@@ -12,6 +12,7 @@ import { VehicleTypeService } from "src/app/services/vehicleType/vehicle-type.se
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 import { Driver } from "../driver-list/driver-list.component"
+import { SocketService } from "src/app/services/socket/socket.service"
 
 export interface Ride {
   _id: string
@@ -78,7 +79,8 @@ export class ConfirmedRideComponent implements OnInit {
     private toast: ToastService,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private vehicleTypeService: VehicleTypeService
+    private vehicleTypeService: VehicleTypeService,
+    private socketService: SocketService
   ) {}
 
   filterForm: FormGroup = this.fb.group({
@@ -90,6 +92,9 @@ export class ConfirmedRideComponent implements OnInit {
     this.fetchRideData(this.pageIndex)
     this.getVehicle()
     this.restrictDate()
+
+    this.socketService.initializeSocket()
+    this.listenSocket()
   }
 
   handlePage(event: any) {
@@ -211,12 +216,10 @@ export class ConfirmedRideComponent implements OnInit {
     })
 
     assignRideDialog.afterClosed().subscribe((result) => {
-      if (result && result.updatedRide) {
-        this.dataSource[index] = result.updatedRide
-        this.dataSource = [...this.dataSource]
-        console.log(this.dataSource)
-      } else if (result && result.error) {
-        this.toast.error(result.error, "Error")
+      if (result && result.assignSelected) {
+        this.socketService.emit("assignToSelectedDriver", result.rideData)
+      } else {
+        this.socketService.emit("assignToNearestDriver", result.rideData)
       }
     })
   }
@@ -230,6 +233,37 @@ export class ConfirmedRideComponent implements OnInit {
         this.toast.error(error.error.error, "Error")
       },
     })
+  }
+
+  listenSocket() {
+    this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
+
+    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
+      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
+
+      if (index !== -1) {
+        this.dataSource[index] = updatedRide
+        this.dataSource = [...this.dataSource]
+      }
+    })
+
+    this.socketService.listen("driverTimeout").subscribe((data: any) => {
+      this.toast.info(
+        `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
+        "Timeout"
+      )
+
+      const index = this.dataSource.findIndex((ride) => ride.rideID === data.ride.rideID)
+
+      if (index !== -1) {
+        this.dataSource[index] = data.ride
+        this.dataSource = [...this.dataSource]
+      }
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.socketService.disconnectSocket()
   }
 
   get vehicleType() {

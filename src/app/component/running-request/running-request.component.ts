@@ -65,9 +65,8 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
     })
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === "Rejected") {
-        this.dataSource.splice(index, 1)
-        this.dataSource = [...this.dataSource]
+      if (result) {
+        this.socketService.emit("selectedDriverRejectRide", { ride: this.dataSource[index] })
       }
     })
   }
@@ -75,11 +74,6 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   acceptRide(event: any, index: number) {
     event.stopPropagation()
     this.socketService.emit("requestAcceptedByDriver", { ride: this.dataSource[index] })
-    this.socketService.listen("rideAccepted").subscribe((ride: any) => {
-      this.dataSource[index] = ride
-      this.dataSource = [...this.dataSource]
-      this.toast.success("Driver confirmed! Your ride is on the way.", "Accepted")
-    })
   }
 
   onTRclick(index: number) {
@@ -104,7 +98,46 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   }
 
   listenSocket() {
-    this.socketService.listen("error").subscribe((error) => this.toast.error(String(error), "Error"))
+    this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
+
+    this.socketService.listen("rideAccepted").subscribe((data: any) => {
+      const index = this.dataSource.findIndex((ride) => ride.rideID === data.rideID)
+
+      if (index !== -1) {
+        this.dataSource[index] = data
+        this.dataSource = [...this.dataSource]
+      }
+
+      this.toast.success(
+        `Driver confirmed for ride ${data.rideID} ! Your ride is on the way.`,
+        "Accepted"
+      )
+    })
+
+    this.socketService.listen("rideRejected").subscribe((data: any) => {
+      this.toast.info(data.message, "Rejected")
+
+      const index = this.dataSource.findIndex((ride) => ride.rideID === data.rideID)
+
+      if (index !== -1) {
+        this.dataSource.splice(index, 1)
+        this.dataSource = [...this.dataSource]
+      }
+    })
+
+    this.socketService.listen("driverTimeout").subscribe((data: any) => {
+      this.toast.info(
+        `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
+        "Timeout"
+      )
+
+      const index = this.dataSource.findIndex((ride) => ride.rideID === data.ride.rideID)
+
+      if (index !== -1) {
+        this.dataSource.splice(index, 1)
+        this.dataSource = [...this.dataSource]
+      }
+    })
   }
 
   ngOnDestroy(): void {
