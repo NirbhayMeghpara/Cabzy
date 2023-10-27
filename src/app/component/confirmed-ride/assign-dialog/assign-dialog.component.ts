@@ -54,7 +54,7 @@ export class AssignDialogComponent implements OnInit {
   assignToNearestDriver() {
     this.dialogRef.close({
       assignSelected: false,
-      rideData: { ride: this.ride, driver: this.drivers },
+      rideData: this.ride,
     })
   }
 }
