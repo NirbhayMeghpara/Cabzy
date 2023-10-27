@@ -14,21 +14,15 @@ export class SocketService {
     this.socket = io("http://localhost:3000")
   }
 
-  emit(eventName: string, data: any, callback?: (error: any, message: string) => void) {
+  emit(eventName: string, data: any) {
     if (this.socket) {
-      if (callback) {
-        this.socket.emit(eventName, data, (error: any, message: string) => {
-          callback(error, message)
-        })
-      } else {
-        this.socket.emit(eventName, data)
-      }
+      this.socket.emit(eventName, data)
     }
   }
 
   disconnectSocket() {
     if (this.socket) {
-      this.socket.disconnect() // Disconnect from the server
+      this.socket.disconnect()
     }
   }
 

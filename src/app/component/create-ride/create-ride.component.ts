@@ -366,6 +366,7 @@ export class CreateRideComponent implements OnInit {
   }
 
   onRequestRide() {
+    console.log(this.rideBookForm)
     if (this.rideBookForm.invalid) {
       this.rideBookForm.markAllAsTouched()
       return
