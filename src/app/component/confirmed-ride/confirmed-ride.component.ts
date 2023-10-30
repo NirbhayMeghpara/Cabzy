@@ -260,6 +260,19 @@ export class ConfirmedRideComponent implements OnInit {
         this.dataSource = [...this.dataSource]
       }
     })
+    this.socketService.listen("nearestDriverTimeout").subscribe((data: any) => {
+      this.toast.info(
+        `Ride ${data.ride.rideID} has timed out. No one accept your ride request.`,
+        "Timeout"
+      )
+
+      const index = this.dataSource.findIndex((ride) => ride.rideID === data.ride.rideID)
+
+      if (index !== -1) {
+        this.dataSource[index] = data.ride
+        this.dataSource = [...this.dataSource]
+      }
+    })
   }
 
   ngOnDestroy(): void {
