@@ -41,7 +41,7 @@
       </mat-form-field>
 
       <mat-form-field class="serviceType">
-        <mat-select id="vehicleType" placeholder="Status" formControlName="vehicleType">
+        <mat-select id="rideStatus" placeholder="Status" formControlName="rideStatus">
           <ng-container *ngFor="let status of statusList; let i = index">
             <mat-option value="{{ i + 1 }}" (click)="onStatusClick(i)">{{ status }}</mat-option>
           </ng-container>
