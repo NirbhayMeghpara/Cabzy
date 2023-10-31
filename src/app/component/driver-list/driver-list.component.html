@@ -294,15 +294,7 @@
         </ng-container>
 
         <ng-container matColumnDef="city">
-          <th
-            class="nameCol"
-            mat-sort-header
-            mat-header-cell
-            *matHeaderCellDef
-            (click)="toggleSort('city')"
-          >
-            City
-          </th>
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>City</th>
           <td class="nameCol" mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{ element.city.name }}</p>
           </td>

@@ -138,6 +138,14 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
         this.dataSource = [...this.dataSource]
       }
     })
+
+    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
+      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
+      if (index !== -1) {
+        this.dataSource[index] = updatedRide
+        this.dataSource = [...this.dataSource]
+      }
+    })
   }
 
   ngOnDestroy(): void {

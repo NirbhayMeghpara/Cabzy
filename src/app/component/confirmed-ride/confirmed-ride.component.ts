@@ -84,6 +84,7 @@ export class ConfirmedRideComponent implements OnInit {
   ) {}
 
   filterForm: FormGroup = this.fb.group({
+    rideStatus: ["", [Validators.required]],
     vehicleType: ["", [Validators.required]],
     filterDate: ["", [Validators.required]],
   })
@@ -238,40 +239,16 @@ export class ConfirmedRideComponent implements OnInit {
   listenSocket() {
     this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
 
-    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
-      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
-
-      if (index !== -1) {
-        this.dataSource[index] = updatedRide
-        this.dataSource = [...this.dataSource]
-      }
-    })
-
     this.socketService.listen("driverTimeout").subscribe((data: any) => {
       this.toast.info(
         `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
         "Timeout"
       )
-
-      const index = this.dataSource.findIndex((ride) => ride.rideID === data.ride.rideID)
-
-      if (index !== -1) {
-        this.dataSource[index] = data.ride
-        this.dataSource = [...this.dataSource]
-      }
+      this.updateRideTR(data.ride)
     })
-    this.socketService.listen("nearestDriverTimeout").subscribe((data: any) => {
-      this.toast.info(
-        `Ride ${data.ride.rideID} has timed out. No one accept your ride request.`,
-        "Timeout"
-      )
 
-      const index = this.dataSource.findIndex((ride) => ride.rideID === data.ride.rideID)
-
-      if (index !== -1) {
-        this.dataSource[index] = data.ride
-        this.dataSource = [...this.dataSource]
-      }
+    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
+      this.updateRideTR(updatedRide)
     })
   }
 
@@ -279,6 +256,18 @@ export class ConfirmedRideComponent implements OnInit {
     this.socketService.disconnectSocket()
   }
 
+  updateRideTR(updatedRide: Ride) {
+    const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
+
+    if (index !== -1) {
+      this.dataSource[index] = updatedRide
+      this.dataSource = [...this.dataSource]
+    }
+  }
+
+  get rideStatus() {
+    return this.filterForm.get("rideStatus")
+  }
   get vehicleType() {
     return this.filterForm.get("vehicleType")
   }
