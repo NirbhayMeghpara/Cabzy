@@ -176,6 +176,11 @@
         <ng-container matColumnDef="status">
           <th class="status" mat-header-cell *matHeaderCellDef>Status</th>
           <td class="status" mat-cell *matCellDef="let element">
+            <ng-container *ngIf="element.status == 0">
+              <span class="bg-light-hold mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Hold
+              </span>
+            </ng-container>
             <ng-container *ngIf="element.status == 1">
               <span class="bg-light-warning mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
                 Pending
@@ -227,7 +232,7 @@
                 />
               </a>
             </div>
-            <div class="d-flex driverName" *ngIf="element.status !== 1">
+            <div class="d-flex driverName" *ngIf="element.status > 1">
               <h3>{{ element.driver.name }}</h3>
             </div>
           </td>

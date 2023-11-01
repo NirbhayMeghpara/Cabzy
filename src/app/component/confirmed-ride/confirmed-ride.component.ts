@@ -34,6 +34,7 @@ export interface Ride {
   user: User
   serviceType: Pricing
   driver: Driver
+  assignSelected: boolean
 }
 
 @Component({
@@ -219,7 +220,7 @@ export class ConfirmedRideComponent implements OnInit {
     assignRideDialog.afterClosed().subscribe((result) => {
       if (result && result.assignSelected) {
         this.socketService.emit("assignToSelectedDriver", result.rideData)
-      } else {
+      } else if (result && !result.assignSelected) {
         this.socketService.emit("assignToNearestDriver", result.rideData)
       }
     })
@@ -240,14 +241,20 @@ export class ConfirmedRideComponent implements OnInit {
     this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
 
     this.socketService.listen("driverTimeout").subscribe((data: any) => {
-      this.toast.info(
-        `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
-        "Timeout"
-      )
+      // this.toast.info(
+      //   `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
+      //   "Timeout"
+      // )
       this.updateRideTR(data.ride)
     })
 
     this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
+      this.updateRideTR(updatedRide)
+    })
+    this.socketService.listen("rideHold").subscribe((updatedRide: any) => {
+      this.updateRideTR(updatedRide)
+    })
+    this.socketService.listen("rideTerminate").subscribe((updatedRide: any) => {
       this.updateRideTR(updatedRide)
     })
   }
