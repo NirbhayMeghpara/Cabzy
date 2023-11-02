@@ -31,7 +31,15 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   ]
   dataSource: Ride[] = []
   vehicles: VehicleType[] = []
-  statusList: string[] = ["Pending", "Assigning", "Accepted", "Arrived", "Started", "Completed"]
+  statusList: string[] = [
+    "Pending",
+    "Assigning",
+    "Accepted",
+    "Arrived",
+    "Picked",
+    "Started",
+    "Completed",
+  ]
   pageIndex: number = 1
   pageSize: number = 4
   totalRideCounts: number = 0
@@ -80,6 +88,11 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
     this.socketService.emit("requestAcceptedByDriver", { ride: this.dataSource[index] })
   }
 
+  updateRideStatue(event: any, index: number) {
+    event.stopPropagation()
+    this.socketService.emit("updateRideStatus", this.dataSource[index])
+  }
+
   onTRclick(index: number) {
     const dialogRef = this.dialog.open(RideDetailsComponent, {
       width: "600px",
@@ -105,12 +118,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
     this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
 
     this.socketService.listen("rideAccepted").subscribe((updatedRide: any) => {
-      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
-
-      if (index !== -1) {
-        this.dataSource[index] = updatedRide
-        this.dataSource = [...this.dataSource]
-      }
+      this.updateRideTR(updatedRide)
 
       this.toast.success(
         `Driver confirmed for ride ${updatedRide.rideID} ! Your ride is on the way.`,
@@ -142,6 +150,23 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
       this.dataSource = [...this.dataSource]
     })
+
+    this.socketService.listen("statusUpdated").subscribe((updatedRide: any) => {
+      if (updatedRide.status === 7) {
+        this.removeRideTR(updatedRide.rideID)
+      } else if (updatedRide.status > 1 && updatedRide.status < 7) {
+        this.updateRideTR(updatedRide)
+      }
+    })
+  }
+
+  updateRideTR(updatedRide: Ride) {
+    const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
+
+    if (index !== -1) {
+      this.dataSource[index] = updatedRide
+      this.dataSource = [...this.dataSource]
+    }
   }
 
   removeRideTR(rideID: number) {

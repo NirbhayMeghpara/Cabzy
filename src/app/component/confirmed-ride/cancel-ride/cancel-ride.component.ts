@@ -1,16 +1,16 @@
 import { Component, Inject } from "@angular/core"
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog"
-import { Ride } from "../../confirmed-ride/confirmed-ride.component"
+import { Ride } from "../confirmed-ride.component"
 
 @Component({
-  selector: "app-reject-ride",
-  templateUrl: "./reject-ride.component.html",
-  styleUrls: ["./reject-ride.component.scss"],
+  selector: "app-cancel-ride",
+  templateUrl: "./cancel-ride.component.html",
+  styleUrls: ["./cancel-ride.component.scss"],
 })
-export class RejectRideComponent {
+export class CancelRideComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: { ride: Ride },
-    private dialogRef: MatDialogRef<RejectRideComponent>
+    private dialogRef: MatDialogRef<CancelRideComponent>
   ) {}
 
   rideID!: number
@@ -18,7 +18,7 @@ export class RejectRideComponent {
     this.rideID = this.data.ride.rideID
   }
 
-  reject() {
+  cancel() {
     this.dialogRef.close(true)
   }
 }

@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit {
   fileSizeLarge: boolean = false
   invalidFile: boolean = false
 
-  currentSortOrder: "asc" | "desc" | undefined = "asc"
+  currentSortOrder: "asc" | "desc" | undefined
   currentSortField: string | undefined = undefined
 
   @ViewChild("fileInput") fileInput!: ElementRef
@@ -281,12 +281,10 @@ export class UsersComponent implements OnInit {
         this.currentSortField = undefined
         return
       }
-      // If the user clicked on the same field, toggle the sorting order
       this.currentSortOrder = this.currentSortOrder === "asc" ? "desc" : "asc"
     } else {
-      // If the user clicked on a different field, set it as the new sorting field
       this.currentSortField = field
-      this.currentSortOrder = "asc" // Reset to ascending order
+      this.currentSortOrder = "asc"
     }
     this.fetchUserData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
   }

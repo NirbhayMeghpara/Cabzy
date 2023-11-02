@@ -13,6 +13,7 @@ import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 import { Driver } from "../driver-list/driver-list.component"
 import { SocketService } from "src/app/services/socket/socket.service"
+import { CancelRideComponent } from "./cancel-ride/cancel-ride.component"
 
 export interface Ride {
   _id: string
@@ -59,15 +60,23 @@ export class ConfirmedRideComponent implements OnInit {
   ]
   dataSource: Ride[] = []
   vehicles: VehicleType[] = []
-  statusList: string[] = ["Pending", "Accepted", "Arrived", "Started", "Completed"]
+  statusList: string[] = [
+    "Pending",
+    "Assigning",
+    "Accepted",
+    "Arrived",
+    "Picked",
+    "Started",
+    "Completed",
+  ]
   pageIndex: number = 1
   pageSize: number = 4
   totalRideCounts: number = 0
   flag!: boolean
-  minDate!: string
   showFilter!: boolean
   filteredDate!: boolean
-  filterRideDate!: string
+  filterRideFromDate!: string
+  filterRideToDate!: string
   filterVehicleType!: string
   filterStatus!: string
 
@@ -87,14 +96,13 @@ export class ConfirmedRideComponent implements OnInit {
   filterForm: FormGroup = this.fb.group({
     rideStatus: ["", [Validators.required]],
     vehicleType: ["", [Validators.required]],
-    filterDate: ["", [Validators.required]],
+    filterFromDate: ["", [Validators.required]],
+    filterToDate: ["", [Validators.required]],
   })
 
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
     this.getVehicle()
-    this.restrictDate()
-
     this.socketService.initializeSocket()
     this.listenSocket()
   }
@@ -117,7 +125,8 @@ export class ConfirmedRideComponent implements OnInit {
       this.searchText,
       this.currentSortField,
       this.currentSortOrder,
-      this.filterRideDate,
+      this.filterRideFromDate,
+      this.filterRideToDate,
       this.filterVehicleType,
       this.filterStatus
     )
@@ -127,7 +136,8 @@ export class ConfirmedRideComponent implements OnInit {
   toggleFilter() {
     if (this.showFilter) {
       this.resetFilterForm()
-      this.filterRideDate = ""
+      this.filterRideFromDate = ""
+      this.filterRideToDate = ""
       this.filterVehicleType = ""
       this.filterStatus = ""
       if (this.filteredDate) {
@@ -148,16 +158,29 @@ export class ConfirmedRideComponent implements OnInit {
     searchText?: string,
     sort?: string,
     sortOrder?: string,
-    rideDate?: string,
+    rideDateFrom?: string,
+    rideDateTo?: string,
     vehicleType?: string,
     status?: string
   ) {
     this.createRideService
-      .getRides({ page, searchText, sort, sortOrder, rideDate, vehicleType, status })
+      .getRides({
+        page,
+        searchText,
+        sort,
+        sortOrder,
+        rideDateFrom,
+        rideDateTo,
+        vehicleType,
+        status,
+        rideStatus: "[0,1,2,3,4,5,6]",
+      })
       .subscribe({
         next: (data: any) => {
           this.totalRideCounts = data.rideCount
-          this.dataSource = data.rides
+          this.dataSource = data.rides.filter((ride: Ride) => {
+            return ride.status >= 0 && ride.status < 7
+          })
         },
         error: (error) => {
           this.dataSource = []
@@ -183,17 +206,18 @@ export class ConfirmedRideComponent implements OnInit {
     }
   }
 
-  restrictDate() {
-    const currentDate = new Date()
-
-    this.minDate = currentDate.toISOString().split("T")[0] // Get the date in YYYY-MM-DD format
-  }
-
-  onDateChange(event: any) {
+  onFromDateChange(event: any) {
     const date = new Date(event.value)
     const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
+    this.filterRideFromDate = formattedDate
+    console.log(this.filterRideFromDate)
+  }
 
-    this.filterRideDate = formattedDate
+  onToDateChange(event: any) {
+    const date = new Date(event.value)
+    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
+    this.filterRideToDate = formattedDate
+    console.log(this.filterRideToDate)
   }
 
   onTRclick(index: number) {
@@ -206,6 +230,19 @@ export class ConfirmedRideComponent implements OnInit {
 
   cancelRide(event: any, index: number) {
     event.stopPropagation()
+    const dialogRef = this.dialog.open(CancelRideComponent, {
+      width: "400px",
+      enterAnimationDuration: "300ms",
+      data: {
+        ride: this.dataSource[index],
+      },
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.socketService.emit("cancelRide", this.dataSource[index])
+      }
+    })
   }
 
   assignRide(event: any, index: number) {
@@ -251,11 +288,43 @@ export class ConfirmedRideComponent implements OnInit {
     this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
       this.updateRideTR(updatedRide)
     })
+
     this.socketService.listen("rideHold").subscribe((updatedRide: any) => {
       this.updateRideTR(updatedRide)
     })
-    this.socketService.listen("rideTerminate").subscribe((updatedRide: any) => {
+
+    this.socketService.listen("rideTimeout").subscribe((updatedRide: any) => {
+      if (!updatedRide.driverID) {
+        this.toast.info("No driver is available!!", "Ride Timeout")
+        const notificationMessage = "No driver is available!!"
+
+        if (Notification.permission === "granted") {
+          new Notification("Ride Timeout", {
+            body: notificationMessage,
+          })
+        } else {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              new Notification("Ride Timeout", {
+                body: notificationMessage,
+              })
+            }
+          })
+        }
+      }
       this.updateRideTR(updatedRide)
+    })
+
+    this.socketService.listen("statusUpdated").subscribe((updatedRide: any) => {
+      if (updatedRide.status === 7) {
+        this.removeRideTR(updatedRide.rideID)
+      } else if (updatedRide.status >= 0 && updatedRide.status < 7) {
+        this.updateRideTR(updatedRide)
+      }
+    })
+
+    this.socketService.listen("rideCancelled").subscribe((updatedRide: any) => {
+      this.removeRideTR(updatedRide.rideID)
     })
   }
 
@@ -272,13 +341,25 @@ export class ConfirmedRideComponent implements OnInit {
     }
   }
 
+  removeRideTR(rideID: number) {
+    const index = this.dataSource.findIndex((ride) => ride.rideID === rideID)
+
+    if (index !== -1) {
+      this.dataSource.splice(index, 1)
+      this.dataSource = [...this.dataSource]
+    }
+  }
+
   get rideStatus() {
     return this.filterForm.get("rideStatus")
   }
   get vehicleType() {
     return this.filterForm.get("vehicleType")
   }
-  get filterDate() {
-    return this.filterForm.get("filterDate")
+  get filterFromDate() {
+    return this.filterForm.get("filterFromDate")
+  }
+  get filterToDate() {
+    return this.filterForm.get("filterToDate")
   }
 }

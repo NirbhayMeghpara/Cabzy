@@ -20,15 +20,28 @@
         <input
           matInput
           placeholder="Date"
-          [matDatepicker]="picker"
-          (focus)="picker.open()"
+          [matDatepicker]="fromPicker"
+          (focus)="fromPicker.open()"
           readonly
-          formControlName="filterDate"
-          [min]="minDate"
-          (dateChange)="onDateChange($event)"
+          formControlName="filterFromDate"
+          (dateChange)="onFromDateChange($event)"
         />
       </mat-form-field>
-      <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #fromPicker></mat-datepicker>
+
+      <mat-form-field class="dataPicker m-r-12" appearance="outline">
+        <mat-label>Date</mat-label>
+        <input
+          matInput
+          placeholder="Date"
+          [matDatepicker]="toPicker"
+          (focus)="toPicker.open()"
+          readonly
+          formControlName="filterToDate"
+          (dateChange)="onToDateChange($event)"
+        />
+      </mat-form-field>
+      <mat-datepicker #toPicker></mat-datepicker>
 
       <mat-form-field class="serviceType m-r-10">
         <mat-select id="vehicleType" placeholder="Vehicle Type" formControlName="vehicleType">
@@ -70,7 +83,7 @@
         (click)="toggleFilter()"
       >
         <span class="mdc-button__label">
-          <img src="../../../assets/images/cancle.png" class="m-r-6" width="16px" /><span>Cancel</span>
+          <img src="../../../assets/images/cancel.png" class="m-r-6" width="16px" /><span>Cancel</span>
         </span>
       </button>
     </div>
