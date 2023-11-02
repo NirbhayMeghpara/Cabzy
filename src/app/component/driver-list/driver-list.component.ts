@@ -372,12 +372,11 @@ export class DriverListComponent implements OnInit {
         this.currentSortField = undefined
         return
       }
-      // If the driver clicked on the same field, toggle the sorting order
+      // toggle the sorting order for same field
       this.currentSortOrder = this.currentSortOrder === "asc" ? "desc" : "asc"
     } else {
-      // If the driver clicked on a different field, set it as the new sorting field
       this.currentSortField = field
-      this.currentSortOrder = "asc" // Reset to ascending order
+      this.currentSortOrder = "asc"
     }
     this.fetchDriverData(this.pageIndex, this.searchText, this.currentSortField, this.currentSortOrder)
   }

@@ -1,1 +1,202 @@
-<p>ride-history works!</p>
+<div class="btn-wrapper">
+  <div class="search-box m-l-32">
+    <button class="btn-search" (click)="rideSearch()">
+      <i class="fas fa-search"></i>
+    </button>
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      class="input-search"
+      (keyup)="clearSearch()"
+      (keydown.enter)="rideSearch()"
+      placeholder="Type to Search..."
+    />
+  </div>
+
+  <div class="filter" *ngIf="showFilter">
+    <form [formGroup]="filterForm">
+      <mat-form-field class="dataPicker m-r-12" appearance="outline">
+        <mat-label>Date</mat-label>
+        <input
+          matInput
+          placeholder="Date"
+          [matDatepicker]="picker"
+          (focus)="picker.open()"
+          readonly
+          formControlName="filterDate"
+          (dateChange)="onDateChange($event)"
+        />
+      </mat-form-field>
+      <mat-datepicker #picker></mat-datepicker>
+
+      <mat-form-field class="serviceType">
+        <mat-select id="rideStatus" placeholder="Status" formControlName="rideStatus">
+          <ng-container *ngFor="let status of statusList; let i = index">
+            <mat-option value="{{ i + 1 }}" (click)="onStatusClick(i)">{{ status }}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <div class="formBtn">
+      <button
+        class="filterActionBtn m-r-10"
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="applyFilter()"
+      >
+        <span class="mdc-button__label">
+          <i-feather name="check-circle" class="applyFilter m-r-6"></i-feather>
+          <span>Apply</span>
+        </span>
+      </button>
+      <button
+        class="filterActionBtn"
+        type="button"
+        mat-raised-button
+        color="warn"
+        (click)="toggleFilter()"
+      >
+        <span class="mdc-button__label">
+          <img src="../../../assets/images/cancel.png" class="m-r-6" width="16px" /><span>Cancel</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <button
+    *ngIf="!showFilter"
+    class="filterBtn"
+    type="button"
+    mat-raised-button
+    color="accent"
+    (click)="toggleFilter()"
+  >
+    <span class="mdc-button__label">
+      <img src="../../../assets/images/setting.png" class="m-r-6" width="16px" /><span>Filter</span>
+    </span>
+  </button>
+</div>
+
+<mat-card class="w-100">
+  <mat-card-content>
+    <h2 class="m-b-20 m-l-6">Ride Request</h2>
+
+    <img
+      src="../../../assets/images/nothingFound.png"
+      class="d-block m-auto"
+      width="250px"
+      *ngIf="!dataSource.length"
+    />
+    <div class="table-responsive" *ngIf="dataSource.length">
+      <table mat-table [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+        <!-- Id Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell class="fw-medium" *matCellDef="let element; let i = index">
+            {{ element.rideID }}
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="userName">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Name</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.userName }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pickUp">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Pick Up</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.pickUp }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dropOff">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Drop Off</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.dropOff }}</p>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="serviceType">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Service Type</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.serviceType.vehicleType }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rideDate">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef>Ride Date</th>
+          <td class="nameCol" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.rideDate }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rideTime">
+          <th class="table-ride-time" mat-header-cell *matHeaderCellDef>Ride Time</th>
+          <td class="table-ride-time" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.rideTime }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="journeyDistance">
+          <th class="jDist" mat-header-cell *matHeaderCellDef>Journey Distance</th>
+          <td class="jDist" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.journeyDistance }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="journeyTime">
+          <th class="jTime" mat-header-cell *matHeaderCellDef>Journey Time</th>
+          <td class="jTime" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.journeyTime }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalFare">
+          <th class="tFare" mat-header-cell *matHeaderCellDef>Estimated Fare</th>
+          <td class="tFare" mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{ element.totalFare }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th class="status" mat-header-cell *matHeaderCellDef>Status</th>
+          <td class="status" mat-cell *matCellDef="let element">
+            <ng-container *ngIf="element.status == -1">
+              <span class="bg-light-error mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Cancelled
+              </span>
+            </ng-container>
+            <ng-container *ngIf="element.status == 7">
+              <span class="bg-light-success mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+                Completed
+              </span>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns; let i = index"
+          (click)="onTRclick(i)"
+        ></tr>
+      </table>
+    </div>
+    <mat-paginator
+      class="paginator"
+      (page)="handlePage($event)"
+      [length]="totalRideCounts"
+      [pageSize]="pageSize"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="true"
+      [pageIndex]="pageIndex - 1"
+      aria-label="Select page"
+      *ngIf="dataSource.length"
+    >
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

@@ -51,7 +51,8 @@ export class CreateRideService {
     searchText?: string
     sort?: string
     sortOrder?: string
-    rideDate?: string
+    rideDateFrom?: string
+    rideDateTo?: string
     vehicleType?: string
     status?: string
     rideStatus?: string
@@ -62,7 +63,8 @@ export class CreateRideService {
     data.searchText && url.searchParams.set("search", data.searchText)
     data.sort && url.searchParams.set("sort", data.sort)
     data.sortOrder && url.searchParams.set("sortOrder", data.sortOrder)
-    data.rideDate && url.searchParams.set("rideDate", data.rideDate)
+    data.rideDateFrom && url.searchParams.set("rideDateFrom", data.rideDateFrom)
+    data.rideDateTo && url.searchParams.set("rideDateTo", data.rideDateTo)
     data.vehicleType && url.searchParams.set("vehicleType", data.vehicleType)
     data.status && url.searchParams.set("status", data.status)
     data.rideStatus && url.searchParams.set("rideStatus", data.rideStatus)

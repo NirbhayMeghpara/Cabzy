@@ -284,7 +284,7 @@ export class CreateRideComponent implements OnInit {
     const currentDate = new Date()
 
     // Add 15 minutes to the current time
-    const newDate = new Date(currentDate.getTime() + 15 * 60 * 1000) // Add 15 minutes in milliseconds
+    const newDate = new Date(currentDate.getTime() + 15 * 60 * 1000)
 
     this.minTime = `${newDate.getHours()}:${newDate.getMinutes()}`
 
@@ -538,8 +538,8 @@ export class CreateRideComponent implements OnInit {
           this.directionsRenderer.setMap(this.map)
           this.directionsRenderer.setDirections(response)
           if (response) {
+            console.log("Ride Response", response)
             // Calculating data related to route
-
             const route = response.routes[0]
             route.legs.forEach((leg) => {
               if (leg.distance?.value) {
