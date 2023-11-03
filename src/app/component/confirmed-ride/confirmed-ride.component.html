@@ -16,7 +16,7 @@
   <div class="filter" *ngIf="showFilter">
     <form [formGroup]="filterForm">
       <mat-form-field class="dataPicker m-r-12" appearance="outline">
-        <mat-label>Date</mat-label>
+        <mat-label>From</mat-label>
         <input
           matInput
           placeholder="Date"
@@ -30,7 +30,7 @@
       <mat-datepicker #fromPicker></mat-datepicker>
 
       <mat-form-field class="dataPicker m-r-12" appearance="outline">
-        <mat-label>Date</mat-label>
+        <mat-label>To</mat-label>
         <input
           matInput
           placeholder="Date"

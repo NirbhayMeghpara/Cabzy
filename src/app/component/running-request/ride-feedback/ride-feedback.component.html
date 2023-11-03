@@ -1,0 +1,36 @@
+<h1
+  mat-dialog-title
+  class="mat-mdc-dialog-title mdc-dialog__title f-w-500 m-b-6"
+  id="mat-mdc-dialog-title-1"
+>
+  <strong>Feedback</strong>
+</h1>
+
+<form [formGroup]="feedbackForm">
+  <div class="rating">
+    <span class="star-cb-group">
+      <ng-container *ngFor="let rating of ratingList; let i = index">
+        <input
+          formControlName="rating"
+          type="radio"
+          id="rating-{{ rating }}"
+          value="{{ rating }}"
+          (change)="selectedRating = i"
+        />
+        <label for="rating-{{ rating }}"></label>
+      </ng-container>
+    </span>
+    <textarea
+      name="feedback"
+      id="feedback"
+      placeholder="Describe your ride experience . . . (optional)"
+      cols="10"
+      rows="5"
+      formControlName="feedback"
+      [(ngModel)]="userFeedback"
+    ></textarea>
+    <div mat-dialog-actions class="btn">
+      <button type="button" (click)="onSubmitFeedback()">Post</button>
+    </div>
+  </div>
+</form>

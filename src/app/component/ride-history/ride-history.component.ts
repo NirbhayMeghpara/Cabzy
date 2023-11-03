@@ -1,12 +1,16 @@
+import { PlatformModule } from "@angular/cdk/platform"
 import { CreateRideService } from "./../../services/createRide/createRide.service"
-import { Component } from "@angular/core"
-import * as XLSX from "xlsx"
+import { Component, ElementRef, ViewChild } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
 import { ToastService } from "src/app/services/toast.service"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
 import { DatePipe } from "@angular/common"
 import { MatDialog } from "@angular/material/dialog"
 import { RideDetailsComponent } from "../confirmed-ride/ride-details/ride-details.component"
+import * as XLSX from "xlsx"
+import { ngxCsv } from "ngx-csv"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 @Component({
   selector: "app-ride-history",
@@ -19,6 +23,7 @@ export class RideHistoryComponent {
     "userName",
     "pickUp",
     "dropOff",
+    "driver",
     "serviceType",
     "rideDate",
     "rideTime",
@@ -36,16 +41,31 @@ export class RideHistoryComponent {
   flag!: boolean
   showFilter!: boolean
   filteredDate!: boolean
-  filterRideDate!: string
+  filterRideFromDate!: string
+  filterRideToDate!: string
   filterVehicleType!: string
   filterStatus!: string
+  disableFilter: boolean = false
+
+  filterForm: FormGroup
+
+  @ViewChild("rideTable") rideTable!: ElementRef
 
   constructor(
     private createRideService: CreateRideService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private toast: ToastService
-  ) {}
+  ) {
+    this.filterForm = this.fb.group({
+      rideStatus: ["", [Validators.required]],
+      vehicleType: ["", [Validators.required]],
+      filterFromDate: ["", [Validators.required]],
+      filterToDate: ["", [Validators.required]],
+    })
+
+    this.filterForm.valueChanges.subscribe(() => (this.disableFilter = false))
+  }
 
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
@@ -55,12 +75,6 @@ export class RideHistoryComponent {
     this.pageIndex = event.pageIndex + 1
     this.fetchRideData(this.pageIndex, this.searchText)
   }
-
-  filterForm: FormGroup = this.fb.group({
-    rideStatus: ["", [Validators.required]],
-    vehicleType: ["", [Validators.required]],
-    filterDate: ["", [Validators.required]],
-  })
 
   fetchRideData(
     page: number = 1,
@@ -97,16 +111,27 @@ export class RideHistoryComponent {
   }
 
   applyFilter() {
-    this.fetchRideData(
-      this.pageIndex,
-      this.searchText,
-      undefined,
-      undefined,
-      this.filterRideDate,
-      this.filterVehicleType,
-      this.filterStatus
-    )
-    this.filteredDate = true
+    const rideStatus = this.rideStatus?.value
+    const vehicleType = this.vehicleType?.value
+    const fromDate = this.filterFromDate?.value
+    const toDate = this.filterToDate?.value
+
+    if (!rideStatus && !vehicleType && !fromDate && !toDate) {
+      return this.toast.info("Please select any one filter", ":)")
+    } else if (!this.disableFilter) {
+      this.fetchRideData(
+        this.pageIndex,
+        this.searchText,
+        undefined,
+        undefined,
+        this.filterRideFromDate,
+        this.filterRideToDate,
+        this.filterVehicleType,
+        this.filterStatus
+      )
+      this.filteredDate = true
+      this.disableFilter = true
+    }
   }
 
   rideSearch() {
@@ -129,7 +154,8 @@ export class RideHistoryComponent {
   toggleFilter() {
     if (this.showFilter) {
       this.resetFilterForm()
-      this.filterRideDate = ""
+      this.filterRideFromDate = ""
+      this.filterRideToDate = ""
       this.filterVehicleType = ""
       this.filterStatus = ""
       if (this.filteredDate) {
@@ -149,10 +175,16 @@ export class RideHistoryComponent {
     index === 0 ? (this.filterStatus = "-1") : (this.filterStatus = "7")
   }
 
-  onDateChange(event: any) {
+  onFromDateChange(event: any) {
     const date = new Date(event.value)
     const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
-    this.filterRideDate = formattedDate
+    this.filterRideFromDate = formattedDate
+  }
+
+  onToDateChange(event: any) {
+    const date = new Date(event.value)
+    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
+    this.filterRideToDate = formattedDate
   }
 
   onTRclick(index: number) {
@@ -163,10 +195,124 @@ export class RideHistoryComponent {
     })
   }
 
-  // exportToExcel() {
-  //   const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.tableData)
-  //   const wb: XLSX.WorkBook = XLSX.utils.book_new()
-  //   XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
-  //   XLSX.writeFile(wb, "TableData.xlsx")
-  // }
+  async exportToCsv() {
+    const exportData = await this.getRideTableData()
+
+    const options = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalseparator: ".",
+      showLabels: true,
+      headers: [
+        "Ride Id",
+        "Name",
+        "Email",
+        "Phone",
+        "Pick Up",
+        "Destination",
+        "Driver",
+        "Service Type",
+        "Ride Date",
+        "Ride Time",
+        "Journey Distance",
+        "Journey Time",
+        "Estimated Fare",
+        "Status",
+      ],
+    }
+
+    new ngxCsv(exportData, "ride_history", options)
+  }
+
+  async exportToPdf() {
+    const exportData = await this.getRideTableData()
+
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: [480, 310],
+    })
+    const options = { margin: { top: 10 } }
+
+    autoTable(doc, {
+      head: [
+        [
+          "Ride Id",
+          "Name",
+          "Email",
+          "Phone",
+          "Pick Up",
+          "Destination",
+          "Driver",
+          "Service Type",
+          "Ride Date",
+          "Ride Time",
+          "Journey Distance",
+          "Journey Time",
+          "Estimated Fare",
+          "Status",
+        ],
+      ],
+      body: exportData.map((ride) => Object.values(ride)),
+      ...options,
+    })
+
+    doc.save("ride_history.pdf")
+  }
+
+  async exportToExcel() {
+    const exportData = await this.getRideTableData()
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData)
+    const wb: XLSX.WorkBook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
+    XLSX.writeFile(wb, "ride_history.xlsx")
+  }
+
+  async getRideTableData() {
+    try {
+      const response: any = await new Promise((resolve, reject) => {
+        this.createRideService.getAllRides("[-1,7]").subscribe({
+          next: (data) => resolve(data),
+          error: (error) => reject(error),
+        })
+      })
+
+      const ridesData: Ride[] = response
+
+      return ridesData.map((ride: Ride) => {
+        return {
+          "Ride Id": ride.rideID,
+          Name: ride.userName,
+          Email: ride.user.email,
+          Phone: ride.user.phone,
+          "Pick Up": ride.pickUp,
+          Destination: ride.dropOff,
+          Driver: ride.driver?.name ? ride.driver.name : "N/A",
+          "Service Type": ride.serviceType.vehicleType,
+          "Ride Date": ride.rideDate,
+          "Ride Time": ride.rideTime,
+          "Journey Distance": ride.journeyDistance,
+          "Journey Time": ride.journeyTime,
+          "Estimated Fare": ride.totalFare,
+          Status: ride.status === 7 ? "Completed" : "Cancelled",
+        }
+      })
+    } catch (error: any) {
+      this.toast.error(error.error.error, "Error")
+      return []
+    }
+  }
+
+  get rideStatus() {
+    return this.filterForm.get("rideStatus")
+  }
+  get vehicleType() {
+    return this.filterForm.get("vehicleType")
+  }
+  get filterFromDate() {
+    return this.filterForm.get("filterFromDate")
+  }
+  get filterToDate() {
+    return this.filterForm.get("filterToDate")
+  }
 }

@@ -366,7 +366,6 @@ export class CreateRideComponent implements OnInit {
   }
 
   onRequestRide() {
-    console.log(this.rideBookForm)
     if (this.rideBookForm.invalid) {
       this.rideBookForm.markAllAsTouched()
       return
@@ -538,7 +537,6 @@ export class CreateRideComponent implements OnInit {
           this.directionsRenderer.setMap(this.map)
           this.directionsRenderer.setDirections(response)
           if (response) {
-            console.log("Ride Response", response)
             // Calculating data related to route
             const route = response.routes[0]
             route.legs.forEach((leg) => {
