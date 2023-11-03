@@ -9,7 +9,9 @@ export class CreateRideService {
   constructor(private http: HttpClient) {}
 
   private _createRideUrl = "http://localhost:3000/ride/create"
+  private _getAllRidesUrl = "http://localhost:3000/ride/fetchAll"
   private _getRidesUrl = "http://localhost:3000/ride"
+  private _feedbackUrl = "http://localhost:3000/ride/feedback"
 
   createRide(
     userId: string,
@@ -46,6 +48,14 @@ export class CreateRideService {
     return this.http.post(this._createRideUrl, formData)
   }
 
+  getAllRides(rideStatus?: string) {
+    const url = new URL(this._getAllRidesUrl)
+
+    rideStatus && url.searchParams.set("rideStatus", rideStatus)
+
+    return this.http.get(url.toString())
+  }
+
   getRides(data: {
     page: number
     searchText?: string
@@ -70,5 +80,15 @@ export class CreateRideService {
     data.rideStatus && url.searchParams.set("rideStatus", data.rideStatus)
 
     return this.http.get(url.toString())
+  }
+
+  sendFeedback(rideId: string, rating: number, feedback: string) {
+    const formData = new FormData()
+
+    formData.append("id", rideId)
+    rating && formData.append("rating", String(rating))
+    feedback && formData.append("feedback", feedback)
+
+    return this.http.post(this._feedbackUrl, formData)
   }
 }

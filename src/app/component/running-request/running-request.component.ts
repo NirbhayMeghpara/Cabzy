@@ -7,6 +7,7 @@ import { RideDetailsComponent } from "../confirmed-ride/ride-details/ride-detail
 import { MatDialog } from "@angular/material/dialog"
 import { SocketService } from "src/app/services/socket/socket.service"
 import { RejectRideComponent } from "./reject-ride/reject-ride.component"
+import { RideFeedbackComponent } from "./ride-feedback/ride-feedback.component"
 
 @Component({
   selector: "app-running-request",
@@ -90,7 +91,19 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
   updateRideStatue(event: any, index: number) {
     event.stopPropagation()
-    this.socketService.emit("updateRideStatus", this.dataSource[index])
+    if (this.dataSource[index].status === 6) {
+      const dialogRef = this.dialog.open(RideFeedbackComponent, {
+        width: "400px",
+        enterAnimationDuration: "300ms",
+        data: {
+          ride: this.dataSource[index],
+        },
+      })
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.socketService.emit("updateRideStatus", this.dataSource[index])
+      })
+    } else this.socketService.emit("updateRideStatus", this.dataSource[index])
   }
 
   onTRclick(index: number) {

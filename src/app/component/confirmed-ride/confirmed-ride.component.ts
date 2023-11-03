@@ -14,6 +14,7 @@ import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 import { Driver } from "../driver-list/driver-list.component"
 import { SocketService } from "src/app/services/socket/socket.service"
 import { CancelRideComponent } from "./cancel-ride/cancel-ride.component"
+import { from } from "rxjs"
 
 export interface Ride {
   _id: string
@@ -79,11 +80,13 @@ export class ConfirmedRideComponent implements OnInit {
   filterRideToDate!: string
   filterVehicleType!: string
   filterStatus!: string
+  disableFilter: boolean = false
 
   searchText: string = ""
   currentSortOrder: "asc" | "desc" | undefined = "asc"
   currentSortField: string | undefined = undefined
 
+  filterForm: FormGroup
   constructor(
     private createRideService: CreateRideService,
     private toast: ToastService,
@@ -91,14 +94,16 @@ export class ConfirmedRideComponent implements OnInit {
     private fb: FormBuilder,
     private vehicleTypeService: VehicleTypeService,
     private socketService: SocketService
-  ) {}
+  ) {
+    this.filterForm = this.fb.group({
+      rideStatus: ["", [Validators.required]],
+      vehicleType: ["", [Validators.required]],
+      filterFromDate: ["", [Validators.required]],
+      filterToDate: ["", [Validators.required]],
+    })
 
-  filterForm: FormGroup = this.fb.group({
-    rideStatus: ["", [Validators.required]],
-    vehicleType: ["", [Validators.required]],
-    filterFromDate: ["", [Validators.required]],
-    filterToDate: ["", [Validators.required]],
-  })
+    this.filterForm.valueChanges.subscribe(() => (this.disableFilter = false))
+  }
 
   ngOnInit(): void {
     this.fetchRideData(this.pageIndex)
@@ -120,17 +125,27 @@ export class ConfirmedRideComponent implements OnInit {
   }
 
   applyFilter() {
-    this.fetchRideData(
-      this.pageIndex,
-      this.searchText,
-      this.currentSortField,
-      this.currentSortOrder,
-      this.filterRideFromDate,
-      this.filterRideToDate,
-      this.filterVehicleType,
-      this.filterStatus
-    )
-    this.filteredDate = true
+    const rideStatus = this.rideStatus?.value
+    const vehicleType = this.vehicleType?.value
+    const fromDate = this.filterFromDate?.value
+    const toDate = this.filterToDate?.value
+
+    if (!rideStatus && !vehicleType && !fromDate && !toDate) {
+      return this.toast.info("Please select any one filter", ":)")
+    } else if (!this.disableFilter) {
+      this.fetchRideData(
+        this.pageIndex,
+        this.searchText,
+        this.currentSortField,
+        this.currentSortOrder,
+        this.filterRideFromDate,
+        this.filterRideToDate,
+        this.filterVehicleType,
+        this.filterStatus
+      )
+      this.filteredDate = true
+      this.disableFilter = true
+    }
   }
 
   toggleFilter() {
@@ -210,14 +225,12 @@ export class ConfirmedRideComponent implements OnInit {
     const date = new Date(event.value)
     const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
     this.filterRideFromDate = formattedDate
-    console.log(this.filterRideFromDate)
   }
 
   onToDateChange(event: any) {
     const date = new Date(event.value)
     const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
     this.filterRideToDate = formattedDate
-    console.log(this.filterRideToDate)
   }
 
   onTRclick(index: number) {

@@ -16,18 +16,32 @@
   <div class="filter" *ngIf="showFilter">
     <form [formGroup]="filterForm">
       <mat-form-field class="dataPicker m-r-12" appearance="outline">
-        <mat-label>Date</mat-label>
+        <mat-label>From</mat-label>
         <input
           matInput
           placeholder="Date"
-          [matDatepicker]="picker"
-          (focus)="picker.open()"
+          [matDatepicker]="fromPicker"
+          (focus)="fromPicker.open()"
           readonly
-          formControlName="filterDate"
-          (dateChange)="onDateChange($event)"
+          formControlName="filterFromDate"
+          (dateChange)="onFromDateChange($event)"
         />
       </mat-form-field>
-      <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #fromPicker></mat-datepicker>
+
+      <mat-form-field class="dataPicker m-r-12" appearance="outline">
+        <mat-label>To</mat-label>
+        <input
+          matInput
+          placeholder="Date"
+          [matDatepicker]="toPicker"
+          (focus)="toPicker.open()"
+          readonly
+          formControlName="filterToDate"
+          (dateChange)="onToDateChange($event)"
+        />
+      </mat-form-field>
+      <mat-datepicker #toPicker></mat-datepicker>
 
       <mat-form-field class="serviceType">
         <mat-select id="rideStatus" placeholder="Status" formControlName="rideStatus">
@@ -81,7 +95,30 @@
 
 <mat-card class="w-100">
   <mat-card-content>
-    <h2 class="m-b-20 m-l-6">Ride Request</h2>
+    <div class="card-header m-b-24 m-l-6 m-r-20">
+      <h2>Ride Request</h2>
+      <button class="exportMenu" mat-button [matMenuTriggerFor]="menu">Export As</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="exportToCsv()">
+          <div class="exportItem">
+            <img src="../../../assets/images/csv.png" class="m-r-8" width="20px" />
+            <span class="f-w-500 m-l-4">.csv</span>
+          </div>
+        </button>
+        <button mat-menu-item (click)="exportToPdf()">
+          <div class="exportItem">
+            <img src="../../../assets/images/pdf.png" class="m-r-8" width="20px" />
+            <span class="f-w-500 m-l-4">.pdf</span>
+          </div>
+        </button>
+        <button mat-menu-item (click)="exportToExcel()">
+          <div class="exportItem">
+            <img src="../../../assets/images/excel.png" class="m-r-8" width="20px" />
+            <span class="f-w-500 m-l-4">.xlsx</span>
+          </div>
+        </button>
+      </mat-menu>
+    </div>
 
     <img
       src="../../../assets/images/nothingFound.png"
@@ -90,7 +127,14 @@
       *ngIf="!dataSource.length"
     />
     <div class="table-responsive" *ngIf="dataSource.length">
-      <table mat-table [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+      <table
+        id="rideTable"
+        mat-table
+        [dataSource]="dataSource"
+        class="text-nowrap w-100"
+        role="table"
+        #rideTable
+      >
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>#</th>
@@ -120,6 +164,16 @@
             <p class="mb-0 fw-medium">{{ element.dropOff }}</p>
           </td>
         </ng-container>
+
+        <ng-container matColumnDef="driver">
+          <th class="nameCol" mat-header-cell *matHeaderCellDef style="text-align: center">Driver</th>
+          <td class="nameCol" mat-cell *matCellDef="let element" style="text-align: center">
+            <p class="mb-0 fw-medium">
+              {{ element.driver?.name ? element.driver.name : "N/A" }}
+            </p>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="serviceType">
           <th class="nameCol" mat-header-cell *matHeaderCellDef>Service Type</th>
           <td class="nameCol" mat-cell *matCellDef="let element">
