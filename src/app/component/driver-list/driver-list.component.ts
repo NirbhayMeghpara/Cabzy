@@ -98,13 +98,11 @@ export class DriverListComponent implements OnInit {
   })
 
   fetchCityOnKey(event: any) {
-    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-      const selectedValue = this.phoneCode?.value
+      const selectedValue = event.value
       const selectedCountry = this.countries.find((country) => country.code === selectedValue)
       if (selectedCountry) {
         this.fetchCity(selectedCountry.name)
       }
-    }
   }
 
   fetchCity(country: String) {
