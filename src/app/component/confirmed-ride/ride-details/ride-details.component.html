@@ -3,53 +3,59 @@
     <mat-dialog-content>
       <h2 class="mb-12">Ride Detail</h2>
       <hr class="mb-20" />
-      <div class="wrapper">
-        <div class="profile-card m-r-5">
-          <div class="top-container">
-            <img
-              src="http://localhost:3000/{{ ride.user.profile }}"
-              alt="user profile"
-              class="profile-image"
-              width="100"
-            />
+      <div class="details-container">
+        <div class="wrapper">
+          <div class="profile-card m-r-5">
+            <div class="top-container">
+              <img
+                src="http://localhost:3000/{{ ride.user.profile }}"
+                alt="user profile"
+                class="profile-image"
+                width="100"
+              />
 
-            <div class="m-l-12 m-t-12">
-              <h2 class="name m-b-12">{{ ride.user.name }}</h2>
-              <div class="mail m-b-0">
-                <i-feather name="mail" class="mailBtn"></i-feather>
-                {{ ride.user.email }}
+              <div class="m-l-12 m-t-12">
+                <h2 class="name m-b-12">{{ ride.user.name }}</h2>
+                <div class="mail m-b-0">
+                  <i-feather name="mail" class="mailBtn"></i-feather>
+                  {{ ride.user.email }}
+                </div>
+                <div class="mail m-b-0">
+                  <i-feather name="phone" class="mailBtn"></i-feather>
+                  {{ ride.user.phoneCode }} {{ ride.user.phone }}
+                </div>
               </div>
-              <div class="mail m-b-0">
-                <i-feather name="phone" class="mailBtn"></i-feather>
-                {{ ride.user.phoneCode }} {{ ride.user.phone }}
+            </div>
+          </div>
+
+          <div class="ride-card m-t-12">
+            <h4>{{ ride.rideDate }}</h4>
+            <h5 class="rideTime m-b-16">{{ ride.rideTime }}</h5>
+            <div class="ride-detail">
+              <div class="left-container">
+                <h6 class="journeyDistance">{{ ride.journeyDistance }} Km</h6>
+                <h6 class="journeyTime">{{ ride.journeyTime }} min</h6>
+              </div>
+              <div class="right-container">
+                <p class="pickUpPoint m-b-10">{{ ride.pickUp }}</p>
+                <ng-container *ngFor="let stop of stopAddress">
+                  <p class="stopPoint m-b-6 m-t-6">{{ stop }}</p>
+                </ng-container>
+                <p class="dropOffPoint m-t-10">{{ ride.dropOff }}</p>
+              </div>
+            </div>
+
+            <div class="row box m-b-8 m-t-24">
+              <h4 class="m-b-0">Estimated Fare :</h4>
+              <div class="d-flex">
+                <span class="totalFarePrice">{{ ride.totalFare }} Rs</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="ride-card m-t-12">
-          <h4>{{ ride.rideDate }}</h4>
-          <h5 class="rideTime m-b-16">{{ ride.rideTime }}</h5>
-          <div class="ride-detail">
-            <div class="left-container">
-              <h6 class="journeyDistance">{{ ride.journeyDistance }} Km</h6>
-              <h6 class="journeyTime">{{ ride.journeyTime }} min</h6>
-            </div>
-            <div class="right-container">
-              <p class="pickUpPoint m-b-10">{{ ride.pickUp }}</p>
-              <ng-container *ngFor="let stop of stopAddress">
-                <p class="stopPoint m-b-6 m-t-6">{{ stop }}</p>
-              </ng-container>
-              <p class="dropOffPoint m-t-10">{{ ride.dropOff }}</p>
-            </div>
-          </div>
-
-          <div class="row box m-b-8 m-t-24">
-            <h4 class="m-b-0">Estimated Fare :</h4>
-            <div class="d-flex">
-              <span class="totalFarePrice">{{ ride.totalFare }} Rs</span>
-            </div>
-          </div>
+        <div class="map-container">
+          <div class="map" id="map"></div>
         </div>
       </div>
     </mat-dialog-content>

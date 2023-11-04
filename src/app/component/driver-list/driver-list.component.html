@@ -32,7 +32,12 @@
         appearance="outline"
       >
         <mat-label>Name</mat-label>
-        <input matInput type="text" placeholder="Enter your name type" formControlName="name" />
+        <input
+          matInput
+          type="text"
+          placeholder="Enter your name type"
+          formControlName="name"
+        />
         <mat-error class="m-t-6" *ngIf="name?.invalid && name?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
           <span *ngIf="name?.hasError('pattern')">Name must not contain digit</span>
@@ -120,7 +125,7 @@
               id="city"
               placeholder="-- Select --"
               formControlName="phoneCode"
-              (keydown)="fetchCityOnKey($event)"
+              (selectionChange)="fetchCityOnKey($event)"
             >
               <ng-container *ngFor="let country of countries; let i = index">
                 <mat-option value="{{ country.code }}" (click)="fetchCity(country.name)">
@@ -155,13 +160,17 @@
       <mat-form-field [class.m-b-20]="city?.invalid && city?.touched">
         <mat-select id="city" placeholder="Select City" formControlName="city">
           <ng-container *ngFor="let city of cities; let i = index">
-            <mat-option value="{{ city.name }}" (click)="onCitySelect(i)">{{ city.name }}</mat-option>
+            <mat-option value="{{ city.name }}" (click)="onCitySelect(i)">{{
+              city.name
+            }}</mat-option>
           </ng-container>
         </mat-select>
         <mat-error class="m-t-6" *ngIf="city?.invalid && city?.touched"
           ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
           <span *ngIf="!phoneCode?.value">Please select country code first</span>
-          <span *ngIf="phoneCode?.value && city?.hasError('required')">Please select city</span>
+          <span *ngIf="phoneCode?.value && city?.hasError('required')"
+            >Please select city</span
+          >
         </mat-error>
       </mat-form-field>
 
@@ -226,7 +235,13 @@
       *ngIf="!dataSource.length"
     />
     <div class="table-responsive" *ngIf="dataSource.length">
-      <table mat-table matSort [dataSource]="dataSource" class="text-nowrap w-100" role="table">
+      <table
+        mat-table
+        matSort
+        [dataSource]="dataSource"
+        class="text-nowrap w-100"
+        role="table"
+      >
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>#</th>
