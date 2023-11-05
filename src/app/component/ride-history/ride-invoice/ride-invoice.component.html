@@ -4,24 +4,38 @@
     <div class="header">
       <div class="i_row">
         <div class="i_logo">
-          <p>Coding Market</p>
+          <img src="../../../../assets/images/brand.png" alt="Company Logo" width="160px" />
         </div>
-        <div class="i_title">
+        <div class="i_title m-t-6">
           <h2>INVOICE</h2>
+          <div class="i_number">
+            <p>Invoice No: 3452324</p>
+          </div>
           <p class="p_title text_right">April 20, 2023</p>
         </div>
       </div>
-      <div class="i_row">
-        <div class="i_number">
-          <p class="p_title">INVOICE NO: 3452324</p>
+      <div class="ride-details m-b-24">
+        <div class="passenger-details">
+          <h3 class="m-b-12">Passenger Details</h3>
+          <div class="m-b-4"><strong class="m-r-4">Name:</strong> <span>Nirbhay</span></div>
+          <div class="m-b-4"><strong class="m-r-4">Email:</strong> <span>Nirbhay</span></div>
+          <div class="m-b-4"><strong class="m-r-4">Phone:</strong> <span>Nirbhay</span></div>
+
+          <div class="right-container">
+            <p class="pickUpPoint m-b-10">{{ ride.pickUp }}</p>
+            <ng-container *ngFor="let stop of stopAddress">
+              <p class="stopPoint m-b-6 m-t-6">{{ stop }}</p>
+            </ng-container>
+            <p class="dropOffPoint m-t-10">{{ ride.dropOff }}</p>
+          </div>
         </div>
-        <div class="i_address text_right">
-          <p>TO</p>
-          <p class="p_title">
-            Facebook <br />
-            <span>Menlo Park, California</span><br />
-            <span>United States</span>
-          </p>
+        <div class="driver-details">
+          <h3 class="m-b-12">Driver Details</h3>
+          <div class="m-b-4"><strong class="m-r-4">Name:</strong> <span>Nirbhay</span></div>
+          <div class="m-b-4"><strong class="m-r-4">Phone:</strong> <span>Nirbhay</span></div>
+          <div class="m-b-4">
+            <strong class="m-r-4">Driver ID:</strong> <span>Nirbhay</span>
+          </div>
         </div>
       </div>
     </div>
