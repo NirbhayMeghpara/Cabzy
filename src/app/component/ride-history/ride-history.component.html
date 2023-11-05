@@ -46,7 +46,9 @@
       <mat-form-field class="serviceType">
         <mat-select id="rideStatus" placeholder="Status" formControlName="rideStatus">
           <ng-container *ngFor="let status of statusList; let i = index">
-            <mat-option value="{{ i + 1 }}" (click)="onStatusClick(i)">{{ status }}</mat-option>
+            <mat-option value="{{ i + 1 }}" (click)="onStatusClick(i)">{{
+              status
+            }}</mat-option>
           </ng-container>
         </mat-select>
       </mat-form-field>
@@ -73,7 +75,9 @@
         (click)="toggleFilter()"
       >
         <span class="mdc-button__label">
-          <img src="../../../assets/images/cancel.png" class="m-r-6" width="16px" /><span>Cancel</span>
+          <img src="../../../assets/images/cancel.png" class="m-r-6" width="16px" /><span
+            >Cancel</span
+          >
         </span>
       </button>
     </div>
@@ -88,7 +92,9 @@
     (click)="toggleFilter()"
   >
     <span class="mdc-button__label">
-      <img src="../../../assets/images/setting.png" class="m-r-6" width="16px" /><span>Filter</span>
+      <img src="../../../assets/images/setting.png" class="m-r-6" width="16px" /><span
+        >Filter</span
+      >
     </span>
   </button>
 </div>
@@ -166,7 +172,9 @@
         </ng-container>
 
         <ng-container matColumnDef="driver">
-          <th class="nameCol" mat-header-cell *matHeaderCellDef style="text-align: center">Driver</th>
+          <th class="nameCol" mat-header-cell *matHeaderCellDef style="text-align: center">
+            Driver
+          </th>
           <td class="nameCol" mat-cell *matCellDef="let element" style="text-align: center">
             <p class="mb-0 fw-medium">
               {{ element.driver?.name ? element.driver.name : "N/A" }}
@@ -225,10 +233,28 @@
               </span>
             </ng-container>
             <ng-container *ngIf="element.status == 7">
-              <span class="bg-light-success mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill">
+              <span
+                class="bg-light-success mat-body-2 f-w-600 p-x-12 p-y-6 f-s-12 rounded-pill"
+              >
                 Completed
               </span>
             </ng-container>
+          </td>
+        </ng-container>
+
+        <!-- Invoice -->
+        <ng-container matColumnDef="invoice">
+          <th class="invoice" mat-header-cell *matHeaderCellDef>Invoice</th>
+          <td class="invoice" mat-cell *matCellDef="let element; let i = index">
+            <a class="icon-18">
+              <img
+                src="../../../assets/images/bill.png"
+                alt="Invoice"
+                width="28"
+                height="auto"
+                (click)="showInvoice($event, i)"
+              />
+            </a>
           </td>
         </ng-container>
 

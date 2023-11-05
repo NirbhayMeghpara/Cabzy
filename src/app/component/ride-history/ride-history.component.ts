@@ -11,6 +11,7 @@ import * as XLSX from "xlsx"
 import { ngxCsv } from "ngx-csv"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
+import { RideInvoiceComponent } from "./ride-invoice/ride-invoice.component"
 
 @Component({
   selector: "app-ride-history",
@@ -31,6 +32,7 @@ export class RideHistoryComponent {
     "journeyTime",
     "totalFare",
     "status",
+    "invoice",
   ]
   dataSource: Ride[] = []
   statusList: string[] = ["Cancelled", "Completed"]
@@ -190,6 +192,15 @@ export class RideHistoryComponent {
   onTRclick(index: number) {
     const dialogRef = this.dialog.open(RideDetailsComponent, {
       width: "1200px",
+      enterAnimationDuration: "300ms",
+      data: this.dataSource[index],
+    })
+  }
+
+  showInvoice(event: any,index: number) {
+    event.stopPropagation()
+    const dialogRef = this.dialog.open(RideInvoiceComponent, {
+      width: "800px",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
     })
