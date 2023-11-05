@@ -1,28 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=Redressed&family=Ubuntu:wght@400;700&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Ubuntu", sans-serif;
-}
-
-body {
-  background: #ead376;
+section {
+  margin-top: -20px;
   font-size: 12px;
-  line-height: 20px;
   color: #2f2929;
-  padding: 0 20px;
+  height: 90vh!important;
 }
 
 .invoice {
-  width: 600px;
-  max-width: 100%;
-  height: auto;
   background: #fff;
-  padding: 50px 60px;
+  padding: 35px 60px;
   position: relative;
   margin: 20px auto;
+}
+
+.i_title{
+  text-align: right;
+}
+
+.i_number{
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .w_15 {
@@ -46,6 +42,98 @@ body {
   display: flex;
 }
 
+.ride-details{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.passenger-details{
+  width: 60%;
+  letter-spacing: 0.5px;
+}
+
+.right-container{
+	position: relative;
+	margin-top: 15px;
+	margin-left: 20px;
+	height: fit-content;
+}
+
+.right-container::after{
+	content: "";
+  position: absolute;
+  left: -15px;
+  top: 10px;
+  width: 1.5px;
+  height: 85%;
+  background-color: rgb(153, 153, 153);
+}
+
+.pickUpPoint, .dropOffPoint, .stopPoint{
+	position: relative;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.stopPoint{
+	position: relative;
+	font-size: 12px;
+	letter-spacing: 0px;
+}
+
+.pickUpPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #00c292!important;
+	z-index: 10;
+}
+
+.stopPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #03c9d7!important;
+	z-index: 10;
+}
+
+.dropOffPoint::after {
+	content: "";
+  position: absolute;
+  left: -18px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+	border-radius: 50px;
+  background-color: #fc4b6c!important;
+	z-index: 10;
+}
+
+.driver-details{
+  width: 40%;
+  margin-left: 15px;
+}
+
+.passenger-details h3, .driver-details h3 {
+  margin-left: -8px;
+  font-size: 16px;
+}
+
+.passenger-details, .driver-details {
+  padding: 8px 20px;
+  background-color: rgb(241, 241, 241);
+  border-radius: 20px;
+}
+
 .text_right {
   text-align: right;
 }
@@ -57,10 +145,6 @@ body {
 
 .invoice .header .i_row:last-child {
   align-items: flex-end;
-}
-
-.invoice .header .i_row .i_logo p {
-  font-family: "Redressed", cursive;
 }
 
 .invoice .header .i_row .i_logo p,
@@ -105,6 +189,9 @@ body {
 .invoice .body .i_table .i_table_foot .grand_total_wrap .grand_total p {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0px;
+  letter-spacing: 1px;
 }
 
 .invoice .footer {
@@ -113,7 +200,7 @@ body {
 
 .top_line,
 .bottom_line {
-  width: 25px;
+  width: 25.5px;
   height: 175px;
   z-index: 1;
   position: absolute;
