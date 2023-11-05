@@ -37,8 +37,9 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker"
 import { RideDetailsComponent } from "./component/confirmed-ride/ride-details/ride-details.component"
 import { AssignDialogComponent } from "./component/confirmed-ride/assign-dialog/assign-dialog.component"
 import { RejectRideComponent } from "./component/running-request/reject-ride/reject-ride.component"
-import { CancelRideComponent } from "./component/confirmed-ride/cancel-ride/cancel-ride.component";
-import { RideFeedbackComponent } from './component/running-request/ride-feedback/ride-feedback.component'
+import { CancelRideComponent } from "./component/confirmed-ride/cancel-ride/cancel-ride.component"
+import { RideFeedbackComponent } from './component/running-request/ride-feedback/ride-feedback.component';
+import { RideInvoiceComponent } from './component/ride-history/ride-invoice/ride-invoice.component'
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { RideFeedbackComponent } from './component/running-request/ride-feedback
     RejectRideComponent,
     CancelRideComponent,
     RideFeedbackComponent,
+    RideInvoiceComponent,
   ],
   imports: [
     BrowserModule,

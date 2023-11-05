@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Redressed&family=Ubuntu:wght@400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Ubuntu", sans-serif;
+}
+
+body {
+  background: #ead376;
+  font-size: 12px;
+  line-height: 20px;
+  color: #2f2929;
+  padding: 0 20px;
+}
+
+.invoice {
+  width: 600px;
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  padding: 50px 60px;
+  position: relative;
+  margin: 20px auto;
+}
+
+.w_15 {
+  width: 15%;
+}
+
+.w_50 {
+  width: 50%;
+}
+
+.w_55 {
+  width: 55%;
+}
+
+.p_title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.i_row {
+  display: flex;
+}
+
+.text_right {
+  text-align: right;
+}
+
+.invoice .header .i_row {
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.invoice .header .i_row:last-child {
+  align-items: flex-end;
+}
+
+.invoice .header .i_row .i_logo p {
+  font-family: "Redressed", cursive;
+}
+
+.invoice .header .i_row .i_logo p,
+.invoice .header .i_row .i_title h2 {
+  font-size: 32px;
+  line-height: 38px;
+  color: #5265a7;
+}
+
+.invoice .header .i_row .i_address .p_title span {
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.invoice .body .i_table .i_col p {
+  font-weight: 700;
+}
+
+.invoice .body .i_table .i_row .i_col {
+  padding: 12px 5px;
+}
+
+.invoice .body .i_table .i_table_head .i_row {
+  border: 2px solid;
+  border-color: #2f2929 transparent #2f2929 transparent;
+}
+
+.invoice .body .i_table .i_table_body .i_row:last-child {
+  border-bottom: 2px solid #2f2929;
+}
+
+.invoice .body .i_table .i_table_foot .grand_total_wrap {
+  margin-top: 20px;
+}
+
+.invoice .body .i_table .i_table_foot .grand_total_wrap .grand_total {
+  background: #5265a7;
+  color: #fff;
+  padding: 10px 15px;
+}
+
+.invoice .body .i_table .i_table_foot .grand_total_wrap .grand_total p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.invoice .footer {
+  margin-top: 30px;
+}
+
+.top_line,
+.bottom_line {
+  width: 25px;
+  height: 175px;
+  z-index: 1;
+  position: absolute;
+  background: #5265a7;
+}
+
+.top_line {
+  top: 0;
+  left: 0;
+}
+
+.bottom_line {
+  bottom: 0;
+  right: 0;
+}
+
+.top_line:before,
+.bottom_line:before {
+  content: "";
+  position: absolute;
+  border: 13px solid;
+}
+
+.top_line:before {
+  bottom: 0;
+  left: 0px;
+  border-color: transparent #fff #fff transparent;
+}
+
+.bottom_line:before {
+  top: 0;
+  left: 0px;
+  border-color: #fff transparent transparent #fff;
+}
