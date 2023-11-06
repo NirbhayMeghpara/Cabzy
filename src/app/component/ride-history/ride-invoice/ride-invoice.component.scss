@@ -1,15 +1,18 @@
+p {
+  margin: 0px!important;
+}
+
 section {
-  margin-top: -20px;
+  overflow-x: hidden!important;
   font-size: 12px;
   color: #2f2929;
-  height: 90vh!important;
 }
 
 .invoice {
   background: #fff;
   padding: 35px 60px;
   position: relative;
-  margin: 20px auto;
+  margin: 0px auto;
 }
 
 .i_title{
@@ -52,38 +55,68 @@ section {
   letter-spacing: 0.5px;
 }
 
-.right-container{
+.passenger-details h1 {
+  font-size: 38px;
+  font-family: "Dosis", sans-serif !important;
+}
+
+.name{
+	font-size: 22px;
+	font-weight: 500;
+	color: #272727;
 	position: relative;
+}
+.mail{
+	font-size: 14px;
+	color: rgb(105, 105, 105);
+	position: relative;
+	top: 2px;
+	display: flex;
+	align-items: center;
+}
+
+.mailBtn,  .driverCar {
+	margin-right: 10px;
+	width: 15px;
+	height: 15px;
+	color: grey;
+	margin-bottom: 3px;
+}
+
+.right-container{
+  position: relative;
 	margin-top: 15px;
 	margin-left: 20px;
 	height: fit-content;
 }
 
 .right-container::after{
-	content: "";
+  content: "";
   position: absolute;
-  left: -15px;
+  left: -8px;
   top: 10px;
-  width: 1.5px;
+  width: 2px;
   height: 85%;
   background-color: rgb(153, 153, 153);
 }
 
 .pickUpPoint, .dropOffPoint, .stopPoint{
-	position: relative;
+  position: relative;
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 1.2;
+  margin-bottom: 10px!important;
 }
 
 .stopPoint{
 	position: relative;
 	font-size: 12px;
 	letter-spacing: 0px;
+  margin: 6px 0px;
 }
 
 .pickUpPoint::after {
-	content: "";
+  content: "";
   position: absolute;
   left: -18px;
   top: 4px;
@@ -95,7 +128,7 @@ section {
 }
 
 .stopPoint::after {
-	content: "";
+  content: "";
   position: absolute;
   left: -18px;
   top: 4px;
@@ -118,20 +151,19 @@ section {
 	z-index: 10;
 }
 
-.driver-details{
-  width: 40%;
-  margin-left: 15px;
+.driver-details div{
+  font-size: 16px!important;
+  font-weight: 500;
 }
 
-.passenger-details h3, .driver-details h3 {
-  margin-left: -8px;
-  font-size: 16px;
+.driver-details h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
 }
 
-.passenger-details, .driver-details {
-  padding: 8px 20px;
-  background-color: rgb(241, 241, 241);
-  border-radius: 20px;
+.driverCar{
+  width: 20px!important;
+  height: 20px!important;
 }
 
 .text_right {
@@ -160,11 +192,16 @@ section {
 }
 
 .invoice .body .i_table .i_col p {
+  font-size: 12.5px;
   font-weight: 700;
 }
 
 .invoice .body .i_table .i_row .i_col {
-  padding: 12px 5px;
+  padding: 7px 5px;
+}
+
+.total{
+  margin-bottom: 4px!important;
 }
 
 .invoice .body .i_table .i_table_head .i_row {
@@ -184,6 +221,7 @@ section {
   background: #5265a7;
   color: #fff;
   padding: 10px 15px;
+  height: auto;
 }
 
 .invoice .body .i_table .i_table_foot .grand_total_wrap .grand_total p {
@@ -194,8 +232,35 @@ section {
   letter-spacing: 1px;
 }
 
+.tm_left_footer {
+  width: 70%;
+  padding: 10px 15px;
+  flex: none;
+}
+
+.tm_left_footer p{
+  margin-bottom: 2px!important;
+  margin-left: 5px!important;
+}
+
 .invoice .footer {
   margin-top: 30px;
+}
+
+.tc{
+  border: 1px solid #dbdfea;
+  overflow: hidden;
+  border-radius: 6px;
+  padding: 15px 20px!important;
+}
+
+.tc h3 b{
+  font-size: 17px;
+  font-family: "Dosis", sans-serif !important;
+}
+
+.tc ul li{
+  text-align: justify;
 }
 
 .top_line,

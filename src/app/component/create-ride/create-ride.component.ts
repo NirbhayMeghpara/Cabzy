@@ -402,6 +402,10 @@ export class CreateRideComponent implements OnInit {
             this.toast.success(response.msg, "Success")
           },
           error: (error) => {
+            if (error.status === 404) {
+              this.toast.error(error.error.msg, "404")
+              return
+            }
             this.toast.error(error.error.error, "Error")
           },
         })

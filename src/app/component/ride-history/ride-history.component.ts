@@ -197,10 +197,11 @@ export class RideHistoryComponent {
     })
   }
 
-  showInvoice(event: any,index: number) {
+  showInvoice(event: any, index: number) {
     event.stopPropagation()
     const dialogRef = this.dialog.open(RideInvoiceComponent, {
       width: "650px",
+      maxHeight: "90vh",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
     })

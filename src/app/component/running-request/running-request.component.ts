@@ -108,7 +108,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
   onTRclick(index: number) {
     const dialogRef = this.dialog.open(RideDetailsComponent, {
-      width: "600px",
+      width: "1200px",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
     })

@@ -17,12 +17,21 @@ export class SettingsComponent implements OnInit {
 
   settingID!: string
   submitFlag!: boolean
+  settingsForm: FormGroup
 
   constructor(
     private settingService: SettingService,
     private toast: ToastService,
     private fb: FormBuilder
-  ) {}
+  ) {
+    this.settingsForm = this.fb.group({
+      driverTimeout: ["", [Validators.required]],
+      stops: ["", [Validators.required]],
+      stripeKey: ["", [Validators.required]],
+    })
+
+    this.settingsForm.valueChanges.subscribe(() => (this.submitFlag = true))
+  }
 
   ngOnInit(): void {
     this.settingService.getSettings().subscribe({
@@ -40,11 +49,6 @@ export class SettingsComponent implements OnInit {
       },
     })
   }
-
-  settingsForm: FormGroup = this.fb.group({
-    driverTimeout: ["", [Validators.required]],
-    stops: ["", [Validators.required]],
-  })
 
   onSelectTime(index: number) {
     this.selectedDriverTimeout = this.times[index]
@@ -70,6 +74,7 @@ export class SettingsComponent implements OnInit {
       id: this.settingID,
       driverTimeout: this.selectedDriverTimeout.toString(),
       stops: this.selectedStops.toString(),
+      stripeKey: this.stripeKey?.value,
     }
 
     this.settingService.editSetting(setting).subscribe({
@@ -77,8 +82,10 @@ export class SettingsComponent implements OnInit {
         this.settingID = response._id
         this.driverTimeout?.setValue(response.driverTimeout)
         this.stops?.setValue(response.stops)
+        this.stripeKey?.setValue(response.stripeKey)
 
         this.toast.success("Settings updated successfully", "Success")
+        this.submitFlag = false
       },
       error: (error) => {
         this.toast.error(error.error.error, "Error")
@@ -91,5 +98,8 @@ export class SettingsComponent implements OnInit {
   }
   get stops() {
     return this.settingsForm.get("stops")
+  }
+  get stripeKey() {
+    return this.settingsForm.get("stripeKey")
   }
 }
