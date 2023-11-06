@@ -5,6 +5,7 @@ interface Settings {
   id: string
   driverTimeout: string
   stops: string
+  stripeKey: string
 }
 
 @Injectable({
@@ -21,6 +22,7 @@ export class SettingService {
     formData.append("id", settings.id)
     formData.append("driverTimeout", settings.driverTimeout)
     formData.append("stops", settings.stops)
+    formData.append("stripeKey", settings.stripeKey)
 
     return this.http.patch(this._editSettingUrl, formData)
   }

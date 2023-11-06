@@ -29,6 +29,15 @@
         </mat-error>
       </mat-form-field>
 
+      <mat-label class="mat-subtitle-2 f-w-600 m-b-8 d-block">Stripe Key</mat-label>
+      <mat-form-field class="w-100 fs-16" [class.mb-16]="stripeKey?.invalid && stripeKey?.touched">
+        <input matInput type="text" placeholder="Enter stripe key" formControlName="stripeKey" />
+        <mat-error class="m-t-6" *ngIf="stripeKey?.invalid && stripeKey?.touched"
+          ><i id="errorMark" class="fa-regular fa-circle-exclamation"></i>
+          <span *ngIf="stripeKey?.hasError('required')">Please enter your stripe key</span>
+        </mat-error>
+      </mat-form-field>
+
       <div class="formBtn m-t-24">
         <!-- Button color and class option : primary, warn, accent, basic, disabled, link -->
         <button type="button" extended mat-fab color="accent" (click)="onSubmitSettings()">

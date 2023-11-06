@@ -16,25 +16,40 @@
       </div>
       <div class="ride-details m-b-24">
         <div class="passenger-details">
-          <h3 class="m-b-12">Passenger Details</h3>
-          <div class="m-b-4"><strong class="m-r-4">Name:</strong> <span>Nirbhay</span></div>
-          <div class="m-b-4"><strong class="m-r-4">Email:</strong> <span>Nirbhay</span></div>
-          <div class="m-b-4"><strong class="m-r-4">Phone:</strong> <span>Nirbhay</span></div>
+          <h1>Thanks for riding,</h1>
 
-          <div class="right-container">
-            <p class="pickUpPoint m-b-10">{{ ride.pickUp }}</p>
+          <div class="p-l-6 m-b-20">
+            <h2 class="name m-b-10">{{ ride.user.name }}</h2>
+            <div class="mail m-b-2">
+              <i-feather name="mail" class="mailBtn"></i-feather>
+              {{ ride.user.email }}
+            </div>
+            <div class="mail m-b-2">
+              <i-feather name="phone" class="mailBtn"></i-feather>
+              {{ ride.user.phoneCode }} {{ ride.user.phone }}
+            </div>
+          </div>
+
+          <div class="right-container p-l-6">
+            <p class="pickUpPoint">{{ ride.pickUp }}</p>
             <ng-container *ngFor="let stop of stopAddress">
-              <p class="stopPoint m-b-6 m-t-6">{{ stop }}</p>
+              <p class="stopPoint">{{ stop }}</p>
             </ng-container>
-            <p class="dropOffPoint m-t-10">{{ ride.dropOff }}</p>
+            <p class="dropOffPoint">{{ ride.dropOff }}</p>
           </div>
         </div>
-        <div class="driver-details">
-          <h3 class="m-b-12">Driver Details</h3>
-          <div class="m-b-4"><strong class="m-r-4">Name:</strong> <span>Nirbhay</span></div>
-          <div class="m-b-4"><strong class="m-r-4">Phone:</strong> <span>Nirbhay</span></div>
-          <div class="m-b-4">
-            <strong class="m-r-4">Driver ID:</strong> <span>Nirbhay</span>
+
+        <div class="driver-details m-l-16 m-t-12">
+          <h3 class="m-b-4">ID: {{ ride.driver.driverID }}</h3>
+          <h2>{{ ride.driver.name }}</h2>
+
+          <div class="mail m-b-2">
+            <img src="../../../../assets/images/car.png" alt="car" class="driverCar" />
+            {{ ride.serviceType.vehicleType }}
+          </div>
+          <div class="mail m-b-2">
+            <i-feather name="phone" class="driverCar"></i-feather>
+            {{ ride.driver.phoneCode }} {{ ride.driver.phone }}
           </div>
         </div>
       </div>
@@ -44,7 +59,7 @@
         <div class="i_table_head">
           <div class="i_row">
             <div class="i_col w_15">
-              <p class="p_title">QTY</p>
+              <p class="p_title">#</p>
             </div>
             <div class="i_col w_55">
               <p class="p_title">DESCRIPTION</p>
@@ -60,71 +75,78 @@
         <div class="i_table_body">
           <div class="i_row">
             <div class="i_col w_15">
-              <p>3</p>
+              <p>{{ ride.rideID }}</p>
             </div>
+            <ng-container *ngIf="ride.totalFare == ride.serviceType.minFare; else pricing">
+              <div class="i_col w_55">
+                <p>Minimum Fare Price</p>
+              </div>
+              <div class="i_col w_15">
+                <p>${{ ride.serviceType.minFare }}</p>
+              </div>
+              <div class="i_col w_15">
+                <p>${{ ride.serviceType.minFare }}</p>
+              </div>
+            </ng-container>
+            <ng-template #pricing>
+              <div class="i_col w_55">
+                <p>Base Price Distance - ({{ ride.serviceType.basePriceDistance }} km)</p>
+              </div>
+              <div class="i_col w_15">
+                <p>${{ ride.serviceType.basePrice }}</p>
+              </div>
+              <div class="i_col w_15">
+                <p>${{ ride.serviceType.basePrice }}</p>
+              </div>
+            </ng-template>
+          </div>
+          <div class="i_row" *ngIf="ride.totalFare != ride.serviceType.minFare">
+            <div class="i_col w_15"></div>
             <div class="i_col w_55">
-              <p>Lorem, ipsum.</p>
-              <span
-                >Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam, vel.</span
-              >
+              <p>
+                Unit Distance Price - ({{ ride.journeyDistance - ride.serviceType.basePriceDistance }})
+              </p>
             </div>
             <div class="i_col w_15">
-              <p>$10.00</p>
+              <p>${{ ride.serviceType.unitDistancePrice }}</p>
             </div>
             <div class="i_col w_15">
-              <p>$30.00</p>
+              <p>
+                ${{
+                  (
+                    (ride.journeyDistance - ride.serviceType.basePriceDistance) *
+                    ride.serviceType.unitDistancePrice
+                  ).toFixed(2)
+                }}
+              </p>
             </div>
           </div>
-          <div class="i_row">
-            <div class="i_col w_15">
-              <p>2</p>
-            </div>
+          <div class="i_row" *ngIf="ride.totalFare != ride.serviceType.minFare">
+            <div class="i_col w_15"></div>
             <div class="i_col w_55">
-              <p>Lorem, ipsum.</p>
-              <span
-                >Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam, vel.</span
-              >
+              <p>Unit Time Price</p>
             </div>
             <div class="i_col w_15">
-              <p>$10.00</p>
+              <p>${{ ride.serviceType.unitTimePrice }}</p>
             </div>
             <div class="i_col w_15">
-              <p>$20.00</p>
-            </div>
-          </div>
-          <div class="i_row">
-            <div class="i_col w_15">
-              <p>5</p>
-            </div>
-            <div class="i_col w_55">
-              <p>Lorem, ipsum.</p>
-              <span
-                >Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam, vel.</span
-              >
-            </div>
-            <div class="i_col w_15">
-              <p>$10.00</p>
-            </div>
-            <div class="i_col w_15">
-              <p>$100.00</p>
+              <p>${{ ride.journeyTime * ride.serviceType.unitTimePrice }}</p>
             </div>
           </div>
         </div>
         <div class="i_table_foot">
           <div class="i_row">
-            <div class="i_col w_15">
-              <p></p>
-            </div>
-            <div class="i_col w_55">
-              <p></p>
+            <div class="tm_left_footer">
+              <h3 class="m-b-4"><b>Payment info: </b>{{ ride.paymentType.toUpperCase() }}</h3>
+              <p *ngIf="ride.paymentType != 'cash'">Credit Card - 236***********928</p>
             </div>
             <div class="i_col w_15">
-              <p>Sub Total</p>
-              <p>Tax 10%</p>
+              <p class="total">Sub Total</p>
+              <p>Tax 0%</p>
             </div>
             <div class="i_col w_15">
-              <p>$150.00</p>
-              <p>$15.00</p>
+              <p class="total">${{ ride.totalFare }}</p>
+              <p>$00.00</p>
             </div>
           </div>
           <div class="i_row grand_total_wrap">
@@ -132,7 +154,7 @@
             <div class="i_col w_50 grand_total">
               <p>
                 <span>GRAND TOTAL:</span>
-                <span>$165.00</span>
+                <span>${{ ride.totalFare }}</span>
               </p>
             </div>
           </div>
@@ -140,21 +162,32 @@
       </div>
     </div>
     <div class="footer">
-      <div class="i_row">
-        <div class="i_col w_50">
-          <p class="p_title">Payment Method</p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, dicta distinctio!
-            Laudantium voluptatibus est nemo.
-          </p>
-        </div>
-        <div class="i_col w_50 text_right">
-          <p class="p_title">Terms and Conditions</p>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, dicta distinctio!
-            Laudantium voluptatibus est nemo.
-          </p>
-        </div>
+      <div class="tc">
+        <h3 class="m-b-6"><b>Terms &amp; Conditions:</b></h3>
+        <ul style="list-style: disc" class="m-l-24">
+          <li class="m-b-6">
+            The charges for utilizing Cabzy services will encompass any applicable taxes mandated by law.
+            Cabzy retains the right to impose an additional fee for pickup services at various locations,
+            along with any relevant taxes (including, but not limited to, GST).
+          </li>
+          <li class="m-b-6">
+            All payments made by users are considered final and non-refundable, unless otherwise
+            determined by Cabzy.
+          </li>
+          <li>
+            Users have the entitlement to request reduced charges from a Third-Party Provider for
+            services or goods received at the time of service or delivery.
+          </li>
+          <li class="m-b-6">
+            Cabzy will respond accordingly to any request from a Third-Party Provider to adjust the
+            charges for a specific service or product.
+          </li>
+          <li class="m-b-6">
+            All charges are immediately due, and Cabzy will facilitate payment using the chosen payment
+            method specified in the user's account. Subsequently, Cabzy will dispatch a receipt via
+            email.
+          </li>
+        </ul>
       </div>
     </div>
     <div class="bottom_line"></div>
