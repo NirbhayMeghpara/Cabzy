@@ -41,6 +41,7 @@ export class SettingsComponent implements OnInit {
         this.selectedStops = response[0].stops
         this.driverTimeout?.setValue(response[0].driverTimeout)
         this.stops?.setValue(response[0].stops)
+        this.stripeKey?.setValue(response[0].stripeKey)
 
         this.submitFlag = false
       },
