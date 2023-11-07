@@ -71,9 +71,10 @@ export class VehicalTypeComponent implements OnInit {
 
     if (this.form === "Add") {
       this.vehicleTypeService.addVehicle(this.vehicleType?.value, this.selectedFile).subscribe({
-        next: (resposne: any) => {
-          this.toast.success(resposne?.msg, "Added")
-          this.getVehicle()
+        next: (response: any) => {
+          this.toast.success(response?.msg, "Added")
+          this.vehicleTypeData.push(response.data)
+          this.vehicleTypeData = [...this.vehicleTypeData]
         },
         error: (error) => this.toast.error(error.error.error, "Error"),
       })
@@ -81,9 +82,10 @@ export class VehicalTypeComponent implements OnInit {
       this.vehicleTypeService
         .editVehicle(this.editID, this.vehicleType?.value, this.selectedFile)
         .subscribe({
-          next: (resposne: any) => {
-            this.toast.success(resposne?.msg, "Success")
-            this.getVehicle()
+          next: (response: any) => {
+            this.toast.success(response?.msg, "Success")
+            this.vehicleTypeData.push(response.data)
+            this.vehicleTypeData = [...this.vehicleTypeData]
           },
           error: (error) => this.toast.error(error.error.error, "Error"),
         })
