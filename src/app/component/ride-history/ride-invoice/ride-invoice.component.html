@@ -8,10 +8,10 @@
         </div>
         <div class="i_title m-t-6">
           <h2>INVOICE</h2>
-          <div class="i_number">
-            <p>Invoice No: 3452324</p>
+          <div class="i_number m-b-4">
+            <p>Invoice No: {{ ride.rideID }}</p>
           </div>
-          <p class="p_title text_right">April 20, 2023</p>
+          <p class="p_title text_right">{{ ride.rideDate }}</p>
         </div>
       </div>
       <div class="ride-details m-b-24">
@@ -82,10 +82,10 @@
                 <p>Minimum Fare Price</p>
               </div>
               <div class="i_col w_15">
-                <p>${{ ride.serviceType.minFare }}</p>
+                <p><span class="currency">&#8377;</span>{{ ride.serviceType.minFare }}</p>
               </div>
               <div class="i_col w_15">
-                <p>${{ ride.serviceType.minFare }}</p>
+                <p><span class="currency">&#8377;</span>{{ ride.serviceType.minFare }}</p>
               </div>
             </ng-container>
             <ng-template #pricing>
@@ -93,10 +93,10 @@
                 <p>Base Price Distance - ({{ ride.serviceType.basePriceDistance }} km)</p>
               </div>
               <div class="i_col w_15">
-                <p>${{ ride.serviceType.basePrice }}</p>
+                <p><span class="currency">&#8377;</span>{{ ride.serviceType.basePrice }}</p>
               </div>
               <div class="i_col w_15">
-                <p>${{ ride.serviceType.basePrice }}</p>
+                <p><span class="currency">&#8377;</span>{{ ride.serviceType.basePrice }}</p>
               </div>
             </ng-template>
           </div>
@@ -104,15 +104,17 @@
             <div class="i_col w_15"></div>
             <div class="i_col w_55">
               <p>
-                Unit Distance Price - ({{ ride.journeyDistance - ride.serviceType.basePriceDistance }})
+                Unit Distance Price - ({{ ride.journeyDistance - ride.serviceType.basePriceDistance }}
+                km)
               </p>
             </div>
             <div class="i_col w_15">
-              <p>${{ ride.serviceType.unitDistancePrice }}</p>
+              <p><span class="currency">&#8377;</span>{{ ride.serviceType.unitDistancePrice }}</p>
             </div>
             <div class="i_col w_15">
               <p>
-                ${{
+                <span class="currency">&#8377;</span
+                >{{
                   (
                     (ride.journeyDistance - ride.serviceType.basePriceDistance) *
                     ride.serviceType.unitDistancePrice
@@ -124,13 +126,16 @@
           <div class="i_row" *ngIf="ride.totalFare != ride.serviceType.minFare">
             <div class="i_col w_15"></div>
             <div class="i_col w_55">
-              <p>Unit Time Price</p>
+              <p>Unit Time Price - ({{ ride.journeyTime }} min)</p>
             </div>
             <div class="i_col w_15">
-              <p>${{ ride.serviceType.unitTimePrice }}</p>
+              <p><span class="currency">&#8377;</span>{{ ride.serviceType.unitTimePrice }}</p>
             </div>
             <div class="i_col w_15">
-              <p>${{ ride.journeyTime * ride.serviceType.unitTimePrice }}</p>
+              <p>
+                <span class="currency">&#8377;</span
+                >{{ ride.journeyTime * ride.serviceType.unitTimePrice }}
+              </p>
             </div>
           </div>
         </div>
@@ -138,15 +143,14 @@
           <div class="i_row">
             <div class="tm_left_footer">
               <h3 class="m-b-4"><b>Payment info: </b>{{ ride.paymentType.toUpperCase() }}</h3>
-              <p *ngIf="ride.paymentType != 'cash'">Credit Card - 236***********928</p>
             </div>
             <div class="i_col w_15">
               <p class="total">Sub Total</p>
               <p>Tax 0%</p>
             </div>
             <div class="i_col w_15">
-              <p class="total">${{ ride.totalFare }}</p>
-              <p>$00.00</p>
+              <p class="total"><span class="currency">&#8377;</span>{{ ride.totalFare }}</p>
+              <p><span class="currency">&#8377;</span>00.00</p>
             </div>
           </div>
           <div class="i_row grand_total_wrap">
@@ -154,7 +158,7 @@
             <div class="i_col w_50 grand_total">
               <p>
                 <span>GRAND TOTAL:</span>
-                <span>${{ ride.totalFare }}</span>
+                <span><span class="currency">&#8377;</span>{{ ride.totalFare }}</span>
               </p>
             </div>
           </div>

@@ -27,7 +27,7 @@ export class CardComponent implements OnInit {
     private toast: ToastService
   ) {
     this.stripe = Stripe(
-      "pk_test_51Nxj1JSCeJNK0dB9dHsH4mCS6yv5ukONxyQxGcdodWpV0Rky29UFhRKNWbFPV3DXk7wKPWJy9m5kLpBzse7iQbG100vKCzd1Ym"
+      "pk_test_51O9jTFDMkPK75q1NwutmRyOxVaDRkuH5jQPNSKwrguBKFkZ3698Jj7VcuKpig4uQ7ZDxcHaX5HYTK14I0OQH6Ue900fbF04VXT"
     )
     this.createSetupIntent(this.data.user._id)
   }

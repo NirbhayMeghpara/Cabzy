@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core"
+import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
@@ -92,6 +92,9 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   updateRideStatue(event: any, index: number) {
     event.stopPropagation()
     if (this.dataSource[index].status === 6) {
+      if (this.dataSource[index].paymentType === "card") {
+        this.processPayment(this.dataSource[index]._id)
+      }
       const dialogRef = this.dialog.open(RideFeedbackComponent, {
         width: "400px",
         enterAnimationDuration: "300ms",
@@ -123,6 +126,19 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.dataSource = []
         if (error.status === 404) this.toast.info(error.error.msg, "404")
+      },
+    })
+  }
+
+  processPayment(rideId: string) {
+    this.createRideService.payment(rideId).subscribe({
+      next: (response: any) => {
+        if (response.charge) {
+          this.toast.success(response.charge.outcome.seller_message, response.charge.description)
+        }
+      },
+      error: (error) => {
+        console.error(error)
       },
     })
   }
@@ -194,4 +210,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.socketService.disconnectSocket()
   }
+}
+function ViewChild(arg0: string): (target: RunningRequestComponent, propertyKey: "cardElement") => void {
+  throw new Error("Function not implemented.")
 }

@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core"
 import { MAT_DIALOG_DATA } from "@angular/material/dialog"
 import { ToastService } from "src/app/services/toast.service"
+import { Stops } from "../../create-ride/create-ride.component"
 
 @Component({
   selector: "app-ride-details",
@@ -33,13 +34,12 @@ export class RideDetailsComponent implements OnInit {
     })
   }
 
-  
   map!: google.maps.Map
   directionsService!: google.maps.DirectionsService
   directionsRenderer!: google.maps.DirectionsRenderer
   myCoordinate!: { lat: number; lng: number }
 
-  waypoints: any[] = this.ride.stops
+  waypoints: any[] = []
 
   private async initMap() {
     console.log("Google Map from ride details")
@@ -58,6 +58,13 @@ export class RideDetailsComponent implements OnInit {
         polylineOptions: {
           strokeWeight: 3, // Thickness of the route line
         },
+      })
+
+      this.ride.stops.forEach((stop: Stops) => {
+        this.waypoints.push({
+          location: { lat: stop.lat, lng: stop.lng },
+          stopover: true,
+        })
       })
 
       const request: google.maps.DirectionsRequest = {
@@ -84,5 +91,4 @@ export class RideDetailsComponent implements OnInit {
       })
     })
   }
-
 }

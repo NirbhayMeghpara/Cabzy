@@ -12,6 +12,7 @@ export class CreateRideService {
   private _getAllRidesUrl = "http://localhost:3000/ride/fetchAll"
   private _getRidesUrl = "http://localhost:3000/ride"
   private _feedbackUrl = "http://localhost:3000/ride/feedback"
+  private _paymentUrl = "http://localhost:3000/ride/charge"
 
   createRide(
     userId: string,
@@ -90,5 +91,13 @@ export class CreateRideService {
     feedback && formData.append("feedback", feedback)
 
     return this.http.post(this._feedbackUrl, formData)
+  }
+
+  payment(rideId: string) {
+    const formData = new FormData()
+
+    formData.append("id", rideId)
+
+    return this.http.post(this._paymentUrl, formData)
   }
 }
