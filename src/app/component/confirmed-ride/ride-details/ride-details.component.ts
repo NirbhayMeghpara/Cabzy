@@ -42,7 +42,6 @@ export class RideDetailsComponent implements OnInit {
   waypoints: any[] = []
 
   private async initMap() {
-    console.log("Google Map from ride details")
     navigator.geolocation.getCurrentPosition((position) => {
       this.myCoordinate = { lat: position.coords.latitude, lng: position.coords.longitude }
       const mapOptions = {

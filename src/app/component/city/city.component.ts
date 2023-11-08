@@ -131,7 +131,7 @@ export class CityComponent implements OnInit {
       if (this.form === "Add") {
         this.onAddCity(this.selectedCountry.name, this.cityInputTag.value, this.polygonCoordinates)
       } else if (this.form === "Edit") {
-        this.onEditCity(this.cityInputTag.value)
+        this.onEditCity()
       }
     }
     this.resetForm()
@@ -149,7 +149,7 @@ export class CityComponent implements OnInit {
     })
   }
 
-  onEditCity(location: string) {
+  onEditCity() {
     if (!this.disableEditBtn) {
       this.polygonCoordinates = this.fetchPolygonCoordinate(this.currentPolygon)
 

@@ -9,13 +9,13 @@
 <form [formGroup]="feedbackForm">
   <div class="rating">
     <span class="star-cb-group">
-      <ng-container *ngFor="let rating of ratingList; let i = index">
+      <ng-container *ngFor="let rating of ratingList">
         <input
           formControlName="rating"
           type="radio"
           id="rating-{{ rating }}"
           value="{{ rating }}"
-          (change)="selectedRating = i"
+          (change)="selectedRating = rating"
         />
         <label for="rating-{{ rating }}"></label>
       </ng-container>
