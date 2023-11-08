@@ -79,7 +79,8 @@ export class CountryComponent implements OnInit {
     this.countryService.addCountry(name, flag, currency, timezone, code, alphaCode, latLong).subscribe({
       next: (response: any) => {
         this.toast.success(response.msg, "Added")
-        this.getCountry()
+        this.countryData.push(response.country)
+        this.countryData = [...this.countryData]
       },
       error: (error) => this.toast.error(error.error.error, "Error"),
     })

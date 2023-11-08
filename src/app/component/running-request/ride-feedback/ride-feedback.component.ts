@@ -10,7 +10,7 @@ import { ToastService } from "src/app/services/toast.service"
   styleUrls: ["./ride-feedback.component.scss"],
 })
 export class RideFeedbackComponent {
-  ratingList = ["5", "4", "3", "2", "1"]
+  ratingList = [5, 4, 3, 2, 1]
   userFeedback!: string
   selectedRating!: number
 
