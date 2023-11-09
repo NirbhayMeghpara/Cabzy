@@ -227,6 +227,9 @@ export class UsersComponent implements OnInit {
     this.email?.setValue(user.email)
     this.phoneCode?.setValue(String(user.phoneCode))
     this.phone?.setValue(user.phone)
+
+    this.profile?.clearValidators()
+    this.userForm.updateValueAndValidity()
   }
 
   deleteUser(index: number) {

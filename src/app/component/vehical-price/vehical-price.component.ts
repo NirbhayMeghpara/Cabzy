@@ -204,7 +204,7 @@ export class VehicalPriceComponent implements OnInit {
 
           if (index !== -1) {
             this.dataSource.splice(index, 1, response.pricing)
-            this.dataSource.push(response.pricing)
+            // this.dataSource.push(response.pricing)
             this.dataSource = [...this.dataSource]
           }
           // this.fetchPricingData(this.selectedCity, this.pageIndex)

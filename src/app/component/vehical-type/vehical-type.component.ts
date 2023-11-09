@@ -84,8 +84,11 @@ export class VehicalTypeComponent implements OnInit {
         .subscribe({
           next: (response: any) => {
             this.toast.success(response?.msg, "Success")
-            this.vehicleTypeData.push(response.data)
-            this.vehicleTypeData = [...this.vehicleTypeData]
+            const index = this.vehicleTypeData.findIndex((data) => data._id === response.data._id)
+
+            if (index !== -1) {
+              this.vehicleTypeData.splice(index, 1, response.data)
+            }
           },
           error: (error) => this.toast.error(error.error.error, "Error"),
         })
