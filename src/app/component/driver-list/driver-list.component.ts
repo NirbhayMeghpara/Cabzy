@@ -59,6 +59,8 @@ export class DriverListComponent implements OnInit {
   currentSortOrder: "asc" | "desc" | undefined = "asc"
   currentSortField: string | undefined = undefined
 
+  driverForm: FormGroup
+
   @ViewChild("fileInput") fileInput!: ElementRef
 
   constructor(
@@ -69,7 +71,20 @@ export class DriverListComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.driverForm = this.fb.group({
+      name: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
+      profile: ["", [Validators.required]],
+      profileHidden: [""],
+      email: [
+        "",
+        [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)],
+      ],
+      phoneCode: ["", [Validators.required]],
+      phone: ["", [Validators.required, Validators.pattern("[0-9]+")]],
+      city: ["", [Validators.required]],
+    })
+  }
 
   ngOnInit(): void {
     this.countryService.getCountryData().subscribe({
@@ -84,25 +99,12 @@ export class DriverListComponent implements OnInit {
     this.fetchDriverData(this.pageIndex)
   }
 
-  driverForm: FormGroup = this.fb.group({
-    name: ["", [Validators.required, Validators.pattern("^[A-Za-z ]+$")]],
-    profile: ["", [Validators.required]],
-    profileHidden: [""],
-    email: [
-      "",
-      [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)],
-    ],
-    phoneCode: ["", [Validators.required]],
-    phone: ["", [Validators.required, Validators.pattern("[0-9]+")]],
-    city: ["", [Validators.required]],
-  })
-
   fetchCityOnKey(event: any) {
-      const selectedValue = event.value
-      const selectedCountry = this.countries.find((country) => country.code === selectedValue)
-      if (selectedCountry) {
-        this.fetchCity(selectedCountry.name)
-      }
+    const selectedValue = event.value
+    const selectedCountry = this.countries.find((country) => country.code === selectedValue)
+    if (selectedCountry) {
+      this.fetchCity(selectedCountry.name)
+    }
   }
 
   fetchCity(country: String) {
@@ -305,6 +307,10 @@ export class DriverListComponent implements OnInit {
     this.email?.setValue(driver.email)
     this.phoneCode?.setValue(String(driver.phoneCode))
     this.phone?.setValue(driver.phone)
+
+    this.profile?.clearValidators()
+    this.driverForm.updateValueAndValidity()
+
     const selectedCountry = this.countries.find((country) => country.code === driver.phoneCode)
     if (selectedCountry) {
       this.fetchCity(selectedCountry.name)
