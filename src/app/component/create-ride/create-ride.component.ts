@@ -274,7 +274,6 @@ export class CreateRideComponent implements OnInit {
           "Unfortunately, there are no available service types at your current location.",
           "Info"
         )
-        // if (error.status === 404) this.toast.info(error.error.msg, "404")
       },
     })
   }

@@ -5,22 +5,6 @@
       <hr class="mb-20" />
       <div class="wrapper">
         <h4 class="mb-12">Ride: #{{ ride.rideID }}</h4>
-        <!-- <div
-          class="alert alert-border-info alert-text-info background-none d-flex fs-14 f-w-400 align-items-center rounded m-b-16 m-t-16"
-          role="alert"
-          *ngIf="noServiceType"
-        >
-          <i-feather name="info" class="text-info feather-base me-12"></i-feather>
-          <span>Service type is not added in {{ data.driver.city }}</span>
-        </div>
-        <div
-          class="alert alert-border-info alert-text-info background-none d-flex fs-14 f-w-400 align-items-center rounded m-b-16 m-t-16"
-          role="alert"
-          *ngIf="alert && !noServiceType"
-        >
-          <i-feather name="info" class="text-info feather-base me-12"></i-feather>
-          <span>No service type assigned to this driver</span>
-        </div> -->
         <div>
           <mat-radio-group
             role="radiogroup"
@@ -36,9 +20,6 @@
               </ng-container>
             </div>
           </mat-radio-group>
-          <!-- <mat-checkbox color="warn">
-                {{ driver.name }} - ({{ driver.phoneCode }} {{ driver.phone }}) - ({{ driver.email }})
-              </mat-checkbox> -->
           <div
             class="alert alert-border-info alert-text-info background-none d-flex fs-14 f-w-400 align-items-center rounded m-b-16 m-t-16"
             role="alert"

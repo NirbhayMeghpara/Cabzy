@@ -72,8 +72,7 @@ export class ServiceTypeComponent implements OnInit {
     })
   }
 
-  removeType(index: number) {
-    // const serviceType = this.serviceTypes[index]
+  removeType() {
     this.driverService.removeServiceType(this.data.driver._id).subscribe({
       next: (response: any) => {
         this.toast.warning(response.msg, "Removed", 5000)
