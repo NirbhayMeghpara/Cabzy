@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from "@angular/core"
+import { Component, OnDestroy, OnInit } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
 import { VehicleType } from "src/app/shared/interfaces/vehicle-type.model"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
@@ -138,7 +138,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error(error)
+        this.toast.error(error.error.error, "Payment Error")
       },
     })
   }

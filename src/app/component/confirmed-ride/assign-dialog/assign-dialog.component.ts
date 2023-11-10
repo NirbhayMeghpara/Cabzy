@@ -1,6 +1,6 @@
 import { Driver } from "./../../driver-list/driver-list.component"
 import { DriverService } from "src/app/services/driver/driver.service"
-import { Component, Inject, OnDestroy, OnInit } from "@angular/core"
+import { Component, Inject, OnInit } from "@angular/core"
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog"
 import { ToastService } from "src/app/services/toast.service"
 

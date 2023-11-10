@@ -14,7 +14,6 @@ import { AssignDialogComponent } from "./assign-dialog/assign-dialog.component"
 import { Driver } from "../driver-list/driver-list.component"
 import { SocketService } from "src/app/services/socket/socket.service"
 import { CancelRideComponent } from "./cancel-ride/cancel-ride.component"
-import { from } from "rxjs"
 
 export interface Ride {
   _id: string
@@ -291,10 +290,6 @@ export class ConfirmedRideComponent implements OnInit {
     this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
 
     this.socketService.listen("driverTimeout").subscribe((data: any) => {
-      // this.toast.info(
-      //   `Ride ${data.ride.rideID} has timed out as ${data.driver} didn't respond within the expected time.`,
-      //   "Timeout"
-      // )
       this.updateRideTR(data.ride)
     })
 
