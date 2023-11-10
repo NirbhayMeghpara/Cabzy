@@ -10,7 +10,6 @@ import { SettingService } from "src/app/services/setting/setting.service"
 import { VehiclePriceService } from "src/app/services/vehiclePrice/vehiclePrice.service"
 import { Pricing } from "../vehical-price/vehical-price.component"
 import { DatePipe } from "@angular/common"
-import { generate } from "rxjs"
 import { CreateRideService } from "src/app/services/createRide/createRide.service"
 
 interface City {

@@ -1,4 +1,3 @@
-import { PlatformModule } from "@angular/cdk/platform"
 import { CreateRideService } from "./../../services/createRide/createRide.service"
 import { Component, ElementRef, ViewChild } from "@angular/core"
 import { Ride } from "../confirmed-ride/confirmed-ride.component"
