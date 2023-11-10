@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core"
+import { Component, Inject } from "@angular/core"
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog"
 import { ToastService } from "src/app/services/toast.service"
 import { DriverService } from "src/app/services/driver/driver.service"

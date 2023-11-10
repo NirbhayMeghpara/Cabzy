@@ -1,55 +1,17 @@
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
 // Alerts
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
-
-.alert {
-  padding: 12px 16px;
-}
-
+.alert{padding:12px 16px}
 
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
 // Alerts Text Color
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
-
-.alert-text-danger {
-  color: $dark-danger;
-}
-
-.alert-text-warning {
-  color: $dark-warning;
-}
-
-.alert-text-info {
-  color: $dark-info;
-}
-
-.alert-text-success {
-  color: $dark-success;
-}
-
+.alert-text-danger{color:$dark-danger}.alert-text-warning{color:$dark-warning}.alert-text-info{color:$dark-info}.alert-text-success{color:$dark-success}
 
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
 // Alerts Background Color
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
-.alert-danger {
-  background-color: #fcf3f4;
-}
-
-.alert-warning {
-  background-color: #fefaeb;
-  color: $dark-warning;
-}
-
-.alert-info {
-  background-color: #f6fcfd;
-  color: $dark-info;
-}
-
-.alert-success {
-  background-color: #eafaf6;
-  color: $dark-success;
-}
-
+.alert-danger{background-color:#fcf3f4}.alert-warning{background-color:#fefaeb;color:$dark-warning}.alert-info{background-color:#f6fcfd;color:$dark-info}.alert-success{background-color:#eafaf6;color:$dark-success}
 
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
 // Alerts Border Color

@@ -1,7 +1,6 @@
 import { CityService } from "./../../services/city/city.service"
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
-import { count } from "rxjs"
 import { CountryService } from "src/app/services/country/country.service"
 import { ToastService } from "src/app/services/toast.service"
 

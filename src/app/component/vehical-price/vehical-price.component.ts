@@ -1,4 +1,3 @@
-import { max } from "rxjs"
 import { VehiclePriceService } from "./../../services/vehiclePrice/vehiclePrice.service"
 import { Component, OnInit } from "@angular/core"
 import { FormBuilder, FormGroup, Validators } from "@angular/forms"
