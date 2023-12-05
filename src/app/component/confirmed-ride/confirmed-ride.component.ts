@@ -275,9 +275,9 @@ export class ConfirmedRideComponent implements OnInit {
 
     assignRideDialog.afterClosed().subscribe((result) => {
       if (result && result.assignSelected) {
-        this.socketService.emit("assignToSelectedDriver", result.rideData)
+        this.socketService.emit("assignToSelectedDriver", JSON.stringify(result.rideData))
       } else if (result && !result.assignSelected) {
-        this.socketService.emit("assignToNearestDriver", result.rideData)
+        this.socketService.emit("assignToNearestDriver", JSON.stringify(result.rideData))
       }
     })
   }

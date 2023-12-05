@@ -76,9 +76,9 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (this.dataSource[index].assignSelected) {
-          this.socketService.emit("selectedDriverRejectRide", { ride: this.dataSource[index] })
+          this.socketService.emit("selectedDriverRejectRide", JSON.stringify({ ride: this.dataSource[index] }))
         } else {
-          this.socketService.emit("nearestDriverRejectRide", { ride: this.dataSource[index] })
+          this.socketService.emit("nearestDriverRejectRide", JSON.stringify({ ride: this.dataSource[index] }))
         }
       }
     })
@@ -86,7 +86,7 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
 
   acceptRide(event: any, index: number) {
     event.stopPropagation()
-    this.socketService.emit("requestAcceptedByDriver", { ride: this.dataSource[index] })
+    this.socketService.emit("requestAcceptedByDriver", JSON.stringify({ ride: this.dataSource[index] }))
   }
 
   updateRideStatue(event: any, index: number) {
