@@ -32,25 +32,25 @@ export class RideHistoryComponent {
     "totalFare",
     "status",
     "invoice",
-  ]
-  dataSource: Ride[] = []
-  statusList: string[] = ["Cancelled", "Completed"]
-  pageIndex: number = 1
-  pageSize: number = 4
-  totalRideCounts: number = 0
-  searchText: string = ""
-  flag!: boolean
-  showFilter!: boolean
-  filteredDate!: boolean
-  filterRideFromDate!: string
-  filterRideToDate!: string
-  filterVehicleType!: string
-  filterStatus!: string
-  disableFilter: boolean = false
+  ];
+  dataSource: Ride[] = [];
+  statusList: string[] = ["Cancelled", "Completed"];
+  pageIndex: number = 1;
+  pageSize: number = 4;
+  totalRideCounts: number = 0;
+  searchText: string = "";
+  flag!: boolean;
+  showFilter!: boolean;
+  filteredDate!: boolean;
+  filterRideFromDate!: string;
+  filterRideToDate!: string;
+  filterVehicleType!: string;
+  filterStatus!: string;
+  disableFilter: boolean = false;
 
-  filterForm: FormGroup
+  filterForm: FormGroup;
 
-  @ViewChild("rideTable") rideTable!: ElementRef
+  @ViewChild("rideTable") rideTable!: ElementRef;
 
   constructor(
     private createRideService: CreateRideService,
@@ -63,18 +63,27 @@ export class RideHistoryComponent {
       vehicleType: ["", [Validators.required]],
       filterFromDate: ["", [Validators.required]],
       filterToDate: ["", [Validators.required]],
-    })
+    });
 
-    this.filterForm.valueChanges.subscribe(() => (this.disableFilter = false))
+    this.filterForm.valueChanges.subscribe(() => (this.disableFilter = false));
   }
 
   ngOnInit(): void {
-    this.fetchRideData(this.pageIndex)
+    this.fetchRideData(this.pageIndex);
   }
 
   handlePage(event: any) {
     this.pageIndex = event.pageIndex + 1
-    this.fetchRideData(this.pageIndex, this.searchText)
+    this.fetchRideData(
+      this.pageIndex,
+      this.searchText,
+      undefined,
+      undefined,
+      this.filterRideFromDate,
+      this.filterRideToDate,
+      undefined,
+      this.filterStatus
+    )
   }
 
   fetchRideData(
@@ -101,24 +110,24 @@ export class RideHistoryComponent {
       })
       .subscribe({
         next: (data: any) => {
-          this.totalRideCounts = data.rideCount
-          this.dataSource = data.rides
+          this.totalRideCounts = data.rideCount;
+          this.dataSource = data.rides;
         },
         error: (error) => {
-          this.dataSource = []
-          if (error.status === 404) this.toast.info(error.error.msg, "404")
+          this.dataSource = [];
+          if (error.status === 404) this.toast.info(error.error.msg, "404");
         },
-      })
+      });
   }
 
   applyFilter() {
-    const rideStatus = this.rideStatus?.value
-    const vehicleType = this.vehicleType?.value
-    const fromDate = this.filterFromDate?.value
-    const toDate = this.filterToDate?.value
+    const rideStatus = this.rideStatus?.value;
+    const vehicleType = this.vehicleType?.value;
+    const fromDate = this.filterFromDate?.value;
+    const toDate = this.filterToDate?.value;
 
     if (!rideStatus && !vehicleType && !fromDate && !toDate) {
-      return this.toast.info("Please select any one filter", ":)")
+      return this.toast.info("Please select any one filter", ":)");
     } else if (!this.disableFilter) {
       this.fetchRideData(
         this.pageIndex,
@@ -129,63 +138,63 @@ export class RideHistoryComponent {
         this.filterRideToDate,
         this.filterVehicleType,
         this.filterStatus
-      )
-      this.filteredDate = true
-      this.disableFilter = true
+      );
+      this.filteredDate = true;
+      this.disableFilter = true;
     }
   }
 
   rideSearch() {
-    this.flag = false
+    this.flag = false;
     if (this.searchText.length) {
-      this.fetchRideData(1, this.searchText)
-      this.flag = true
+      this.fetchRideData(1, this.searchText);
+      this.flag = true;
     }
   }
 
   clearSearch() {
     if (this.searchText.length === 0) {
       if (this.flag) {
-        this.fetchRideData(1, undefined)
-        this.flag = false
+        this.fetchRideData(1, undefined);
+        this.flag = false;
       }
     }
   }
 
   toggleFilter() {
     if (this.showFilter) {
-      this.resetFilterForm()
-      this.filterRideFromDate = ""
-      this.filterRideToDate = ""
-      this.filterVehicleType = ""
-      this.filterStatus = ""
+      this.resetFilterForm();
+      this.filterRideFromDate = "";
+      this.filterRideToDate = "";
+      this.filterVehicleType = "";
+      this.filterStatus = "";
       if (this.filteredDate) {
-        this.fetchRideData()
-        this.filteredDate = false
+        this.fetchRideData();
+        this.filteredDate = false;
       }
     }
-    this.showFilter = !this.showFilter
+    this.showFilter = !this.showFilter;
   }
 
   resetFilterForm() {
-    this.filterForm.reset()
-    this.filterForm.updateValueAndValidity()
+    this.filterForm.reset();
+    this.filterForm.updateValueAndValidity();
   }
 
   onStatusClick(index: number) {
-    index === 0 ? (this.filterStatus = "-1") : (this.filterStatus = "7")
+    index === 0 ? (this.filterStatus = "-1") : (this.filterStatus = "7");
   }
 
   onFromDateChange(event: any) {
-    const date = new Date(event.value)
-    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
-    this.filterRideFromDate = formattedDate
+    const date = new Date(event.value);
+    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!;
+    this.filterRideFromDate = formattedDate;
   }
 
   onToDateChange(event: any) {
-    const date = new Date(event.value)
-    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!
-    this.filterRideToDate = formattedDate
+    const date = new Date(event.value);
+    const formattedDate = new DatePipe("en-US").transform(date, "MM/dd/yyyy")!;
+    this.filterRideToDate = formattedDate;
   }
 
   onTRclick(index: number) {
@@ -193,21 +202,21 @@ export class RideHistoryComponent {
       width: "1200px",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
-    })
+    });
   }
 
   showInvoice(event: any, index: number) {
-    event.stopPropagation()
+    event.stopPropagation();
     const dialogRef = this.dialog.open(RideInvoiceComponent, {
       width: "650px",
       maxHeight: "90vh",
       enterAnimationDuration: "300ms",
       data: this.dataSource[index],
-    })
+    });
   }
 
   async exportToCsv() {
-    const exportData = await this.getRideTableData()
+    const exportData = await this.getRideTableData();
 
     const options = {
       fieldSeparator: ",",
@@ -230,20 +239,20 @@ export class RideHistoryComponent {
         "Estimated Fare",
         "Status",
       ],
-    }
+    };
 
-    new ngxCsv(exportData, "ride_history", options)
+    new ngxCsv(exportData, "ride_history", options);
   }
 
   async exportToPdf() {
-    const exportData = await this.getRideTableData()
+    const exportData = await this.getRideTableData();
 
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: [480, 310],
-    })
-    const options = { margin: { top: 10 } }
+    });
+    const options = { margin: { top: 10 } };
 
     autoTable(doc, {
       head: [
@@ -266,17 +275,17 @@ export class RideHistoryComponent {
       ],
       body: exportData.map((ride) => Object.values(ride)),
       ...options,
-    })
+    });
 
-    doc.save("ride_history.pdf")
+    doc.save("ride_history.pdf");
   }
 
   async exportToExcel() {
-    const exportData = await this.getRideTableData()
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData)
-    const wb: XLSX.WorkBook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
-    XLSX.writeFile(wb, "ride_history.xlsx")
+    const exportData = await this.getRideTableData();
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "ride_history.xlsx");
   }
 
   async getRideTableData() {
@@ -285,10 +294,10 @@ export class RideHistoryComponent {
         this.createRideService.getAllRides("[-1,7]").subscribe({
           next: (data) => resolve(data),
           error: (error) => reject(error),
-        })
-      })
+        });
+      });
 
-      const ridesData: Ride[] = response
+      const ridesData: Ride[] = response;
 
       return ridesData.map((ride: Ride) => {
         return {
@@ -306,24 +315,24 @@ export class RideHistoryComponent {
           "Journey Time": ride.journeyTime,
           "Estimated Fare": ride.totalFare,
           Status: ride.status === 7 ? "Completed" : "Cancelled",
-        }
-      })
+        };
+      });
     } catch (error: any) {
-      this.toast.error(error.error.error, "Error")
-      return []
+      this.toast.error(error.error.error, "Error");
+      return [];
     }
   }
 
   get rideStatus() {
-    return this.filterForm.get("rideStatus")
+    return this.filterForm.get("rideStatus");
   }
   get vehicleType() {
-    return this.filterForm.get("vehicleType")
+    return this.filterForm.get("vehicleType");
   }
   get filterFromDate() {
-    return this.filterForm.get("filterFromDate")
+    return this.filterForm.get("filterFromDate");
   }
   get filterToDate() {
-    return this.filterForm.get("filterToDate")
+    return this.filterForm.get("filterToDate");
   }
 }
