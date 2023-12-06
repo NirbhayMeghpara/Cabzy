@@ -259,7 +259,7 @@ export class ConfirmedRideComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.socketService.emit("cancelRide", this.dataSource[index])
+        this.socketService.emit("cancelRide", JSON.stringify(this.dataSource[index]))
       }
     })
   }

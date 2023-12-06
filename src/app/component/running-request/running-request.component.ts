@@ -104,9 +104,9 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
       })
 
       dialogRef.afterClosed().subscribe(() => {
-        this.socketService.emit("updateRideStatus", this.dataSource[index])
+        this.socketService.emit("updateRideStatus", JSON.stringify(this.dataSource[index]))
       })
-    } else this.socketService.emit("updateRideStatus", this.dataSource[index])
+    } else this.socketService.emit("updateRideStatus", JSON.stringify(this.dataSource[index]))
   }
 
   onTRclick(index: number) {
