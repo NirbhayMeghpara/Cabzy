@@ -142,9 +142,18 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
       },
     })
   }
-
+  
   listenSocket() {
     this.socketService.listen("error").subscribe((error: any) => this.toast.error(error, "Error"))
+    
+    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
+      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
+  
+      if (index !== -1) this.dataSource[index] = updatedRide
+      else this.dataSource.push(updatedRide)
+  
+      this.dataSource = [...this.dataSource]
+    })
 
     this.socketService.listen("rideAccepted").subscribe((updatedRide: any) => {
       this.updateRideTR(updatedRide)
@@ -169,15 +178,6 @@ export class RunningRequestComponent implements OnInit, OnDestroy {
       )
 
       this.removeRideTR(data.ride.rideID)
-    })
-
-    this.socketService.listen("rideAssigned").subscribe((updatedRide: any) => {
-      const index = this.dataSource.findIndex((ride) => ride.rideID === updatedRide.rideID)
-
-      if (index !== -1) this.dataSource[index] = updatedRide
-      else this.dataSource.push(updatedRide)
-
-      this.dataSource = [...this.dataSource]
     })
 
     this.socketService.listen("statusUpdated").subscribe((updatedRide: any) => {

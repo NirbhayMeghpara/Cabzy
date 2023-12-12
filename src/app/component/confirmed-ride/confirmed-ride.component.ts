@@ -308,6 +308,12 @@ export class ConfirmedRideComponent implements OnInit {
       this.updateRideTR(updatedRide)
     })
 
+    this.socketService.listen("rideRejected").subscribe((data: any) => {
+      this.toast.info(data.message, "Rejected")
+
+      this.updateRideTR(data.ride)
+    })
+
     this.socketService.listen("rideHold").subscribe((updatedRide: any) => {
       this.updateRideTR(updatedRide)
     })
